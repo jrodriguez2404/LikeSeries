@@ -4,29 +4,29 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+        <item android:title="Opciones de la App">
+            <menu>
+                <item
+                    android:id="@+id/peliculas"
+                    android:icon="@drawable/filmstrip"
+                    android:title="Peliculas" />
+                <item
+                    android:id="@+id/series"
+                    android:icon="@drawable/cellphone_android"
+                    android:title="Series" />
+            </menu>
+        </item>
     </group>
 
     <item android:title="Ajustes Usuario">
         <menu>
             <item
-                android:id="@+id/ajustes_app"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="Ajustes" />
+                android:id="@+id/mi_perfil"
+                android:icon="@drawable/account_arrow_left_outline"
+                android:title="Mi perfil" />
             <item
                 android:id="@+id/cerrar_sesion"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/account_remove_outline"
                 android:title="Cerrar sesión" />
         </menu>
     </item>

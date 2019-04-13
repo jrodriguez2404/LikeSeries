@@ -1,17 +1,21 @@
 package com.loja.jesus.likeseries;
 
+import android.content.Intent;
+import android.provider.ContactsContract;
+
 public class Usuario {
     private String nombre,email,uid;
     private Boolean mensajes;
-
+    private Integer num_votos;
     public Usuario() {
     }
 
-    public Usuario(String nombre, String email, String uid, Boolean mensajes) {
+    public Usuario(String nombre, String email, String uid, Boolean mensajes,Integer num_votos) {
         this.nombre = nombre;
         this.email = email;
         this.uid = uid;
         this.mensajes = mensajes;
+        this.num_votos = num_votos;
     }
 
     public String getNombre() {
@@ -44,5 +48,21 @@ public class Usuario {
 
     public void setMensajes(Boolean mensajes) {
         this.mensajes = mensajes;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public Integer getNum_votos() {
+        return num_votos;
+    }
+
+    public void setNum_votos(Integer num_votos) {
+        this.num_votos = num_votos;
     }
 }

@@ -12,9 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".miperfil"
+            android:label="@string/miperfil"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".Like"
             android:label="@string/title_activity_like"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainRegistro" />
         <activity android:name=".MainLogin">
             <intent-filter>

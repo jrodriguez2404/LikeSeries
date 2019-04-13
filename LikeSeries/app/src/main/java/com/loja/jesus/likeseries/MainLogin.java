@@ -77,10 +77,14 @@ public class MainLogin extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            updateUI();
-        }
+            if (user.isEmailVerified()) {
+                updateUI();
+
+            }
+
+    }
     }
 /**
     @Override

@@ -168,7 +168,7 @@ public class MainRegistro extends AppCompatActivity {
                             //Creo un usuario y lo agrego a la base de datos de FireBase Cloud
 
 
-                            Usuario usuario = new Usuario(nombre, user.getEmail(),uid ,recibir);
+                            Usuario usuario = new Usuario(nombre, user.getEmail(),uid ,recibir,0);
 
                             insertarBasedeDatosFireBaseUsuario(usuario);
 
