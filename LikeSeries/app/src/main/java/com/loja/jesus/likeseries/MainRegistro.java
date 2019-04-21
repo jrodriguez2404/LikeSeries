@@ -122,8 +122,9 @@ public class MainRegistro extends AppCompatActivity {
                             user = mAuth.getCurrentUser();
                             Intent intent = new Intent(getApplication(), SplashScreen.class);
                             intent.putExtra("cambioclase", false);
-                            startActivity(intent);
                             enviarAuthEmail1(user.getUid(), nombre, recibir);
+                            startActivity(intent);
+                            finish();
                         }
                         else
                         {
@@ -174,8 +175,7 @@ public class MainRegistro extends AppCompatActivity {
 
 
                             //Cierro la actividad
-                            MainLogin login = new MainLogin();
-                            login.cerrarPagina();
+                            finish();
 
                         }
                     }

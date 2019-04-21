@@ -28,11 +28,7 @@ public class SplashScreen extends Activity {
         //Segun le llege a nuestra clase por el extras abriremos
         Bundle datos = this.getIntent().getExtras();
         Boolean cambioclase = datos.getBoolean("cambioclase");
-        String no = datos.getString("nombre");
-        String ui = datos.getString("uid");
-        String email = datos.getString("email");
         cambiarActividad(cambioclase);
-        Preferencias(no,ui,email);
     }
 
     /**
@@ -47,20 +43,9 @@ public class SplashScreen extends Activity {
         else
         {
             //Una vez registrado salta este metodo
-            FirebaseAuth.getInstance().signOut();
             SplashS(MainLogin.class,true);
-
+            FirebaseAuth.getInstance().signOut();
         }
-    }
-    private void Preferencias(String nombre,String uid,String email)
-    {
-        SharedPreferences prefs =
-                getSharedPreferences("preferencias",this.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("nombre", nombre);
-        editor.putString("uid", uid);
-        editor.putString("email",email);
-        editor.commit();
     }
     /**
      * Le llega por parametro la clase a la que se va a iniciar y si se esta registrando se le pasa un falso para evitar que coja las preferencias ya que cuando registramos nos interesa que entre en la clase de Login/Registro
@@ -75,18 +60,9 @@ public class SplashScreen extends Activity {
                     Intent mainIntent = new Intent().setClass(
                             SplashScreen.this,clase);
 
-            if(registro==false) {
-                SharedPreferences prefs = getSharedPreferences("preferencias", getApplicationContext().MODE_PRIVATE);
-
-                String nombre = prefs.getString("nombre", "");
-                mainIntent.putExtra("nombre", nombre);
-                String uid = prefs.getString("uid", "");
-                mainIntent.putExtra("uid", uid);
-                String email = prefs.getString("email", "");
-                mainIntent.putExtra("email", email);
+            if(!registro) {
+                startActivity(mainIntent);
         }
-
-                    startActivity(mainIntent);
 // Close the activity so the user won't able to go back this
 // activity pressing Back button
                     finish();

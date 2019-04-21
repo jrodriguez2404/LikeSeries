@@ -1,5 +1,7 @@
 package com.loja.jesus.likeseries;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -109,10 +112,10 @@ private FirebaseStorage storage;
         }
         else if (id == R.id.cerrar_sesion) {
 
-            FirebaseAuth.getInstance().signOut();
-            finish();
-            Intent login = new Intent(this, MainLogin.class);
-            startActivity(login);
+                            FirebaseAuth.getInstance().signOut();
+                            finish();
+                            Intent login = new Intent(getApplication(), MainLogin.class);
+                            startActivity(login);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
