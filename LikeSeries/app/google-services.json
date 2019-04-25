@@ -21,6 +21,10 @@
             "package_name": "com.loja.jesus.likeseries",
             "certificate_hash": "b67fafccd89e9f84817a436521be32dcae26e0cf"
           }
+        },
+        {
+          "client_id": "1030857108024-89utj4g5ae01hg2le92deciocvk0ondh.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [

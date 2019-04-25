@@ -122,7 +122,7 @@ public class MainLogin extends AppCompatActivity {
      * @param email
      * @param password
      */
-    private void logearUsuarioFirebase(final String email, final String password) {
+    public void logearUsuarioFirebase(final String email, final String password) {
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
