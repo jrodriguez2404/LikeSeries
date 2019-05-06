@@ -4,30 +4,38 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item android:title="Opciones de la App">
+        <item android:title="¿Qué deséa?">
             <menu>
                 <item
-                    android:id="@+id/peliculas"
+                    android:id="@+id/votacion"
+                    android:icon="@drawable/votos"
+                    android:title="@string/votacion_menu" />
+                <item
+                    android:id="@+id/pelicula"
                     android:icon="@drawable/filmstrip"
-                    android:title="Peliculas" />
+                    android:title="@string/pelis_menu" />
                 <item
                     android:id="@+id/series"
                     android:icon="@drawable/cellphone_android"
-                    android:title="Series" />
+                    android:title="@string/series_menu" />
             </menu>
         </item>
     </group>
 
-    <item android:title="Ajustes Usuario">
+    <item android:title="Sobre el usuario">
         <menu>
             <item
                 android:id="@+id/mi_perfil"
                 android:icon="@drawable/account_arrow_left_outline"
-                android:title="Mi perfil" />
+                android:title="@string/miperfil"/>
             <item
                 android:id="@+id/cerrar_sesion"
                 android:icon="@drawable/account_remove_outline"
-                android:title="Cerrar sesión" />
+                android:title="@string/cerrarsesion_menu" />
+            <item
+                android:id="@+id/creador"
+                android:icon="@drawable/ic_info_black_24dp"
+                android:title="@string/info_menu" />
         </menu>
     </item>
 

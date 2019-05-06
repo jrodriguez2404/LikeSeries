@@ -140,7 +140,7 @@ public class MainLogin extends AppCompatActivity {
                             {
                                 Snackbar.make(getCurrentFocus(), "¿Email no verificado , reenviar email?", Snackbar.LENGTH_INDEFINITE)
                                         .setActionTextColor(Color.CYAN)
-                                        .setActionTextColor(Color.GREEN)
+                                        .setActionTextColor(Color.GRAY)
                                         .setAction("Aceptar", new View.OnClickListener() {
                                             @Override
                                            public void onClick(View view) {

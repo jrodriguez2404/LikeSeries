@@ -1,7 +1,9 @@
 package com.loja.jesus.likeseries;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -81,24 +83,28 @@ public class MainRegistro extends AppCompatActivity {
 
 
                         }
-                        //Este else simplemente ejecuta un Toast que indica que el acuerdo legal es necesario , y pone el texto de color rojo
+                        //Este else simplemente ejecuta un Toast que indica que el acuerdo legal es necesario
                         else {
 
                             tcontrasenaregistro.setText("");
-                            Toast.makeText(getApplicationContext(),
-                                    "Acuerdo Legal necesario", Toast.LENGTH_LONG).show();
-                            acuerdolegal.setTextColor(getResources().getColor(R.color.rojo));
+                            Snackbar.make(getCurrentFocus(), getResources().getString(R.string.acuerdolegal), Snackbar.LENGTH_LONG)
+                                    .setActionTextColor(Color.CYAN)
+                                    .setActionTextColor(Color.GRAY)
+                                    .show();
                         }
                     } else {
                         tcontrasenaregistro.setText("");
-                        Toast.makeText(getApplicationContext(),
-                                "Contraseña requerida", Toast.LENGTH_LONG).show();
+                        Snackbar.make(getCurrentFocus(), getResources().getString(R.string.contraseñarequerida), Snackbar.LENGTH_LONG)
+                                .setActionTextColor(Color.CYAN)
+                                .setActionTextColor(Color.GRAY)
+                                .show();
                     }
                 } else {
                     tcontrasenaregistro.setText("");
-                    Toast.makeText(getApplicationContext(),
-                            "Email requerido", Toast.LENGTH_LONG).show();
-                    temailregistro.setTextColor(getResources().getColor(R.color.rojo));
+                    Snackbar.make(getCurrentFocus(), getResources().getString(R.string.emailrequerido), Snackbar.LENGTH_LONG)
+                            .setActionTextColor(Color.CYAN)
+                            .setActionTextColor(Color.GRAY)
+                            .show();
                 }
             }
         });
@@ -131,23 +137,25 @@ public class MainRegistro extends AppCompatActivity {
                             try {
                                 throw task.getException();
                             } catch (FirebaseAuthWeakPasswordException e) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Contraseña debil", Toast.LENGTH_LONG).show();
+                                Snackbar.make(getCurrentFocus(), getResources().getString(R.string.contraseñadebil), Snackbar.LENGTH_LONG)
+                                        .show();
                             } catch (FirebaseAuthInvalidCredentialsException e) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Email invalido", Toast.LENGTH_LONG).show();
-
+                                Snackbar.make(getCurrentFocus(), getResources().getString(R.string.emailinvalido), Snackbar.LENGTH_LONG)
+                                        .show();
                             } catch (FirebaseAuthUserCollisionException e) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Usuario ya registrado", Toast.LENGTH_LONG).show();
+                                Snackbar.make(getCurrentFocus(), getResources().getString(R.string.usuarioregistrado), Snackbar.LENGTH_LONG)
+                                        .show();
 
                             } catch (FirebaseAuthInvalidUserException e) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Usuario invalido", Toast.LENGTH_LONG).show();
-
+                                Snackbar.make(getCurrentFocus(), getResources().getString(R.string.usuarioinvalido), Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(Color.CYAN)
+                                        .setActionTextColor(Color.CYAN)
+                                        .show();
                             } catch (Exception e) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Error al registrar usuario", Toast.LENGTH_LONG).show();
+                                Snackbar.make(getCurrentFocus(), getResources().getString(R.string.errousuario), Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(Color.CYAN)
+                                        .setActionTextColor(Color.GRAY)
+                                        .show();
                             }
                         }
                     }
@@ -165,7 +173,6 @@ public class MainRegistro extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "Email sent.");
                             //Creo un usuario y lo agrego a la base de datos de FireBase Cloud
 
 
@@ -183,7 +190,6 @@ public class MainRegistro extends AppCompatActivity {
     }
     /**
      * Este metodo se encargara de guardar nuestros datos registrados en la nube
-     *
      * @param usuario
      */
     private void insertarBasedeDatosFireBaseUsuario(Usuario usuario) {

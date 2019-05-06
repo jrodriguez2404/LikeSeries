@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 public class Pelicula {
     private String Titulo_PEL_NA,Descripcion_PEL_NA,Productora_PEL_NA;
-    private Date Duración_PEL_NA;
     private ArrayList<String> Género_PEL_NA;
     private String nombreimagen;
     private int Votos_PEL_NA;

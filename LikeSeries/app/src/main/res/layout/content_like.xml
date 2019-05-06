@@ -9,37 +9,31 @@
     tools:context=".Like"
     tools:showIn="@layout/app_bar_like">
 
-    <RadioGroup
-        android:id="@+id/peli_serie"
+    <LinearLayout
+        android:id="@+id/principal_like"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_margin="10sp"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Elija una opcion" />
-
-        <RadioButton
-            android:id="@+id/rPelicula"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Pelicula" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/rSerie"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Serie" />
-
-    </RadioGroup>
+            <TextView
+                android:id="@+id/hola"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/Peliculas"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -111,7 +105,7 @@
     <LinearLayout
         android:id="@+id/Series"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -143,7 +137,7 @@
         </RadioGroup>
 
         <LinearLayout
-            android:id="@+id/s_anime"
+            android:id="@+id/ventana_anime_S"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -161,7 +155,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/s_realista"
+            android:id="@+id/ventana_realista_S"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"

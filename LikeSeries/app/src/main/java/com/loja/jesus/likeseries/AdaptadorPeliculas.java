@@ -1,6 +1,7 @@
 package com.loja.jesus.likeseries;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -24,7 +25,6 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
         private TextView titulo,numvotos;
         private ImageView imagen;
         private LinearLayout seleccion;
-        private String url;
 
         public ViewHolderPeliculas(@NonNull View itemView) {
             super(itemView);
@@ -65,13 +65,19 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
      */
     @Override
     public void onBindViewHolder(@NonNull final AdaptadorPeliculas.ViewHolderPeliculas viewHolderPeliculas, final int i) {
+        final Intent intent = new Intent(context,ContenedorMultimedia.class);
+        intent.putExtra("titulo",listaPeliculas.get(i).getTitulo_PEL_NA());
+        intent.putExtra("descripcion",listaPeliculas.get(i).getDescripcion_PEL_NA());
+        intent.putExtra("genero",listaPeliculas.get(i).getGénero_PEL_NA());
+        intent.putExtra("votos",listaPeliculas.get(i).getVotos_PEL_NA());
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference gsReference = storage.getReferenceFromUrl(listaPeliculas.get(i).getNombreimagen()+"");
-        final long ONE_MEGABYTE = 624 * 624;
+        final long ONE_MEGABYTE = 1024 * 1024;
         gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                intent.putExtra("imagen",bytes);
                 viewHolderPeliculas.imagen.setImageBitmap(bmp);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -85,7 +91,7 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
         viewHolderPeliculas.seleccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Entro "+i);
+                context.startActivity(intent);
             }
         });
     }

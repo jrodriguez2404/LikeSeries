@@ -1,13 +1,17 @@
 package com.loja.jesus.likeseries;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +19,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,36 +42,36 @@ import java.util.Arrays;
 
 public class Like extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, RadioGroup.OnCheckedChangeListener {
-private TextView nombre;
+private TextView bienvenida,hola;
+private String usuario;
 private RecyclerView RVPR,RVPA,s_RVPA,s_RVPR;
 private FirebaseAuth mAuth;
 private FirebaseUser user;
 private FirebaseFirestore db;
-private RadioGroup peli_serie,anime_real;
-private LinearLayout Peliculas,Series,AnimeP,RealistaP,AnimeS,RealistaS;
+private RadioGroup anime_real;
+private LinearLayout Peliculas,Series,AnimeP,RealistaP,AnimeS,RealistaS,principal_like;
+private Spinner spiner;
 Context contexto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like);
+        cargarNombreUsuario();
+        principal_like = findViewById(R.id.principal_like);
+        principal_like.setVisibility(View.VISIBLE);
         cargarRecycleview();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //Pantalla de peliculas
         Peliculas=findViewById(R.id.Peliculas);
         Series=findViewById(R.id.Series);
-
+        AnimeS=findViewById(R.id.ventana_anime_S);
+        RealistaS=findViewById(R.id.ventana_realista_S);
         contexto = this;
 
-        AnimeS = findViewById(R.id.s_anime);
-        AnimeP = findViewById(R.id.s_realista);
-
-        peli_serie = findViewById(R.id.peli_serie);
         anime_real = findViewById(R.id.anime_real);
 
-        peli_serie.clearCheck();
-
-        peli_serie.setOnCheckedChangeListener(this);
         anime_real.setOnCheckedChangeListener(this);
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,19 +89,24 @@ Context contexto;
             }
 
             @Override
+            @SuppressLint("StringFormatMatches")
             public void onDrawerOpened(@NonNull View view) {
+                bienvenida = drawer.findViewById(R.id.bienvenida);
                 mAuth = FirebaseAuth.getInstance();
                 user = mAuth.getCurrentUser();
-                nombre = drawer.findViewById(R.id.nombre);
                 db= FirebaseFirestore.getInstance();
                 DocumentReference docRef = db.collection("usuarios").document(user.getUid());
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                        nombre.setText(usuario.getNombre());
+                        Usuario user = documentSnapshot.toObject(Usuario.class);
+                        bienvenida.setText(getResources().getString(R.string.bienvenida,user.getNombre()));
                     }
                 });
+
+
+
+
             }
 
             @Override
@@ -109,6 +120,24 @@ Context contexto;
             }
         });
     }
+    private void cargarNombreUsuario()
+    {
+        hola = findViewById(R.id.hola);
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db= FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            @SuppressLint("StringFormatMatches")
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Usuario user = documentSnapshot.toObject(Usuario.class);
+                usuario=user.getNombre();
+                hola.setText(getResources().getString(R.string.bienvenida,usuario));
+            }
+        });
+    }
+
     private void agregarPeliculasRapidamente()
     {
         ArrayList<String> array = new ArrayList<>();
@@ -161,23 +190,59 @@ Context contexto;
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.peliculas) {
+        if (id == R.id.votacion)
+        {
+            Peliculas.setVisibility(View.GONE);
+            Series.setVisibility(View.GONE);
+            principal_like.setVisibility(View.VISIBLE);
+        }
+        else if (id == R.id.pelicula) {
 
+            Peliculas.setVisibility(View.VISIBLE);
+            Series.setVisibility(View.GONE);
+            principal_like.setVisibility(View.GONE);
+            AnimeP = findViewById(R.id.ventana_anime_P);
+            RealistaP = findViewById(R.id.ventana_realista_P);
         } else if (id == R.id.series) {
-
+            Peliculas.setVisibility(View.GONE);
+            Series.setVisibility(View.VISIBLE);
+            principal_like.setVisibility(View.GONE);
+            AnimeS = findViewById(R.id.ventana_anime_S);
+            RealistaS = findViewById(R.id.ventana_realista_S);
         }
         else if (id == R.id.mi_perfil) {
             Intent miperfil = new Intent(this, miperfil.class);
             startActivity(miperfil);
         }
         else if (id == R.id.cerrar_sesion) {
-
+            mAuth = FirebaseAuth.getInstance();
+            user = mAuth.getCurrentUser();
+            db= FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Usuario user = documentSnapshot.toObject(Usuario.class);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(contexto);
+                    builder.setTitle(getResources().getString(R.string.cerrarsesion,user.getNombre()));
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
                             FirebaseAuth.getInstance().signOut();
                             finish();
                             Intent login = new Intent(getApplication(), MainLogin.class);
                             startActivity(login);
+                        }
+                    });
+                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    builder.show();
+                }
+            });
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -188,7 +253,7 @@ Context contexto;
      * @param nombreColeccion
      * @param recView
      */
-    private void cargarDocumentosBD(String nombreColeccion, final RecyclerView recView) {
+    private void cargarDocumentosPeliculasBD(String nombreColeccion, final RecyclerView recView) {
     db = FirebaseFirestore.getInstance();
     final ArrayList<Pelicula>peliculas = new ArrayList<>();
     db.collection(nombreColeccion)
@@ -218,37 +283,44 @@ Context contexto;
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch(group.getId())
         {
-            case R.id.peli_serie:
-                switch(checkedId)
-                {
-                    case R.id.rPelicula:
-                        Peliculas.setVisibility(View.VISIBLE);
-                        Series.setVisibility(View.GONE);
-
-                        AnimeP = findViewById(R.id.ventana_anime_P);
-                        RealistaP = findViewById(R.id.ventana_realista_P);
-                        break;
-                    case R.id.rSerie:
-                        Peliculas.setVisibility(View.GONE);
-                        Series.setVisibility(View.VISIBLE);
-
-                        AnimeP = findViewById(R.id.ventana_anime_P);
-                        RealistaP = findViewById(R.id.ventana_realista_P);
-                        break;
-                }
-                break;
             case R.id.anime_real:
                 switch (checkedId)
                 {
                     case R.id.rAnime:
                         AnimeP.setVisibility(View.VISIBLE);
                         RealistaP.setVisibility(View.GONE);
-                        cargarDocumentosBD("peliculasA",RVPA);
+                        cargarDocumentosPeliculasBD("peliculasA",RVPA);
+                        spiner=findViewById(R.id.cat_anime);
+                        //Agregar aqui el array de las categorias
+                        //rellenarSpinner(spiner,nombres);
                         break;
                     case R.id.rRealista:
                         AnimeP.setVisibility(View.GONE);
                         RealistaP.setVisibility(View.VISIBLE);
-                        cargarDocumentosBD("peliculas",RVPR);
+                        cargarDocumentosPeliculasBD("peliculas",RVPR);
+                        spiner=findViewById(R.id.cat_realista);
+                        //Agregar aqui el array de las categorias
+                        //rellenarSpinner(spiner,nombres);
+                        break;
+                }
+            case R.id.s_anime_real:
+                switch (checkedId)
+                {
+                    case R.id.s_rAnime:
+                        AnimeS.setVisibility(View.VISIBLE);
+                        RealistaS.setVisibility(View.GONE);
+                        cargarDocumentosPeliculasBD("peliculasA",RVPA);
+                        spiner=findViewById(R.id.s_cat_anime);
+                        //Agregar aqui el array de las categorias
+                        //rellenarSpinner(spiner,nombres);
+                        break;
+                    case R.id.s_rRealista:
+                        AnimeS.setVisibility(View.GONE);
+                        RealistaS.setVisibility(View.VISIBLE);
+                        cargarDocumentosPeliculasBD("peliculas",RVPR);
+                        spiner=findViewById(R.id.s_cat_realista);
+                        //Agregar aqui el array de las categorias
+                        //rellenarSpinner(spiner,nombres);
                         break;
                 }
         }
@@ -256,7 +328,13 @@ Context contexto;
 
     private class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         public SpaceItemDecoration(Like like, Object p1, boolean b, boolean b1) {
-
         }
+    }
+    private void rellenarSpinner(Spinner spiner, ArrayList<String> recurso)
+    {
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, recurso);
+        //Spiner
+        spiner.setAdapter(adapter);
     }
 }
