@@ -14,11 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10sp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <TextView
@@ -27,7 +29,45 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center" />
+
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/RVVP"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/RVVN"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -37,68 +77,15 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/titulopeliculas"
+        <Spinner
+            android:id="@+id/spinerPelicula"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Peliculas" />
+            android:layout_height="wrap_content" />
 
-        <RadioGroup
-            android:id="@+id/anime_real"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/RVP"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:id="@+id/rAnime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Anime" />
-
-            <RadioButton
-                android:id="@+id/rRealista"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Realista" />
-
-        </RadioGroup>
-
-        <LinearLayout
-            android:id="@+id/ventana_anime_P"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Spinner
-                android:id="@+id/cat_anime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/RVPA"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ventana_realista_P"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Spinner
-                android:id="@+id/cat_realista"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/RVPR"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
@@ -109,68 +96,15 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/tituloseries"
+        <Spinner
+            android:id="@+id/spinerSerie"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Series" />
+            android:layout_height="wrap_content" />
 
-        <RadioGroup
-            android:id="@+id/s_anime_real"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/RVS"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:id="@+id/s_rAnime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Anime" />
-
-            <RadioButton
-                android:id="@+id/s_rRealista"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Realista" />
-
-        </RadioGroup>
-
-        <LinearLayout
-            android:id="@+id/ventana_anime_S"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Spinner
-                android:id="@+id/s_cat_anime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/s_RVPA"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ventana_realista_S"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Spinner
-                android:id="@+id/s_cat_realista"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/s_RVPR"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

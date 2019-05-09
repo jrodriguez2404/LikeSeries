@@ -11,26 +11,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ContenedorMultimedia"></activity>
+        <activity android:name=".ContenedorMultimedia"
+            android:theme="@style/EstiloContenedor"></activity>
         <activity
             android:name=".miperfil"
-            android:label="@string/miperfil"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/EstiloPerfil" />
         <activity
             android:name=".Like"
-            android:label="@string/title_activity_like"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/EstiloMain" />
         <activity android:name=".MainRegistro" />
-        <activity android:name=".MainLogin">
+        <activity
+            android:name=".MainLogin"
+            android:theme="@style/EstiloLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SplashScreen"
-            android:label="@string/SplasScream" />
+             />
     </application>
 
 </manifest>

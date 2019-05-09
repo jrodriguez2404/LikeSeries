@@ -11,6 +11,11 @@
     <string name="noregistrado">¿No estas registrado?</string>
     <!--Cambio contraseña-->
     <string name="cambiarcontraseña">Va a enviar un email para cambiar la contraseña</string>
+    <string name="olvidocontraseña">Olvidé mi contraseña</string>
+    <string name="enviado">Email enviado correctamente</string>
+    <string name="emailnovacio">El email no puede estar vacio</string>
+    <string name="emailmalformado">El email no esta bien formado</string>
+    <string name="errorgeneralemail">No se ha podido mandar el email</string>
     <!--REGISTRO-->
     <string name="REGISTRO">REGISTRO</string>
     <string name="correor">Su correo electrónico:</string>
@@ -57,4 +62,7 @@
     <string name="cerrarsesion">¿Está seguro de que quiere cerrar sesión %1$s?</string>
     <string name="ok">Aceptar</string>
     <string name="no">Cancelar</string>
+    <!--SplashScreen-->
+    <string name="votomas">Número de votos positivos : %1$s</string>
+    <string name="votomenos">Número de votos negativos : %1$s</string>
 </resources>

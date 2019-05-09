@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,9 +18,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,19 +35,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 
 public class Like extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, RadioGroup.OnCheckedChangeListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 private TextView bienvenida,hola;
 private String usuario;
-private RecyclerView RVPR,RVPA,s_RVPA,s_RVPR;
+private RecyclerView RVP,RVS,RVVP,RVVN;
 private FirebaseAuth mAuth;
 private FirebaseUser user;
 private FirebaseFirestore db;
-private RadioGroup anime_real;
 private LinearLayout Peliculas,Series,AnimeP,RealistaP,AnimeS,RealistaS,principal_like;
 private Spinner spiner;
 Context contexto;
@@ -59,20 +56,19 @@ Context contexto;
         cargarNombreUsuario();
         principal_like = findViewById(R.id.principal_like);
         principal_like.setVisibility(View.VISIBLE);
+        //Cargo los recyclerview
         cargarRecycleview();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //agregarSeriesRapidamente();
+        //agregarPeliculasRapidamente();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
         //Pantalla de peliculas
         Peliculas=findViewById(R.id.Peliculas);
+        //Pantalla de series
         Series=findViewById(R.id.Series);
-        AnimeS=findViewById(R.id.ventana_anime_S);
-        RealistaS=findViewById(R.id.ventana_realista_S);
         contexto = this;
-
-        anime_real = findViewById(R.id.anime_real);
-
-        anime_real.setOnCheckedChangeListener(this);
+        cargarVotosPositivosenListaHorizontal();
+        cargarVotosNegativosenListaHorizontal();
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -141,37 +137,65 @@ Context contexto;
     private void agregarPeliculasRapidamente()
     {
         ArrayList<String> array = new ArrayList<>();
+        array.add("Accion");
+        array.add("Romance");
+        array.add("Ciencia Ficción");
+        array.add("Realista");
+        ArrayList<HashMap<String,Object>> arraymapa = new ArrayList<>();
+        HashMap<String,Object> map = new HashMap<>();
+
+        map.put("usuario",user.getUid());
+        map.put("votopositivo",false);
+        map.put("votonegativo",false);
+        arraymapa.add(map);
+
+        db= FirebaseFirestore.getInstance();
+        Pelicula pelicula = new Pelicula("Alita: Ángel de combate","Cuando Alita se despierta sin recordar quién es en un mundo futuro que no reconoce, Ido , un médico compasivo, se da cuenta de que en algún lugar de ese caparazón de cyborg abandonado, está el corazón y alma de una mujer joven con un pasado extraordinario. Mientras Alita toma las riendas de su nueva vida y aprende a adaptarse a las peligrosas calles de Iron City, Ido tratará de protegerla de su propio pasado, mientras que su nuevo amigo Hugo se ofrecerá, en cambio, a ayudarla a desenterrar sus recuerdos. Cuando las fuerzas mortales y corruptas que manejan la ciudad comienzan a perseguir a Alita, ella descubre una pista crucial sobre su pasado: posee habilidades de combate únicas que los que ostentan el poder querrán controlar a toda costa. Sólo manteniéndose fuera de su alcance, podrá salvar a sus amigos, a su familia y el mundo que ha aprendido a amar.","Twenty Century Fox",null,null,array,"gs://likeseries-c426a.appspot.com/imagenesPeliculas/alita.jpg",0,0,0,0,arraymapa);
+        db.collection("peliculas").document("Alita").set(pelicula);
+    }
+    private void agregarSeriesRapidamente()
+    {
+        ArrayList<String> array = new ArrayList<>();
         array.add("Acción");
         array.add("Aventura");
-        array.add("Romance");
+        array.add("SuperHeroes");
+        array.add("Anime");
+        ArrayList<HashMap<String,Object>> arraymapa = new ArrayList<>();
+        HashMap<String,Object> map = new HashMap<>();
+
+        map.put("usuario",user.getUid());
+        map.put("votopositivo",false);
+        map.put("votonegativo",false);
+        arraymapa.add(map);
+
         db= FirebaseFirestore.getInstance();
-        Pelicula pelicula = new Pelicula("Alita: Ángel de combate","Alita, una joven en el cuerpo de un cyborg, que es rescatada por un científico tras ser encontrada entre los escombros de un desguace. Alita es reconstruida poco a poco, pero se da cuenta que ha perdido la memoria y no recuerda nada de lo que ha sido de ella antes de aterrizar en el desguace. La joven verá en el científico a su salvador, una figura paterna que la convertirá en un ser letal y peligroso para conseguir así un trabajo como cazarrecompensas.","Twentieth Century Fox España",array,"gs://likeseries-c426a.appspot.com/imagenesPeliculasNA/alita.png",0);
-        db.collection("peliculas").document("1").set(pelicula);
+        Serie serie = new Serie("Boku no Hero","Un día, tras conocer personalmente a All Might, este le ofrece heredar sus poderes al ver la gran determinación de Midoriya aunque no tenga poderes; desde entonces, Midoriya accede y empieza a estudiar en la U.A; donde hace nuevos amigos, conoce otros héroes profesionales, aprende a dominar sus poderes y hasta hacer frente a auténticos villanos.","Bones",null,null,array,"gs://likeseries-c426a.appspot.com/imagenesSeries/bokunohero.jpg",0,0,0,0,null);
+        db.collection("series").document("Boku").set(serie);
     }
     private void cargarRecycleview(){
-        RVPR = findViewById(R.id.RVPR);
-        RVPA = findViewById(R.id.RVPA);
-        s_RVPA = findViewById(R.id.s_RVPA);
-        s_RVPR = findViewById(R.id.s_RVPR);
+        RVP = findViewById(R.id.RVP);
+        RVS = findViewById(R.id.RVS);
+        RVVP = findViewById(R.id.RVVP);
+        RVVN = findViewById(R.id.RVVN);
+        LinearLayoutManager llmRVVP = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        RVVP.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
+        RVVP.setHasFixedSize(true);
+        RVVP.setLayoutManager(llmRVVP);
 
-        LinearLayoutManager llmRVPR = new LinearLayoutManager(this);
-        RVPR.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
-        RVPR.setHasFixedSize(true);
-        RVPR.setLayoutManager(llmRVPR);
-        LinearLayoutManager llmRVPA = new LinearLayoutManager(this);
-        RVPA.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
-        RVPA.setHasFixedSize(true);
-        RVPA.setLayoutManager(llmRVPA);
-        LinearLayoutManager llms_RVPA = new LinearLayoutManager(this);
-        s_RVPA.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
-        s_RVPA.setHasFixedSize(true);
-        s_RVPA.setLayoutManager(llms_RVPA);
-        LinearLayoutManager llms_RVPR = new LinearLayoutManager(this);
-        s_RVPR.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
-        s_RVPR.setHasFixedSize(true);
-        s_RVPR.setLayoutManager(llms_RVPR);
+        LinearLayoutManager llmRVVN = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        RVVN.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
+        RVVN.setHasFixedSize(true);
+        RVVN.setLayoutManager(llmRVVN);
 
+        LinearLayoutManager llmRVP = new LinearLayoutManager(this);
+        RVP.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
+        RVP.setHasFixedSize(true);
+        RVP.setLayoutManager(llmRVP);
 
+        LinearLayoutManager llmRVS = new LinearLayoutManager(this);
+        RVS.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
+        RVS.setHasFixedSize(true);
+        RVS.setLayoutManager(llmRVS);
     }
     @Override
     public void onBackPressed() {
@@ -201,14 +225,15 @@ Context contexto;
             Peliculas.setVisibility(View.VISIBLE);
             Series.setVisibility(View.GONE);
             principal_like.setVisibility(View.GONE);
-            AnimeP = findViewById(R.id.ventana_anime_P);
-            RealistaP = findViewById(R.id.ventana_realista_P);
+            spiner = findViewById(R.id.spinerPelicula);
+            rellenarSpinner(spiner);
+
         } else if (id == R.id.series) {
             Peliculas.setVisibility(View.GONE);
             Series.setVisibility(View.VISIBLE);
             principal_like.setVisibility(View.GONE);
-            AnimeS = findViewById(R.id.ventana_anime_S);
-            RealistaS = findViewById(R.id.ventana_realista_S);
+            spiner = findViewById(R.id.spinerSerie);
+            rellenarSpinner(spiner);
         }
         else if (id == R.id.mi_perfil) {
             Intent miperfil = new Intent(this, miperfil.class);
@@ -279,62 +304,183 @@ Context contexto;
             });
 }
 
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        switch(group.getId())
-        {
-            case R.id.anime_real:
-                switch (checkedId)
-                {
-                    case R.id.rAnime:
-                        AnimeP.setVisibility(View.VISIBLE);
-                        RealistaP.setVisibility(View.GONE);
-                        cargarDocumentosPeliculasBD("peliculasA",RVPA);
-                        spiner=findViewById(R.id.cat_anime);
-                        //Agregar aqui el array de las categorias
-                        //rellenarSpinner(spiner,nombres);
-                        break;
-                    case R.id.rRealista:
-                        AnimeP.setVisibility(View.GONE);
-                        RealistaP.setVisibility(View.VISIBLE);
-                        cargarDocumentosPeliculasBD("peliculas",RVPR);
-                        spiner=findViewById(R.id.cat_realista);
-                        //Agregar aqui el array de las categorias
-                        //rellenarSpinner(spiner,nombres);
-                        break;
-                }
-            case R.id.s_anime_real:
-                switch (checkedId)
-                {
-                    case R.id.s_rAnime:
-                        AnimeS.setVisibility(View.VISIBLE);
-                        RealistaS.setVisibility(View.GONE);
-                        cargarDocumentosPeliculasBD("peliculasA",RVPA);
-                        spiner=findViewById(R.id.s_cat_anime);
-                        //Agregar aqui el array de las categorias
-                        //rellenarSpinner(spiner,nombres);
-                        break;
-                    case R.id.s_rRealista:
-                        AnimeS.setVisibility(View.GONE);
-                        RealistaS.setVisibility(View.VISIBLE);
-                        cargarDocumentosPeliculasBD("peliculas",RVPR);
-                        spiner=findViewById(R.id.s_cat_realista);
-                        //Agregar aqui el array de las categorias
-                        //rellenarSpinner(spiner,nombres);
-                        break;
-                }
-        }
-    }
+    /**
+     * Rellena el spiner de todas las categorias
+     * @return
+     */
+    private ArrayList<String> categoriasPeliculasySeries()
+{
+    final ArrayList<String> array = new ArrayList<>();
+    array.add("Sin filtro");
+    array.add("Ciencia Ficción");
+    array.add("Realista");
+    array.add("Anime");
+    array.add("Aventura");
+    array.add("Acción");
+    array.add("SuperHeroes");
+    array.add("Terror");
+    array.add("Más Votados");
+    //Para coger un elemento concreto del array y filtrar por ese elemento ;where("género_PEL","array-contains",)
+    return array;
+}
+private void actualizarRecyclerView(String categoria)
+{
+    System.out.println(categoria);
+}
+
+
+
+
+
+
 
     private class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         public SpaceItemDecoration(Like like, Object p1, boolean b, boolean b1) {
         }
     }
-    private void rellenarSpinner(Spinner spiner, ArrayList<String> recurso)
+    private void rellenarSpinner(Spinner spiner)
     {
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, recurso);
+                android.R.layout.simple_spinner_item, categoriasPeliculasySeries());
         //Spiner
         spiner.setAdapter(adapter);
+        String categoria = spiner.getSelectedItem().toString();
+        actualizarRecyclerView(categoria);
+        spiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final ArrayList<Pelicula>peliculas = new ArrayList<>();
+                db = FirebaseFirestore.getInstance();
+                final ArrayList<Serie>series = new ArrayList<>();
+                if(!parent.getItemAtPosition(position).toString().equals("Más Votados") && !parent.getItemAtPosition(position).toString().equals("Sin filtro")) {
+                    db.collection("peliculas")
+                            .whereArrayContains("género_PEL", parent.getItemAtPosition(position).toString())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            System.out.println(document.getData());
+                                            Pelicula pelicula = document.toObject(Pelicula.class);
+                                            peliculas.add(pelicula);
+                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
+                                            RVP.setAdapter(adaptadorPeliculas);
+                                            adaptadorPeliculas.refrescar();
+                                        }
+                                    }
+                                }
+                            });
+                    db.collection("series")
+                            .whereArrayContains("género_SER", parent.getItemAtPosition(position).toString())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Serie serie = document.toObject(Serie.class);
+                                            series.add(serie);
+                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
+                                            RVS.setAdapter(adaptadorSeries);
+                                            adaptadorSeries.refrescar();
+                                        }
+                                    }
+                                }
+                            });
+
+                }
+                else if(parent.getItemAtPosition(position).toString().equals("Sin filtro"))
+                {
+
+                    db.collection("peliculas")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            System.out.println(document.getData());
+                                            Pelicula pelicula = document.toObject(Pelicula.class);
+                                            peliculas.add(pelicula);
+                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
+                                            RVP.setAdapter(adaptadorPeliculas);
+                                            adaptadorPeliculas.refrescar();
+                                        }
+                                    }
+                                }
+                            });
+                    db.collection("series")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Serie serie = document.toObject(Serie.class);
+                                            series.add(serie);
+                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
+                                            RVS.setAdapter(adaptadorSeries);
+                                            adaptadorSeries.refrescar();
+                                        }
+                                    }
+                                }
+                            });
+                }
+                else if(parent.getItemAtPosition(position).toString().equals("Más Votados"))
+                {
+
+                    /**
+                    //Agregamos las peliculas o series mas votadas
+                    db.collection("peliculas")
+                            .whereArrayContains("género_PEL", parent.getItemAtPosition(position).toString())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            System.out.println(document.getData());
+                                            Pelicula pelicula = document.toObject(Pelicula.class);
+                                            peliculas.add(pelicula);
+                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
+                                            RVP.setAdapter(adaptadorPeliculas);
+                                            adaptadorPeliculas.refrescar();
+                                        }
+                                    }
+                                }
+                            });
+                    db.collection("series")
+                            .whereGreaterThan("género_SER", parent.getItemAtPosition(position).toString())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Serie serie = document.toObject(Serie.class);
+                                            series.add(serie);
+                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
+                                            RVS.setAdapter(adaptadorSeries);
+                                            adaptadorSeries.refrescar();
+                                        }
+                                    }
+                                }
+                            });
+                     */
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
+    private void cargarVotosPositivosenListaHorizontal() {
+        //RVVP.
+    }
+        private void cargarVotosNegativosenListaHorizontal() {
+            //RVVN
+        }
 }

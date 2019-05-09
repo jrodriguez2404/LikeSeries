@@ -6,16 +6,17 @@ import android.provider.ContactsContract;
 public class Usuario {
     private String nombre,email,uid;
     private Boolean mensajes;
-    private Integer num_votos;
+    private Integer num_votospositivos,num_votosnegativos;
     public Usuario() {
     }
 
-    public Usuario(String nombre, String email, String uid, Boolean mensajes,Integer num_votos) {
+    public Usuario(String nombre, String email, String uid, Boolean mensajes,Integer num_votospositivos,Integer num_votosnegativos) {
         this.nombre = nombre;
         this.email = email;
         this.uid = uid;
         this.mensajes = mensajes;
-        this.num_votos = num_votos;
+        this.num_votospositivos = num_votospositivos;
+        this.num_votosnegativos = num_votosnegativos;
     }
 
     public String getNombre() {
@@ -58,11 +59,19 @@ public class Usuario {
         this.uid = uid;
     }
 
-    public Integer getNum_votos() {
-        return num_votos;
+    public Integer getNum_votospositivos() {
+        return num_votospositivos;
     }
 
-    public void setNum_votos(Integer num_votos) {
-        this.num_votos = num_votos;
+    public void setNum_votospositivos(Integer num_votospositivos) {
+        this.num_votospositivos = num_votospositivos;
+    }
+
+    public Integer getNum_votosnegativos() {
+        return num_votosnegativos;
+    }
+
+    public void setNum_votosnegativos(Integer num_votosnegativos) {
+        this.num_votosnegativos = num_votosnegativos;
     }
 }

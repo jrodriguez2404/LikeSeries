@@ -14,7 +14,7 @@ import java.util.TimerTask;
 
 public class SplashScreen extends Activity {
     // Tiempo de duracion de la pantalla de carga en segundos
-    private static final long SPLASH_SCREEN_DELAY = 5000;
+    private static final long SPLASH_SCREEN_DELAY = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

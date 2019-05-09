@@ -10,26 +10,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainLogin extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     //Declaración de elementos del login
-    private Button isesion,iregistro;
+    private Button isesion,iregistro,iolvidar;
     //Login
     private EditText temail, tcontra;
 
@@ -37,11 +35,12 @@ public class MainLogin extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_login);
-        Toolbar appToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar appToolbar = (Toolbar) findViewById(R.id.appbar);
 // *************************************************
 // Pongo el titulo en la toolbar
         appToolbar.setTitle(getResources().getString(R.string.LOGIN));
         isesion = findViewById(R.id.login);
+        iolvidar = findViewById(R.id.olvidarcontraseña);
         temail = findViewById(R.id.temail);
         tcontra = findViewById(R.id.tcontrasena);
         iregistro=findViewById(R.id.registro);
@@ -55,8 +54,6 @@ public class MainLogin extends AppCompatActivity {
         isesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.login:
                         if (!temail.getText().toString().equals("")) {
                             if (!tcontra.getText().toString().equals("")) {
                                 logearUsuarioFirebase(temail.getText().toString(), tcontra.getText().toString());
@@ -69,38 +66,62 @@ public class MainLogin extends AppCompatActivity {
                                     "Email vacio", Toast.LENGTH_LONG).show();
                             tcontra.setText("");
                         }
-                        break;
-                }
-
             }
         });
-    }
+        iolvidar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                final View view = getLayoutInflater().inflate(R.layout.olvidarcontrasena, null);
+                builder.setView(view);
+                builder.setTitle(getResources().getString(R.string.olvidocontraseña));
+                builder.setMessage(getResources().getString(R.string.correo));
+                final TextView erroresemail=view.findViewById(R.id.erroresemail);
+                final EditText emailolvido = view.findViewById(R.id.cogeremailolvido);
+                final AlertDialog alerta = builder.create();
+                final Button enviarolvido = view.findViewById(R.id.botonenviar);
+                enviarolvido.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        mAuth = FirebaseAuth.getInstance();
+                        String email = emailolvido.getText().toString();
+                    try
+                    {
+                        mAuth.sendPasswordResetEmail(email)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Snackbar.make(v.getRootView(), getResources().getString(R.string.enviado), Snackbar.LENGTH_LONG)
+                                                    .show();
+                                            alerta.dismiss();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.olvido, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        cerrarPagina();
+                                        }
+                                        else
+                                        {
+                                            try {
+                                                throw task.getException();
+                                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                                erroresemail.setVisibility(View.VISIBLE);
+                                                erroresemail.setText(R.string.emailmalformado);
+                                            }  catch (Exception e) {
+                                                erroresemail.setVisibility(View.VISIBLE);
+                                                erroresemail.setText(R.string.errorgeneralemail);
+                                            }
+                                        }
+                                            }
+                                });
+                    }
+                    catch (IllegalArgumentException e)
+                    {
+                        erroresemail.setVisibility(View.VISIBLE);
+                        erroresemail.setText(R.string.emailnovacio);
+                    }
+                    }
+                });
+                alerta.show();
+            }
+        });
     }
 
     @Override

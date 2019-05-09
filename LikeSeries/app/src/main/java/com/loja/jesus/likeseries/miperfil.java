@@ -39,7 +39,7 @@ Context contexto;
         email_miperfil=findViewById(R.id.email_perfil);
         contrasenaolvidada = findViewById(R.id.olvido_miperfil);
         contexto=this;
-        Toolbar appToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar appToolbar = (Toolbar) findViewById(R.id.appbar);
 // *************************************************
 // Pongo el titulo en la toolbar
         appToolbar.setTitle(getResources().getString(R.string.miperfil));

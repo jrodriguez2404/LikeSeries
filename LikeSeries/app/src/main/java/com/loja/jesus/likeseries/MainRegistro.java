@@ -45,7 +45,7 @@ public class MainRegistro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_registro);
 
-        Toolbar appToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar appToolbar = (Toolbar) findViewById(R.id.appbar);
 // *************************************************
 // Pongo el titulo en la toolbar
         appToolbar.setTitle(getResources().getString(R.string.REGISTRO));
@@ -176,7 +176,7 @@ public class MainRegistro extends AppCompatActivity {
                             //Creo un usuario y lo agrego a la base de datos de FireBase Cloud
 
 
-                            Usuario usuario = new Usuario(nombre, user.getEmail(),uid ,recibir,0);
+                            Usuario usuario = new Usuario(nombre, user.getEmail(),uid ,recibir,0,0);
 
                             insertarBasedeDatosFireBaseUsuario(usuario);
 
