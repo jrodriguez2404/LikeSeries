@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item android:title="¿Qué deséa?">
+            <menu>
+                <item
+                    android:id="@+id/votacion"
+                    android:icon="@drawable/votos"
+                    android:title="@string/votacion_menu" />
+                <item
+                    android:id="@+id/pelicula"
+                    android:icon="@drawable/filmstrip"
+                    android:title="@string/pelis_menu" />
+                <item
+                    android:id="@+id/series"
+                    android:icon="@drawable/cellphone_android"
+                    android:title="@string/series_menu" />
+            </menu>
+        </item>
+    </group>
+
+    <item android:title="Sobre el usuario">
+        <menu>
+            <item
+                android:id="@+id/mi_perfil"
+                android:icon="@drawable/account_arrow_left_outline"
+                android:title="@string/miperfil"/>
+            <item
+                android:id="@+id/cerrar_sesion"
+                android:icon="@drawable/account_remove_outline"
+                android:title="@string/cerrarsesion_menu" />
+            <item
+                android:id="@+id/creador"
+                android:icon="@drawable/ic_info_black_24dp"
+                android:title="@string/info_menu" />
+        </menu>
+    </item>
+
+</menu>
