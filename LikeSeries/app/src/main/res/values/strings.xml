@@ -65,4 +65,13 @@
     <!--SplashScreen-->
     <string name="votomas">Número de votos positivos : %1$s</string>
     <string name="votomenos">Número de votos negativos : %1$s</string>
+    <!--Contenedor-->
+    <string name="nohavotado">Votar -> </string>
+    <string name="botonnumberpickervoto"></string>
+    <string name="estaseguro">Esta votación no se puede deshacer</string>
+    <string name="eliminarcomentario">Eliminar Comentario</string>
+    <string name="seguro">¿Está seguro?</string>
+    <string name="delete">Eliminar</string>
+    <string name="comenta">Comenta que te ha parecido</string>
+    <string name="comentario">Comentarios:</string>
 </resources>

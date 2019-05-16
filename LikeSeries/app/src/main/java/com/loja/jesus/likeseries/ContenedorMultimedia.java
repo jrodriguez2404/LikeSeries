@@ -1,13 +1,17 @@
 package com.loja.jesus.likeseries;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,9 +19,11 @@ import java.util.HashMap;
 public class ContenedorMultimedia extends AppCompatActivity implements View.OnClickListener {
 private TextView titulo_multi,descripcion_multi,genero0_multi,genero1_multi,genero2_multi,votopositivo,votonegativo;
 private ImageView imagenvotopositivo,imagenvotonegativos,imagen_multi,like,nolike;
-private String titulo;
-private Boolean contenedorpositivo,contenedornegativo,vnegativo,vpositivo;
+private Boolean vnegativo,vpositivo;
 private Integer votospositivos,votosnegativos;
+private RecyclerView RVComentarios;
+private ImageView imagenvoto;
+Context contexto = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +33,7 @@ private Integer votospositivos,votosnegativos;
         setSupportActionBar(toolbar);
         like=findViewById(R.id.like);
         nolike=findViewById(R.id.nolike);
-
+        RVComentarios = findViewById(R.id.RVComentarios);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,6 +44,12 @@ private Integer votospositivos,votosnegativos;
         });
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        actualizarDatosBD();
     }
 
     @Override
@@ -87,12 +99,17 @@ private Integer votospositivos,votosnegativos;
         imagenvotonegativos = findViewById(R.id.nolike);
         votopositivo = findViewById(R.id.votoslike);
         votonegativo = findViewById(R.id.votosnolike);
+
+        imagenvoto= findViewById(R.id.imagenvoto);
+        imagenvoto.setOnClickListener(this);
+        RVComentarios = findViewById(R.id.RVComentarios);
+
         cogerExtras();
     }
     private void cogerExtras()
     {
         Intent intent = getIntent();
-        titulo = intent.getStringExtra("titulo");
+        String titulo = intent.getStringExtra("titulo");
         titulo_multi.setText(titulo);
         String descripcion = intent.getStringExtra("descripcion");
         descripcion_multi.setText(descripcion);
@@ -104,18 +121,35 @@ private Integer votospositivos,votosnegativos;
          votospositivos = intent.getIntExtra("votosmas",0);
          votosnegativos = intent.getIntExtra("votosmenos",0);
         Integer mediacontador = intent.getIntExtra("mediavotos",0);
+        //Cojo todos los comentarios de la BD
+        ArrayList<String> arraynombres = intent.getStringArrayListExtra("arraynombres");
+        ArrayList<String> arrayusuarios = intent.getStringArrayListExtra("arrayusuarios");
+        ArrayList<String> arraycomentarios = intent.getStringArrayListExtra("arraycomentarios");
+        ArrayList<Comentario> comentarios = new ArrayList<>();
+        for (int i = 0;i<arraynombres.size();i++)
+        {
+            Comentario c = new Comentario(arraynombres.get(i),arrayusuarios.get(i),arraycomentarios.get(i));
+            comentarios.add(c);
+        }
+        //Cargamos el recyclerview
 
-        final String comentarios =intent.getStringExtra("comentarios");
-        String usuariocomentario =intent.getStringExtra("usuariocomentario");
-        HashMap<String,Object> Comentario = new HashMap<>();
-        Comentario.put("usuario",usuariocomentario);
-        Comentario.put("comentario",comentarios);
+        LinearLayoutManager llmRVCO = new LinearLayoutManager(this);
+        RVComentarios.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
+        RVComentarios.setHasFixedSize(true);
+        RVComentarios.setLayoutManager(llmRVCO);
+        AdaptadorComentarios adaptadorComentarios = new AdaptadorComentarios(this,comentarios);
+        RVComentarios.setAdapter(adaptadorComentarios);
+        adaptadorComentarios.refrescar();
+
 
 
         byte[] imagen_bytes = intent.getByteArrayExtra("imagen");
         Bitmap imagen= BitmapFactory.decodeByteArray(imagen_bytes,0,imagen_bytes.length);
         imagen_multi.setImageBitmap(imagen);
-
+        int ancho = 250;
+        int alto = 250;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+        imagen_multi.setLayoutParams(params);
 
 
          vnegativo = intent.getBooleanExtra("votonegativo",false);
@@ -184,6 +218,9 @@ private Integer votospositivos,votosnegativos;
                 actualizarVotos();
             }
                 break;
+            case R.id.imagenvoto:
+                new DialogoNumberPickerValoracion(contexto,ContenedorMultimedia.class,imagenvoto);
+                break;
         }
 
     }
@@ -194,5 +231,9 @@ private Integer votospositivos,votosnegativos;
     private void actualizarDatosBD()
     {
 
+    }
+    private class SpaceItemDecoration extends RecyclerView.ItemDecoration {
+        public SpaceItemDecoration(ContenedorMultimedia contenedorMultimedia, Object p1, boolean b, boolean b1) {
+        }
     }
 }

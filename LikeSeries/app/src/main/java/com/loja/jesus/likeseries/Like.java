@@ -46,7 +46,7 @@ private RecyclerView RVP,RVS,RVVP,RVVN;
 private FirebaseAuth mAuth;
 private FirebaseUser user;
 private FirebaseFirestore db;
-private LinearLayout Peliculas,Series,AnimeP,RealistaP,AnimeS,RealistaS,principal_like;
+private LinearLayout Peliculas,Series,principal_like;
 private Spinner spiner;
 Context contexto;
     @Override
@@ -59,7 +59,7 @@ Context contexto;
         //Cargo los recyclerview
         cargarRecycleview();
         //agregarSeriesRapidamente();
-        //agregarPeliculasRapidamente();
+        agregarPeliculasRapidamente();
         Toolbar toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
         //Pantalla de peliculas
@@ -137,10 +137,10 @@ Context contexto;
     private void agregarPeliculasRapidamente()
     {
         ArrayList<String> array = new ArrayList<>();
-        array.add("Accion");
-        array.add("Romance");
-        array.add("Ciencia Ficción");
-        array.add("Realista");
+        array.add("Drama");
+        array.add("Escolares");
+        array.add("Shounen");
+        array.add("Anime");
         ArrayList<HashMap<String,Object>> arraymapa = new ArrayList<>();
         HashMap<String,Object> map = new HashMap<>();
 
@@ -149,9 +149,24 @@ Context contexto;
         map.put("votonegativo",false);
         arraymapa.add(map);
 
+        ArrayList<HashMap<String,Object>> arraymapa2 = new ArrayList<>();
+        HashMap<String,Object> map2 = new HashMap<>();
+
+        map2.put("usuario",user.getUid());
+        map2.put("nombre",user.getDisplayName());
+        map2.put("comentario","Hola , muy buena peli");
+        arraymapa2.add(map2);
+        HashMap<String,Object> map3 = new HashMap<>();
+        map3.put("usuario","6KhLKtDocIfOgySomzeXhygPUmF3");
+        map3.put("nombre","J.R");
+        map3.put("comentario","Hola ,soy nuevo , me la recomendais , espero que me guste");
+        arraymapa2.add(map3);
+
+
+
         db= FirebaseFirestore.getInstance();
-        Pelicula pelicula = new Pelicula("Alita: Ángel de combate","Cuando Alita se despierta sin recordar quién es en un mundo futuro que no reconoce, Ido , un médico compasivo, se da cuenta de que en algún lugar de ese caparazón de cyborg abandonado, está el corazón y alma de una mujer joven con un pasado extraordinario. Mientras Alita toma las riendas de su nueva vida y aprende a adaptarse a las peligrosas calles de Iron City, Ido tratará de protegerla de su propio pasado, mientras que su nuevo amigo Hugo se ofrecerá, en cambio, a ayudarla a desenterrar sus recuerdos. Cuando las fuerzas mortales y corruptas que manejan la ciudad comienzan a perseguir a Alita, ella descubre una pista crucial sobre su pasado: posee habilidades de combate únicas que los que ostentan el poder querrán controlar a toda costa. Sólo manteniéndose fuera de su alcance, podrá salvar a sus amigos, a su familia y el mundo que ha aprendido a amar.","Twenty Century Fox",null,null,array,"gs://likeseries-c426a.appspot.com/imagenesPeliculas/alita.jpg",0,0,0,0,arraymapa);
-        db.collection("peliculas").document("Alita").set(pelicula);
+        Pelicula pelicula = new Pelicula("Koe no Katachi","La historia gira en torno a Shoko Nishimiya, una estudiante de primaria que es sorda de nacimiento y que al cambiarse de colegio comienza a recibir acoso escolar por parte de sus nuevos compañeros. Uno de los principales responsables es Ishida Shouya quien termina por forzar que Nishimiya se cambie de escuela. Como resultado de los actos contra Shoko las autoridades del colegio toman cartas en el asunto y el curso señala como único responsable a Ishida, quien comienza a sentir el acoso impuesto por sus propios compañeros, al mismo tiempo que termina aislándose de los que alguna vez fueron sus amigos. Años después, Ishida intenta corregir su mal actuar, buscando la redención frente a Nishimiya.","Selecta Vision",array,"gs://likeseries-c426a.appspot.com/imagenesPeliculas/koeno.jpg",0,0,0,0,arraymapa,arraymapa2);
+        db.collection("peliculas").document("Koeno").set(pelicula);
     }
     private void agregarSeriesRapidamente()
     {
@@ -167,6 +182,14 @@ Context contexto;
         map.put("votopositivo",false);
         map.put("votonegativo",false);
         arraymapa.add(map);
+
+        ArrayList<HashMap<String,Object>> arraymapa2 = new ArrayList<>();
+        HashMap<String,Object> map2 = new HashMap<>();
+
+        map2.put("usuario",user.getUid());
+        map2.put("nombre",user.getDisplayName());
+        map2.put("comentario","Buenas,soy un mensaje de ejemplo");
+        arraymapa2.add(map2);
 
         db= FirebaseFirestore.getInstance();
         Serie serie = new Serie("Boku no Hero","Un día, tras conocer personalmente a All Might, este le ofrece heredar sus poderes al ver la gran determinación de Midoriya aunque no tenga poderes; desde entonces, Midoriya accede y empieza a estudiar en la U.A; donde hace nuevos amigos, conoce otros héroes profesionales, aprende a dominar sus poderes y hasta hacer frente a auténticos villanos.","Bones",null,null,array,"gs://likeseries-c426a.appspot.com/imagenesSeries/bokunohero.jpg",0,0,0,0,null);
@@ -323,10 +346,6 @@ Context contexto;
     //Para coger un elemento concreto del array y filtrar por ese elemento ;where("género_PEL","array-contains",)
     return array;
 }
-private void actualizarRecyclerView(String categoria)
-{
-    System.out.println(categoria);
-}
 
 
 
@@ -344,8 +363,6 @@ private void actualizarRecyclerView(String categoria)
                 android.R.layout.simple_spinner_item, categoriasPeliculasySeries());
         //Spiner
         spiner.setAdapter(adapter);
-        String categoria = spiner.getSelectedItem().toString();
-        actualizarRecyclerView(categoria);
         spiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

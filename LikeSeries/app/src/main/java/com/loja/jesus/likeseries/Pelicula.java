@@ -8,21 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Pelicula {
-    private String titulo_PEL,descripcion_PEL,productora_PEL,comentarios,usuariocomentario;
+    private String titulo_PEL,descripcion_PEL,productora_PEL;
     private ArrayList<String> Género_PEL;
     private String nombreimagen;
     private int votosmas_PEL,votosmenos_PEL,notamedia,contadormedia;
     private ArrayList<HashMap<String,Object>> votosusuarios;
-
+    private ArrayList<HashMap<String,Object>> comentarios;
     public Pelicula() {
     }
 
-    public Pelicula(String titulo_PEL, String descripcion_PEL, String productora_PEL, String comentarios, String usuariocomentario, ArrayList<String> género_PEL, String nombreimagen, int votosmas_PEL, int votosmenos_PEL, int notamedia, int contadormedia, ArrayList<HashMap<String, Object>> votosusuarios) {
+    public Pelicula(String titulo_PEL, String descripcion_PEL, String productora_PEL, ArrayList<String> género_PEL, String nombreimagen, int votosmas_PEL, int votosmenos_PEL, int notamedia, int contadormedia, ArrayList<HashMap<String, Object>> votosusuarios, ArrayList<HashMap<String, Object>> comentarios) {
         this.titulo_PEL = titulo_PEL;
         this.descripcion_PEL = descripcion_PEL;
         this.productora_PEL = productora_PEL;
-        this.comentarios = comentarios;
-        this.usuariocomentario = usuariocomentario;
         Género_PEL = género_PEL;
         this.nombreimagen = nombreimagen;
         this.votosmas_PEL = votosmas_PEL;
@@ -30,6 +28,7 @@ public class Pelicula {
         this.notamedia = notamedia;
         this.contadormedia = contadormedia;
         this.votosusuarios = votosusuarios;
+        this.comentarios = comentarios;
     }
 
     public String getTitulo_PEL() {
@@ -54,22 +53,6 @@ public class Pelicula {
 
     public void setProductora_PEL(String productora_PEL) {
         this.productora_PEL = productora_PEL;
-    }
-
-    public String getComentarios() {
-        return comentarios;
-    }
-
-    public void setComentarios(String comentarios) {
-        this.comentarios = comentarios;
-    }
-
-    public String getUsuariocomentario() {
-        return usuariocomentario;
-    }
-
-    public void setUsuariocomentario(String usuariocomentario) {
-        this.usuariocomentario = usuariocomentario;
     }
 
     public ArrayList<String> getGénero_PEL() {
@@ -126,5 +109,13 @@ public class Pelicula {
 
     public void setVotosusuarios(ArrayList<HashMap<String, Object>> votosusuarios) {
         this.votosusuarios = votosusuarios;
+    }
+
+    public ArrayList<HashMap<String, Object>> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(ArrayList<HashMap<String, Object>> comentarios) {
+        this.comentarios = comentarios;
     }
 }

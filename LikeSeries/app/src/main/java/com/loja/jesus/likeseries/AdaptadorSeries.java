@@ -74,7 +74,12 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
     @SuppressLint("StringFormatMatches")
     @Override
     public void onBindViewHolder(@NonNull final AdaptadorSeries.ViewHolderSeries viewHolderSeries, final int i) {
-        final long cargaBaseDatos = 2000;
+        long cargaBaseDatos = 1000;
+        try {
+            Thread.sleep(cargaBaseDatos);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         Boolean votonegativo=false;
@@ -121,22 +126,13 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
         viewHolderSeries.titulo.setText(listaSeries.get(i).getTitulo_SER());
         viewHolderSeries.numvotosmas.setText(res.getString(R.string.votomas, listaSeries.get(i).getVotosmas_SER()));
         viewHolderSeries.numvotosmenos.setText(res.getString(R.string.votomenos, listaSeries.get(i).getVotosmenos_SER()));
-        viewHolderSeries.seleccion.setEnabled(false);
         viewHolderSeries.seleccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 context.startActivity(intent);
             }
         });
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                viewHolderSeries.seleccion.setEnabled(true);
-            }
-        };
-        Timer timer = new Timer();
 
-        timer.schedule(task, cargaBaseDatos);
     }
 
     @Override
