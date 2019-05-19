@@ -192,7 +192,7 @@ public class MainRegistro extends AppCompatActivity {
                             //Creo un usuario y lo agrego a la base de datos de FireBase Cloud
 
 
-                            Usuario usuario = new Usuario(nombre, user.getEmail(),uid ,recibir,0,0);
+                            Usuario usuario = new Usuario(uid,nombre, user.getEmail(),recibir,0,0);
 
                             insertarBasedeDatosFireBaseUsuario(usuario);
 
@@ -211,7 +211,7 @@ public class MainRegistro extends AppCompatActivity {
     private void insertarBasedeDatosFireBaseUsuario(Usuario usuario) {
         // Creamos un usuario y lo guardamos en la base de datos
         db = FirebaseFirestore.getInstance();
-        db.collection("usuarios").document(usuario.getToken())
+        db.collection("usuarios").document(usuario.getUID())
                 .set(usuario, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

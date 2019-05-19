@@ -4,31 +4,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Comentario {
-    private String nombreusuario,uidusuario,comentario;
+    private String nombre,usuario,comentario;
 
     public Comentario() {
     }
 
-    public Comentario(String nombreusuario,String uidusuario, String comentario) {
-        this.nombreusuario = nombreusuario;
-        this.uidusuario = uidusuario;
+    public Comentario(String nombre, String usuario, String comentario) {
+        this.nombre = nombre;
+        this.usuario = usuario;
         this.comentario = comentario;
     }
 
-    public String getNombreusuario() {
-        return nombreusuario;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombreusuario(String nombreusuario) {
-        this.nombreusuario = nombreusuario;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getUidusuario() {
-        return uidusuario;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setUidusuario(String uidusuario) {
-        this.uidusuario = uidusuario;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getComentario() {

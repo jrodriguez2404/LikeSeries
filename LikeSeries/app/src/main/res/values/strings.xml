@@ -73,5 +73,7 @@
     <string name="seguro">¿Está seguro?</string>
     <string name="delete">Eliminar</string>
     <string name="comenta">Comenta que te ha parecido</string>
-    <string name="comentario">Comentarios:</string>
+    <string name="comentario">Comentarios: (%1$s)</string>
+    <string name="productora">Producida por %1$s</string>
+    <string name="capitulos">Número de capitulos %1$s</string>
 </resources>

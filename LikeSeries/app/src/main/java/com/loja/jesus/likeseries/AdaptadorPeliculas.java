@@ -35,6 +35,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.ViewHolderPeliculas> {
+
+
     public class ViewHolderPeliculas extends RecyclerView.ViewHolder {
         private TextView titulo,numvotosmas,numvotosmenos;
         private ImageView imagen;
@@ -81,61 +83,56 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
     @SuppressLint("StringFormatMatches")
     @Override
     public void onBindViewHolder(@NonNull final AdaptadorPeliculas.ViewHolderPeliculas viewHolderPeliculas, final int i) {
-        long cargaBaseDatos = 1000;
-        try {
-            Thread.sleep(cargaBaseDatos);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        Boolean votonegativo=false,usuarioactual=false,votopositivo=false;
         String usuario="",nombre="",comentario="";
-        ArrayList<String> arrayusuarios = new ArrayList<>(),arraynombres= new ArrayList<>(),arraycomentarios = new ArrayList<>();
+        ArrayList<String> arrayusuarios = new ArrayList<>(),arraynombres= new ArrayList<>(),arraycomentarios = new ArrayList<>(),arrayvotantes= new ArrayList<>(),arrayreglas = new ArrayList<>();
 //Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
+
         for(int j = 0 ; j<listaPeliculas.get(i).getVotosusuarios().size();j++)
         {
-            HashMap<String,Object> map = listaPeliculas.get(i).getVotosusuarios().get(j);
-            if (map.containsValue(user.getUid())) {
-
-                 votonegativo =Boolean.parseBoolean(map.get("votonegativo").toString());
-                 votopositivo =Boolean.parseBoolean(map.get("votopositivo").toString());
-            }
-
+            arrayvotantes.add(listaPeliculas.get(i).getVotosusuarios().get(j).getUsuariovoto());
+            arrayreglas.add(listaPeliculas.get(i).getVotosusuarios().get(j).getReglas());
         }
         //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
         for(int j = 0 ; j<listaPeliculas.get(i).getComentarios().size();j++)
         {
-            HashMap<String,Object> map = listaPeliculas.get(i).getComentarios().get(j);
-            arrayusuarios.add(map.get("usuario").toString());
-            arraynombres.add(map.get("nombre").toString());
-            arraycomentarios.add(map.get("comentario").toString());
+            arrayusuarios.add(listaPeliculas.get(i).getComentarios().get(j).getUsuario());
+            arraynombres.add(listaPeliculas.get(i).getComentarios().get(j).getNombre());
+            arraycomentarios.add(listaPeliculas.get(i).getComentarios().get(j).getComentario());
+
 
         }
+
             Resources res = viewHolderPeliculas.itemView.getContext().getResources();
             final Intent intent = new Intent(context, ContenedorMultimedia.class);
-            intent.putExtra("titulo", listaPeliculas.get(i).getTitulo_PEL());
-            intent.putExtra("descripcion", listaPeliculas.get(i).getDescripcion_PEL());
-            intent.putExtra("genero", listaPeliculas.get(i).getGénero_PEL());
-            intent.putExtra("votosmas", listaPeliculas.get(i).getVotosmas_PEL());
-            intent.putExtra("votosmenos", listaPeliculas.get(i).getVotosmenos_PEL());
-            intent.putExtra("mediavotos", listaPeliculas.get(i).getContadormedia());
-            intent.putExtra("votonegativo",votonegativo);
-            intent.putExtra("votopositivo",votopositivo);
+        intent.putExtra("ID", listaPeliculas.get(i).getID_Pelicula());
+            intent.putExtra("titulo", listaPeliculas.get(i).getTitulo_Pelicula());
+            intent.putExtra("descripcion", listaPeliculas.get(i).getDescripcion_Pelicula());
+            intent.putExtra("genero", listaPeliculas.get(i).getGenero_Pelicula());
+            intent.putExtra("votosmas", listaPeliculas.get(i).getVotosPositivos_Pelicula());
+            intent.putExtra("votosmenos", listaPeliculas.get(i).getVotosNegativos_Pelicula());
+            intent.putExtra("votantes", listaPeliculas.get(i).getVotantes_Pelicula());
+        intent.putExtra("productora", listaPeliculas.get(i).getProductora_Pelicula());
+        intent.putExtra("nmedia", listaPeliculas.get(i).getNotamedia_Pelicula());
             intent.putExtra("arrayusuarios",arrayusuarios);
         intent.putExtra("arraynombres",arraynombres);
         intent.putExtra("arraycomentarios",arraycomentarios);
-
+        intent.putExtra("arrayvotantes",arrayvotantes);
+        intent.putExtra("arrayreglas",arrayreglas);
+        intent.putExtra("pelioserie","peliculas");
+        intent.putExtra("collection", listaPeliculas.get(i).getCollection_Pelicula());
+        intent.putExtra("urlimagen",listaPeliculas.get(i).getImagen_Pelicula());
+        intent.putExtra("numero",i);
 
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference gsReference = storage.getReferenceFromUrl(listaPeliculas.get(i).getNombreimagen() + "");
+            StorageReference gsReference = storage.getReferenceFromUrl(listaPeliculas.get(i).getImagen_Pelicula() + "");
             final long ONE_MEGABYTE = 1024 * 1024;
             gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    intent.putExtra("imagen", bytes);
                     viewHolderPeliculas.imagen.setImageBitmap(bmp);
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -143,14 +140,15 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
                 public void onFailure(@NonNull Exception exception) {
                 }
             });
-            viewHolderPeliculas.titulo.setText(listaPeliculas.get(i).getTitulo_PEL());
-            viewHolderPeliculas.numvotosmas.setText(res.getString(R.string.votomas, listaPeliculas.get(i).getVotosmas_PEL()));
-            viewHolderPeliculas.numvotosmenos.setText(res.getString(R.string.votomenos, listaPeliculas.get(i).getVotosmenos_PEL()));
+            viewHolderPeliculas.titulo.setText(listaPeliculas.get(i).getTitulo_Pelicula());
+            viewHolderPeliculas.numvotosmas.setText(res.getString(R.string.votomas, listaPeliculas.get(i).getVotosPositivos_Pelicula()));
+            viewHolderPeliculas.numvotosmenos.setText(res.getString(R.string.votomenos, listaPeliculas.get(i).getVotosNegativos_Pelicula()));
 
             viewHolderPeliculas.seleccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 context.startActivity(intent);
+                new Like().cerrarActividad();
             }
             });
 
@@ -167,7 +165,9 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
     {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
-
+    public void addItem(Pelicula pelicula, int index) {
+        listaPeliculas.add(pelicula);
+        notifyItemInserted(index);
+    }
 
 }

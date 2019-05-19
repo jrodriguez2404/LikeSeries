@@ -73,7 +73,7 @@ public class AdaptadorComentarios extends RecyclerView.Adapter<AdaptadorComentar
     @SuppressLint("StringFormatMatches")
     @Override
     public void onBindViewHolder(@NonNull final AdaptadorComentarios.ViewHolderComentarios viewHolderComentarios, final int i) {
-        if(listaComentarios.get(i).getUidusuario().equals(viewHolderComentarios.user.getUid()))
+        if(listaComentarios.get(i).getUsuario().equals(viewHolderComentarios.user.getUid()))
         {
         viewHolderComentarios.eliminacion.setVisibility(View.VISIBLE);
         viewHolderComentarios.eliminacion.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +101,7 @@ public class AdaptadorComentarios extends RecyclerView.Adapter<AdaptadorComentar
         });
 
         }
-        viewHolderComentarios.nombreComentario.setText(listaComentarios.get(i).getNombreusuario());
+        viewHolderComentarios.nombreComentario.setText(listaComentarios.get(i).getNombre());
         viewHolderComentarios.comentario.setText(listaComentarios.get(i).getComentario());
     }
 

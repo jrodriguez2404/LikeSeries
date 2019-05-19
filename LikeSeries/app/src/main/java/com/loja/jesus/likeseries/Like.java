@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -57,9 +58,9 @@ Context contexto;
         principal_like = findViewById(R.id.principal_like);
         principal_like.setVisibility(View.VISIBLE);
         //Cargo los recyclerview
-        cargarRecycleview();
+        //cargarRecycleview();
         //agregarSeriesRapidamente();
-        agregarPeliculasRapidamente();
+        //agregarPeliculasRapidamente();
         Toolbar toolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
         //Pantalla de peliculas
@@ -116,6 +117,18 @@ Context contexto;
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        cargarRecycleview();
+        cargarRecycerViewVotos();
+    }
+
+    public void cerrarActividad()
+    {
+        finish();
+    }
     private void cargarNombreUsuario()
     {
         hola = findViewById(R.id.hola);
@@ -137,36 +150,24 @@ Context contexto;
     private void agregarPeliculasRapidamente()
     {
         ArrayList<String> array = new ArrayList<>();
-        array.add("Drama");
-        array.add("Escolares");
-        array.add("Shounen");
-        array.add("Anime");
-        ArrayList<HashMap<String,Object>> arraymapa = new ArrayList<>();
-        HashMap<String,Object> map = new HashMap<>();
+        array.add("Acción");
+        array.add("Romance");
+        array.add("Ciencia Ficción");
+        array.add("Realista");
 
-        map.put("usuario",user.getUid());
-        map.put("votopositivo",false);
-        map.put("votonegativo",false);
-        arraymapa.add(map);
+        ArrayList<Votos> votos = new ArrayList<>();
+        Votos v = new Votos("PR1n0WS7eGepWHObst5MXEbTZbB2","1");
+        votos.add(v);
 
-        ArrayList<HashMap<String,Object>> arraymapa2 = new ArrayList<>();
-        HashMap<String,Object> map2 = new HashMap<>();
-
-        map2.put("usuario",user.getUid());
-        map2.put("nombre",user.getDisplayName());
-        map2.put("comentario","Hola , muy buena peli");
-        arraymapa2.add(map2);
-        HashMap<String,Object> map3 = new HashMap<>();
-        map3.put("usuario","6KhLKtDocIfOgySomzeXhygPUmF3");
-        map3.put("nombre","J.R");
-        map3.put("comentario","Hola ,soy nuevo , me la recomendais , espero que me guste");
-        arraymapa2.add(map3);
+        ArrayList<Comentario> comentarios = new ArrayList<>();
+        Comentario c = new Comentario("Jesus","PR1n0WS7eGepWHObst5MXEbTZbB2","hola");
+comentarios.add(c);
 
 
 
         db= FirebaseFirestore.getInstance();
-        Pelicula pelicula = new Pelicula("Koe no Katachi","La historia gira en torno a Shoko Nishimiya, una estudiante de primaria que es sorda de nacimiento y que al cambiarse de colegio comienza a recibir acoso escolar por parte de sus nuevos compañeros. Uno de los principales responsables es Ishida Shouya quien termina por forzar que Nishimiya se cambie de escuela. Como resultado de los actos contra Shoko las autoridades del colegio toman cartas en el asunto y el curso señala como único responsable a Ishida, quien comienza a sentir el acoso impuesto por sus propios compañeros, al mismo tiempo que termina aislándose de los que alguna vez fueron sus amigos. Años después, Ishida intenta corregir su mal actuar, buscando la redención frente a Nishimiya.","Selecta Vision",array,"gs://likeseries-c426a.appspot.com/imagenesPeliculas/koeno.jpg",0,0,0,0,arraymapa,arraymapa2);
-        db.collection("peliculas").document("Koeno").set(pelicula);
+        Pelicula pelicula = new Pelicula("peliculas","Alita:Ángeldecombate","Alita: Ángel de combate","Cuando Alita se despierta sin recordar quién es en un mundo futuro que no reconoce, Ido , un médico compasivo, se da cuenta de que en algún lugar de ese caparazón de cyborg abandonado, está el corazón y alma de una mujer joven con un pasado extraordinario. Mientras Alita toma las riendas de su nueva vida y aprende a adaptarse a las peligrosas calles de Iron City, Ido tratará de protegerla de su propio pasado, mientras que su nuevo amigo Hugo se ofrecerá, en cambio, a ayudarla a desenterrar sus recuerdos. Cuando las fuerzas mortales y corruptas que manejan la ciudad comienzan a perseguir a Alita, ella descubre una pista crucial sobre su pasado: posee habilidades de combate únicas que los que ostentan el poder querrán controlar a toda costa. Sólo manteniéndose fuera de su alcance, podrá salvar a sus amigos, a su familia y el mundo que ha aprendido a amar.","Twenty Century Fox",array,"gs://likeseries-c426a.appspot.com/imagenesPeliculas/alita.jpg",0,0,0,0,votos,comentarios);
+        db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
     }
     private void agregarSeriesRapidamente()
     {
@@ -175,31 +176,27 @@ Context contexto;
         array.add("Aventura");
         array.add("SuperHeroes");
         array.add("Anime");
-        ArrayList<HashMap<String,Object>> arraymapa = new ArrayList<>();
-        HashMap<String,Object> map = new HashMap<>();
 
-        map.put("usuario",user.getUid());
-        map.put("votopositivo",false);
-        map.put("votonegativo",false);
-        arraymapa.add(map);
+        ArrayList<Votos> votos = new ArrayList<>();
+        Votos v = new Votos("PR1n0WS7eGepWHObst5MXEbTZbB2","0");
+        votos.add(v);
 
-        ArrayList<HashMap<String,Object>> arraymapa2 = new ArrayList<>();
-        HashMap<String,Object> map2 = new HashMap<>();
+        ArrayList<Comentario> comentarios = new ArrayList<>();
+        Comentario c = new Comentario("Jesus","PR1n0WS7eGepWHObst5MXEbTZbB2","hola");
+        comentarios.add(c);
 
-        map2.put("usuario",user.getUid());
-        map2.put("nombre",user.getDisplayName());
-        map2.put("comentario","Buenas,soy un mensaje de ejemplo");
-        arraymapa2.add(map2);
+
 
         db= FirebaseFirestore.getInstance();
-        Serie serie = new Serie("Boku no Hero","Un día, tras conocer personalmente a All Might, este le ofrece heredar sus poderes al ver la gran determinación de Midoriya aunque no tenga poderes; desde entonces, Midoriya accede y empieza a estudiar en la U.A; donde hace nuevos amigos, conoce otros héroes profesionales, aprende a dominar sus poderes y hasta hacer frente a auténticos villanos.","Bones",null,null,array,"gs://likeseries-c426a.appspot.com/imagenesSeries/bokunohero.jpg",0,0,0,0,null);
-        db.collection("series").document("Boku").set(serie);
+        Serie serie = new Serie("series","BokunoHero","Boku no Hero","Un día, tras conocer personalmente a All Might, este le ofrece heredar sus poderes al ver la gran determinación de Midoriya aunque no tenga poderes; desde entonces, Midoriya accede y empieza a estudiar en la U.A; donde hace nuevos amigos, conoce otros héroes profesionales, aprende a dominar sus poderes y hasta hacer frente a auténticos villanos.","Bones",array,"gs://likeseries-c426a.appspot.com/imagenesSeries/bokunohero.jpg",0,0,0,25,0,votos,comentarios);
+        db.collection("series").document(serie.getID_Serie()).set(serie);
     }
     private void cargarRecycleview(){
         RVP = findViewById(R.id.RVP);
         RVS = findViewById(R.id.RVS);
         RVVP = findViewById(R.id.RVVP);
         RVVN = findViewById(R.id.RVVN);
+
         LinearLayoutManager llmRVVP = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         RVVP.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
         RVVP.setHasFixedSize(true);
@@ -230,6 +227,72 @@ Context contexto;
         }
     }
 
+    public void cargarRecycerViewVotos()
+    {
+        final ArrayList<Multimedia> multipositiva = new ArrayList<>(),multinegativa = new ArrayList<>();
+        db.collection("peliculas")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Multimedia multimedia = document.toObject(Multimedia.class);
+                                try {
+                                    if (multimedia.getVotosusuarios().get(0).getReglas().equals("1") && multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
+                                        multipositiva.add(multimedia);
+                                    } else if (multimedia.getVotosusuarios().get(0).getReglas().equals("2") && multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
+                                        multinegativa.add(multimedia);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                }
+                        }
+                            AdaptadorMutimediaLike adaptadorlike = new AdaptadorMutimediaLike(contexto, multipositiva);
+                            RVVP.setAdapter(adaptadorlike);
+                            RVVP.setHasFixedSize(true);
+                            adaptadorlike.refrescar();
+
+                            AdaptadorMutimediaDisLike adaptadornolike = new AdaptadorMutimediaDisLike(contexto, multinegativa);
+                            RVVN.setAdapter(adaptadornolike);
+                            RVVN.setHasFixedSize(true);
+                            adaptadornolike.refrescar();
+                        }
+                    }
+                });
+        db.collection("series")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Multimedia multimedia = document.toObject(Multimedia.class);
+
+                                     if (multimedia.getVotosusuarios().get(0).getReglas().equals("1")&&multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()) )
+                                     {
+                                     multipositiva.add(multimedia);
+                                     }
+                                     else if (multimedia.getVotosusuarios().get(0).getReglas().equals("2")&&multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()))
+                                     {
+                                     multinegativa.add(multimedia);
+                                     }
+
+                            }
+                            AdaptadorMutimediaLike adaptadorlike = new AdaptadorMutimediaLike(contexto, multipositiva);
+                            RVVP.setAdapter(adaptadorlike);
+                            RVVP.setHasFixedSize(true);
+                            adaptadorlike.refrescar();
+
+                            AdaptadorMutimediaDisLike adaptadornolike = new AdaptadorMutimediaDisLike(contexto, multinegativa);
+                            RVVN.setAdapter(adaptadornolike);
+                            RVVN.setHasFixedSize(true);
+                            adaptadornolike.refrescar();
+                        }
+                    }
+                });
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -296,36 +359,6 @@ Context contexto;
         return true;
     }
 
-    /**
-     * Metodo que carga todas las tablas de la coleccion que le llega por parametro
-     * @param nombreColeccion
-     * @param recView
-     */
-    private void cargarDocumentosPeliculasBD(String nombreColeccion, final RecyclerView recView) {
-    db = FirebaseFirestore.getInstance();
-    final ArrayList<Pelicula>peliculas = new ArrayList<>();
-    db.collection(nombreColeccion)
-            .get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    String TAG="";
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
-                            Pelicula pelicula = document.toObject(Pelicula.class);
-                            peliculas.add(pelicula);
-                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
-                            recView.setAdapter(adaptadorPeliculas);
-                            adaptadorPeliculas.refrescar();
-
-                        }
-                    } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
-                    }
-                }
-            });
-}
 
     /**
      * Rellena el spiner de todas las categorias
@@ -336,14 +369,15 @@ Context contexto;
     final ArrayList<String> array = new ArrayList<>();
     array.add("Sin filtro");
     array.add("Ciencia Ficción");
+    array.add("Romance");
     array.add("Realista");
     array.add("Anime");
     array.add("Aventura");
     array.add("Acción");
     array.add("SuperHeroes");
     array.add("Terror");
+    array.add("Escolares");
     array.add("Más Votados");
-    //Para coger un elemento concreto del array y filtrar por ese elemento ;where("género_PEL","array-contains",)
     return array;
 }
 
@@ -371,7 +405,7 @@ Context contexto;
                 final ArrayList<Serie>series = new ArrayList<>();
                 if(!parent.getItemAtPosition(position).toString().equals("Más Votados") && !parent.getItemAtPosition(position).toString().equals("Sin filtro")) {
                     db.collection("peliculas")
-                            .whereArrayContains("género_PEL", parent.getItemAtPosition(position).toString())
+                            .whereArrayContains("genero_Pelicula", parent.getItemAtPosition(position).toString())
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -389,7 +423,7 @@ Context contexto;
                                 }
                             });
                     db.collection("series")
-                            .whereArrayContains("género_SER", parent.getItemAtPosition(position).toString())
+                            .whereArrayContains("genero_Serie", parent.getItemAtPosition(position).toString())
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -447,10 +481,8 @@ Context contexto;
                 else if(parent.getItemAtPosition(position).toString().equals("Más Votados"))
                 {
 
-                    /**
-                    //Agregamos las peliculas o series mas votadas
                     db.collection("peliculas")
-                            .whereArrayContains("género_PEL", parent.getItemAtPosition(position).toString())
+                            .orderBy("votosPositivos_Pelicula", Query.Direction.ASCENDING)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -468,7 +500,7 @@ Context contexto;
                                 }
                             });
                     db.collection("series")
-                            .whereGreaterThan("género_SER", parent.getItemAtPosition(position).toString())
+                            .orderBy("votosPositivos_Series", Query.Direction.ASCENDING)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -484,7 +516,6 @@ Context contexto;
                                     }
                                 }
                             });
-                     */
                 }
             }
 

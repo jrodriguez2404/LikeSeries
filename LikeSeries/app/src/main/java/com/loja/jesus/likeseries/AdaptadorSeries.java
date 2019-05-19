@@ -28,16 +28,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHolderSeries> {
+
+
     public class ViewHolderSeries extends RecyclerView.ViewHolder {
         private TextView titulo,numvotosmas,numvotosmenos;
         private ImageView imagen;
         private LinearLayout seleccion;
-
         public ViewHolderSeries(@NonNull View itemView) {
             super(itemView);
             titulo = itemView.findViewById(R.id.titulo);
             numvotosmas = itemView.findViewById(R.id.numvotosmas);
-            numvotosmenos=itemView.findViewById(R.id.numvotosmenos);
+            numvotosmenos = itemView.findViewById(R.id.numvotosmenos);
             imagen = itemView.findViewById(R.id.imagen);
             seleccion = itemView.findViewById(R.id.seleccion);
         }
@@ -68,72 +69,86 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
 
     /**
      * A perfeccionar
-     * @param viewHolderSeries
+     * @param viewHolderseries
      * @param i
      */
     @SuppressLint("StringFormatMatches")
     @Override
-    public void onBindViewHolder(@NonNull final AdaptadorSeries.ViewHolderSeries viewHolderSeries, final int i) {
-        long cargaBaseDatos = 1000;
-        try {
-            Thread.sleep(cargaBaseDatos);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void onBindViewHolder(@NonNull final AdaptadorSeries.ViewHolderSeries viewHolderseries, final int i) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        Boolean votonegativo=false;
-        Boolean votopositivo=false;
+        String usuario="",nombre="",comentario="";
+        ArrayList<String> arrayusuarios = new ArrayList<>(),arraynombres= new ArrayList<>(),arraycomentarios = new ArrayList<>(),arrayvotantes= new ArrayList<>(),arrayreglas = new ArrayList<>();
 //Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
+
         for(int j = 0 ; j<listaSeries.get(i).getVotosusuarios().size();j++)
         {
-            HashMap<String,Object> map = listaSeries.get(i).getVotosusuarios().get(j);
-            if (map.containsValue(user.getUid())) {
+            arrayvotantes.add(listaSeries.get(i).getVotosusuarios().get(j).getUsuariovoto());
+            arrayreglas.add(listaSeries.get(i).getVotosusuarios().get(j).getReglas());
+        }
+        //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
+        for(int j = 0 ; j<listaSeries.get(i).getComentarios().size();j++)
+        {
+            arrayusuarios.add(listaSeries.get(i).getComentarios().get(j).getUsuario());
+            arraynombres.add(listaSeries.get(i).getComentarios().get(j).getNombre());
+            arraycomentarios.add(listaSeries.get(i).getComentarios().get(j).getComentario());
 
-                votonegativo =Boolean.parseBoolean(map.get("votonegativo").toString());
-                votopositivo =Boolean.parseBoolean(map.get("votopositivo").toString());
-            }
 
         }
-        Resources res = viewHolderSeries.itemView.getContext().getResources();
+
+        Resources res = viewHolderseries.itemView.getContext().getResources();
         final Intent intent = new Intent(context, ContenedorMultimedia.class);
-        intent.putExtra("titulo", listaSeries.get(i).getTitulo_SER());
-        intent.putExtra("descripcion", listaSeries.get(i).getDescripcion_SER());
-        intent.putExtra("genero", listaSeries.get(i).getGénero_SER());
-        intent.putExtra("votosmas", listaSeries.get(i).getVotosmas_SER());
-        intent.putExtra("votosmenos", listaSeries.get(i).getVotosmenos_SER());
-        intent.putExtra("comentarios", listaSeries.get(i).getComentarios());
-        intent.putExtra("usuariocomentario", listaSeries.get(i).getUsuariocomentario());
-        intent.putExtra("mediavotos", listaSeries.get(i).getContadormedia());
-        intent.putExtra("votonegativo",votonegativo);
-        intent.putExtra("votopositivo",votopositivo);
+        intent.putExtra("ID", listaSeries.get(i).getID_Serie());
+        intent.putExtra("collection", listaSeries.get(i).getCollection_Serie());
+        intent.putExtra("capitulos", listaSeries.get(i).getNCapitulos());
+        intent.putExtra("titulo", listaSeries.get(i).getTitulo_Serie());
+        intent.putExtra("descripcion", listaSeries.get(i).getDescripcion_Serie());
+        intent.putExtra("genero", listaSeries.get(i).getGenero_Serie());
+        intent.putExtra("votosmas", listaSeries.get(i).getVotosPositivos_Serie());
+        intent.putExtra("votosmenos", listaSeries.get(i).getVotosNegativos_Serie());
+        intent.putExtra("votantes", listaSeries.get(i).getVotantes_Serie());
+        intent.putExtra("productora", listaSeries.get(i).getProductora_Serie());
+        intent.putExtra("nmedia", listaSeries.get(i).getNotamedia_Serie());
+        intent.putExtra("arrayusuarios",arrayusuarios);
+        intent.putExtra("arraynombres",arraynombres);
+        intent.putExtra("arraycomentarios",arraycomentarios);
+        intent.putExtra("arrayvotantes",arrayvotantes);
+        intent.putExtra("arrayreglas",arrayreglas);
+        intent.putExtra("pelioserie","series");
+
+        intent.putExtra("urlimagen",listaSeries.get(i).getImagen_Serie());
+        intent.putExtra("numero",i);
+
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference gsReference = storage.getReferenceFromUrl(listaSeries.get(i).getNombreimagen() + "");
+        StorageReference gsReference = storage.getReferenceFromUrl(listaSeries.get(i).getImagen_Serie() + "");
         final long ONE_MEGABYTE = 1024 * 1024;
         gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                intent.putExtra("imagen", bytes);
-                viewHolderSeries.imagen.setImageBitmap(bmp);
+                viewHolderseries.imagen.setImageBitmap(bmp);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
             }
         });
-        viewHolderSeries.titulo.setText(listaSeries.get(i).getTitulo_SER());
-        viewHolderSeries.numvotosmas.setText(res.getString(R.string.votomas, listaSeries.get(i).getVotosmas_SER()));
-        viewHolderSeries.numvotosmenos.setText(res.getString(R.string.votomenos, listaSeries.get(i).getVotosmenos_SER()));
-        viewHolderSeries.seleccion.setOnClickListener(new View.OnClickListener() {
+        viewHolderseries.titulo.setText(listaSeries.get(i).getTitulo_Serie());
+        viewHolderseries.numvotosmas.setText(res.getString(R.string.votomas, listaSeries.get(i).getVotosPositivos_Serie()));
+        viewHolderseries.numvotosmenos.setText(res.getString(R.string.votomenos, listaSeries.get(i).getVotosNegativos_Serie()));
+
+        viewHolderseries.seleccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 context.startActivity(intent);
+                new Like().cerrarActividad();
             }
         });
 
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -144,7 +159,9 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
     {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
-
+    public void addItem(Serie serie, int index) {
+        listaSeries.add(serie);
+        notifyItemInserted(index);
+    }
 
 }
