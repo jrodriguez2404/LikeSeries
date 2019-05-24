@@ -74,137 +74,148 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
     @SuppressLint("StringFormatMatches")
     @Override
     public void onBindViewHolder(@NonNull final AdaptadorMutimediaDisLike.ViewHolderMultimedia viewHolderMultimedia, final int i) {
-        if(listaMultimedia.get(i).getCollection_Pelicula().equals("peliculas")) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            String usuario = "", nombre = "", comentario = "";
-            ArrayList<String> arrayusuarios = new ArrayList<>(), arraynombres = new ArrayList<>(), arraycomentarios = new ArrayList<>(), arrayvotantes = new ArrayList<>(), arrayreglas = new ArrayList<>();
+        try {
+            if (listaMultimedia.get(i).getCollection_Pelicula().equals("peliculas")) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                String usuario = "", nombre = "", comentario = "";
+                ArrayList<String> arrayusuarios = new ArrayList<>(), arraynombres = new ArrayList<>(), arraycomentarios = new ArrayList<>(), arrayvotantes = new ArrayList<>(), arrayreglas = new ArrayList<>();
 //Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
-            for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
-                arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
-                arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
+                for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
+                    arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
+                    arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
+                }
+                //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
+                for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
+                    arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
+                    arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
+                    arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
+
+
+                }
+                Resources res = viewHolderMultimedia.itemView.getContext().getResources();
+                final Intent intent = new Intent(context, ContenedorMultimedia.class);
+                intent.putExtra("ID", listaMultimedia.get(i).getID_Pelicula());
+                intent.putExtra("titulo", listaMultimedia.get(i).getTitulo_Pelicula());
+                intent.putExtra("descripcion", listaMultimedia.get(i).getDescripcion_Pelicula());
+                intent.putExtra("genero", listaMultimedia.get(i).getGenero_Pelicula());
+                intent.putExtra("votosmas", listaMultimedia.get(i).getVotosPositivos_Pelicula());
+                intent.putExtra("votosmenos", listaMultimedia.get(i).getVotosNegativos_Pelicula());
+                intent.putExtra("votantes", listaMultimedia.get(i).getVotantes_Pelicula());
+                intent.putExtra("productora", listaMultimedia.get(i).getProductora_Pelicula());
+                intent.putExtra("nmedia", listaMultimedia.get(i).getNotamedia_Pelicula());
+                intent.putExtra("arrayusuarios", arrayusuarios);
+                intent.putExtra("arraynombres", arraynombres);
+                intent.putExtra("arraycomentarios", arraycomentarios);
+                intent.putExtra("arrayvotantes", arrayvotantes);
+                intent.putExtra("arrayreglas", arrayreglas);
+                intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Pelicula());
+                intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Pelicula());
+                intent.putExtra("numero", i);
+
+                try {
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference gsReference = storage.getReferenceFromUrl(listaMultimedia.get(i).getImagen_Pelicula() + "");
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            viewHolderMultimedia.imagen.setImageBitmap(bmp);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                        }
+                    });
+                } catch (Exception e) {
+
+                }
+                viewHolderMultimedia.titulo.setText(listaMultimedia.get(i).getTitulo_Pelicula());
+                viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas, listaMultimedia.get(i).getVotosPositivos_Pelicula()));
+                viewHolderMultimedia.numvotosmenos.setText(res.getString(R.string.votomenos, listaMultimedia.get(i).getVotosNegativos_Pelicula()));
+
+                viewHolderMultimedia.seleccion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        context.startActivity(intent);
+                        new Like().cerrarActividad();
+                    }
+                });
             }
-            //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
-            for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
-                arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
-                arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
-                arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
-
-
-            }
-            Resources res = viewHolderMultimedia.itemView.getContext().getResources();
-            final Intent intent = new Intent(context, ContenedorMultimedia.class);
-            intent.putExtra("ID", listaMultimedia.get(i).getID_Pelicula());
-            intent.putExtra("titulo", listaMultimedia.get(i).getTitulo_Pelicula());
-            intent.putExtra("descripcion", listaMultimedia.get(i).getDescripcion_Pelicula());
-            intent.putExtra("genero", listaMultimedia.get(i).getGenero_Pelicula());
-            intent.putExtra("votosmas", listaMultimedia.get(i).getVotosPositivos_Pelicula());
-            intent.putExtra("votosmenos", listaMultimedia.get(i).getVotosNegativos_Pelicula());
-            intent.putExtra("votantes", listaMultimedia.get(i).getVotantes_Pelicula());
-            intent.putExtra("productora", listaMultimedia.get(i).getProductora_Pelicula());
-            intent.putExtra("nmedia", listaMultimedia.get(i).getNotamedia_Pelicula());
-            intent.putExtra("arrayusuarios", arrayusuarios);
-            intent.putExtra("arraynombres", arraynombres);
-            intent.putExtra("arraycomentarios", arraycomentarios);
-            intent.putExtra("arrayvotantes", arrayvotantes);
-            intent.putExtra("arrayreglas", arrayreglas);
-            intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Pelicula());
-            intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Pelicula());
-            intent.putExtra("numero", i);
-
-
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference gsReference = storage.getReferenceFromUrl(listaMultimedia.get(i).getImagen_Pelicula() + "");
-            final long ONE_MEGABYTE = 1024 * 1024;
-            gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    viewHolderMultimedia.imagen.setImageBitmap(bmp);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                }
-            });
-            viewHolderMultimedia.titulo.setText(listaMultimedia.get(i).getTitulo_Pelicula());
-            viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas, listaMultimedia.get(i).getVotosPositivos_Pelicula()));
-            viewHolderMultimedia.numvotosmenos.setText(res.getString(R.string.votomenos, listaMultimedia.get(i).getVotosNegativos_Pelicula()));
-
-            viewHolderMultimedia.seleccion.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.startActivity(intent);
-                    new Like().cerrarActividad();
-                }
-            });
-        }
-        else if (listaMultimedia.get(i).getCollection_Serie().equals("series"))
+        }catch (Exception e)
         {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (listaMultimedia.get(i).getCollection_Serie().equals("series")) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            String usuario = "", nombre = "", comentario = "";
-            ArrayList<String> arrayusuarios = new ArrayList<>(), arraynombres = new ArrayList<>(), arraycomentarios = new ArrayList<>(), arrayvotantes = new ArrayList<>(), arrayreglas = new ArrayList<>();
+                String usuario = "", nombre = "", comentario = "";
+                ArrayList<String> arrayusuarios = new ArrayList<>(), arraynombres = new ArrayList<>(), arraycomentarios = new ArrayList<>(), arrayvotantes = new ArrayList<>(), arrayreglas = new ArrayList<>();
 //Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
-            for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
-                arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
-                arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
+                for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
+                    arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
+                    arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
+                }
+                //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
+                for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
+                    arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
+                    arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
+                    arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
+
+
+                }
+                Resources res = viewHolderMultimedia.itemView.getContext().getResources();
+                final Intent intent = new Intent(context, ContenedorMultimedia.class);
+                intent.putExtra("ID", listaMultimedia.get(i).getID_Serie());
+                intent.putExtra("titulo", listaMultimedia.get(i).getTitulo_Serie());
+                intent.putExtra("capitulos", listaMultimedia.get(i).getNCapitulos());
+                intent.putExtra("descripcion", listaMultimedia.get(i).getDescripcion_Serie());
+                intent.putExtra("genero", listaMultimedia.get(i).getGenero_Serie());
+                intent.putExtra("votosmas", listaMultimedia.get(i).getVotosPositivos_Serie());
+                intent.putExtra("votosmenos", listaMultimedia.get(i).getVotosNegativos_Serie());
+                intent.putExtra("votantes", listaMultimedia.get(i).getVotantes_Serie());
+                intent.putExtra("productora", listaMultimedia.get(i).getProductora_Serie());
+                intent.putExtra("nmedia", listaMultimedia.get(i).getNotamedia_Serie());
+                intent.putExtra("arrayusuarios", arrayusuarios);
+                intent.putExtra("arraynombres", arraynombres);
+                intent.putExtra("arraycomentarios", arraycomentarios);
+                intent.putExtra("arrayvotantes", arrayvotantes);
+                intent.putExtra("arrayreglas", arrayreglas);
+                intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Serie());
+                intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Serie());
+                intent.putExtra("numero", i);
+
+
+                try {
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference gsReference = storage.getReferenceFromUrl(listaMultimedia.get(i).getImagen_Serie() + "");
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            viewHolderMultimedia.imagen.setImageBitmap(bmp);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                        }
+                    });
+                } catch (Exception x) {
+
+                }
+                viewHolderMultimedia.titulo.setText(listaMultimedia.get(i).getTitulo_Serie());
+                viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas, listaMultimedia.get(i).getVotosPositivos_Serie()));
+                viewHolderMultimedia.numvotosmenos.setText(res.getString(R.string.votomenos, listaMultimedia.get(i).getVotosNegativos_Serie()));
+
+                viewHolderMultimedia.seleccion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        context.startActivity(intent);
+                        new Like().cerrarActividad();
+                    }
+                });
             }
-            //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
-            for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
-                arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
-                arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
-                arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
-
-
-            }
-            Resources res = viewHolderMultimedia.itemView.getContext().getResources();
-            final Intent intent = new Intent(context, ContenedorMultimedia.class);
-            intent.putExtra("ID", listaMultimedia.get(i).getID_Serie());
-            intent.putExtra("titulo", listaMultimedia.get(i).getTitulo_Serie());
-            intent.putExtra("capitulos", listaMultimedia.get(i).getNCapitulos());
-            intent.putExtra("descripcion", listaMultimedia.get(i).getDescripcion_Serie());
-            intent.putExtra("genero", listaMultimedia.get(i).getGenero_Serie());
-            intent.putExtra("votosmas", listaMultimedia.get(i).getVotosPositivos_Serie());
-            intent.putExtra("votosmenos", listaMultimedia.get(i).getVotosNegativos_Serie());
-            intent.putExtra("votantes", listaMultimedia.get(i).getVotantes_Serie());
-            intent.putExtra("productora", listaMultimedia.get(i).getProductora_Serie());
-            intent.putExtra("nmedia", listaMultimedia.get(i).getNotamedia_Serie());
-            intent.putExtra("arrayusuarios", arrayusuarios);
-            intent.putExtra("arraynombres", arraynombres);
-            intent.putExtra("arraycomentarios", arraycomentarios);
-            intent.putExtra("arrayvotantes", arrayvotantes);
-            intent.putExtra("arrayreglas", arrayreglas);
-            intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Serie());
-            intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Serie());
-            intent.putExtra("numero", i);
-
-
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference gsReference = storage.getReferenceFromUrl(listaMultimedia.get(i).getImagen_Serie() + "");
-            final long ONE_MEGABYTE = 1024 * 1024;
-            gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    viewHolderMultimedia.imagen.setImageBitmap(bmp);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                }
-            });
-            viewHolderMultimedia.titulo.setText(listaMultimedia.get(i).getTitulo_Serie());
-            viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas, listaMultimedia.get(i).getVotosPositivos_Serie()));
-            viewHolderMultimedia.numvotosmenos.setText(res.getString(R.string.votomenos, listaMultimedia.get(i).getVotosNegativos_Serie()));
-
-            viewHolderMultimedia.seleccion.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.startActivity(intent);
-                    new Like().cerrarActividad();
-                }
-            });
         }
     }
 

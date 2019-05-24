@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
 
-    <include android:id="@+id/appbar"
+    <include
+        android:id="@+id/appbar"
         layout="@layout/toolbar" />
 
     <LinearLayout
@@ -36,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text="@string/correo"
+                android:textColor="@color/letras"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -51,6 +53,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Email"
                     android:singleLine="true"
+                    android:textColor="@color/letras"
                     android:textSize="24sp"
                     android:textStyle="bold" />
             </android.support.design.widget.TextInputLayout>
@@ -79,6 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="@string/contrasena"
+            android:textColor="@color/letras"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -91,6 +95,7 @@
             android:ems="10"
             android:inputType="textPassword"
             android:singleLine="true"
+            android:textColor="@color/letras"
             android:textSize="24sp"
             android:textStyle="bold" />
 

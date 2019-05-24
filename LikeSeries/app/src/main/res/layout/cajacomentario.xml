@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/common_google_signin_btn_text_dark_default"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:scrollbarSize="1sp">
 
@@ -27,9 +27,10 @@
                 android:layout_gravity="center"
                 android:layout_weight="4"
                 android:allowUndo="true"
-                android:breakStrategy="simple"
+                android:breakStrategy="high_quality"
                 android:ems="10"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine"
+                android:textColor="@color/primary_text" />
 
             <Button
                 android:id="@+id/botonmandarComentario"
@@ -46,8 +47,11 @@
             android:id="@+id/comentarios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5sp"
+            android:layout_marginBottom="10sp"
             android:layout_weight="1"
             android:gravity="center|left"
+            android:textColor="@color/letras"
             android:textSize="18sp" />
 
         <android.support.v7.widget.RecyclerView

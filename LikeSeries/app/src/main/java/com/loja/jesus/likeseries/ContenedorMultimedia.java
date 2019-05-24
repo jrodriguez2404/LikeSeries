@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,7 +28,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -34,9 +40,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ContenedorMultimedia extends AppCompatActivity implements View.OnClickListener {
-private TextView titulo_multi,descripcion_multi,genero0_multi,genero1_multi,genero2_multi,votopositivo,votonegativo,productora_multi,capitulos_multi ,comentarios;
+private TextView titulo_multi,descripcion_multi,genero0_multi,genero1_multi,genero2_multi,votopositivo,votonegativo,productora_multi,capitulos_multi ,comentarios,mostrarmas;
 private ImageView imagenvotopositivo,imagenvotonegativos,imagen_multi,like,nolike;
-private Boolean vnegativo,vpositivo;
+private Boolean vnegativo,vpositivo,mostrarmas_boolean;
 private Integer votantes,votomas,votomenos,usuariovotopositivo,usuariovotonegativo;
 private FirebaseUser user;
 private FirebaseAuth mAuth;
@@ -55,7 +61,10 @@ private ArrayList<String> arrayusuariovoto;
 private ArrayList<String> arrayusuarios;
 private Intent intentlike;
 private String collection;
-    @Override
+private Button insertarcomentario;
+private EditText cajacomentario;
+private LinearLayout mostrar;
+ @Override
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(intentlike);
@@ -128,15 +137,25 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         }
 
         }
+    @SuppressLint("StringFormatMatches")
+    private void actualizarRecyclerComentarios() {
+        AdaptadorComentarios adaptadorComentarios = new AdaptadorComentarios(this,collection,id,coment);
+        RVComentarios.setAdapter(adaptadorComentarios);
+        adaptadorComentarios.refrescar();
+        comentarios.setText(getResources().getString(R.string.comentario,coment.size()));
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
+        mostrarmas_boolean=true;
         declaraciones();
       if(reglas.equals("0"))
       {
           vpositivo=true;
           vnegativo=true;
+          imagenvotopositivo.setEnabled(true);
+          imagenvotonegativos.setEnabled(true);
           imagenvotopositivo.setImageResource(R.drawable.unlike);
           imagenvotonegativos.setImageResource(R.drawable.unnolike);
       }
@@ -144,6 +163,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
       {
           vpositivo=false;
           vnegativo=true;
+          imagenvotopositivo.setEnabled(true);
+          imagenvotonegativos.setEnabled(false);
           imagenvotopositivo.setImageResource(R.drawable.like);
           imagenvotonegativos.setImageResource(R.drawable.unnolike);
       }
@@ -151,6 +172,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
       {
           vpositivo=true;
           vnegativo=false;
+          imagenvotopositivo.setEnabled(false);
+          imagenvotonegativos.setEnabled(true);
           imagenvotopositivo.setImageResource(R.drawable.unlike);
           imagenvotonegativos.setImageResource(R.drawable.nolike);
 
@@ -161,6 +184,13 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
 
     private void declaraciones()
     {
+
+        mostrar=findViewById(R.id.mostrar);
+        mostrarmas = findViewById(R.id.mostrarmasomenos);
+        mostrarmas.setOnClickListener(this);
+        cajacomentario = findViewById(R.id.cajaTexto);
+        insertarcomentario = findViewById(R.id.botonmandarComentario);
+        insertarcomentario.setOnClickListener(this);
         usuariovotopositivo=0;
         usuariovotonegativo=0;
         comentarios=findViewById(R.id.comentarios);
@@ -185,15 +215,45 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
 
         cogerExtras();
     }
+    public void metodoCambio()
+    {
+        db=FirebaseFirestore.getInstance();
+        final DocumentReference docRef = db.collection(collection).document(id);
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @SuppressLint("StringFormatMatches")
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    if(collection.equals("peliculas")) {
+                        Pelicula peli = snapshot.toObject(Pelicula.class);
+                        comentarios.setText(getResources().getString(R.string.comentario,peli.getComentarios().size()));
+
+                    }
+                    else if(collection.equals("series"))
+                    {
+                        Serie ser = snapshot.toObject(Serie.class);
+                        comentarios.setText(getResources().getString(R.string.comentario,ser.getComentarios().size()));
+                    }
+                } else {
+                }
+            }
+        });
+
+    }
     @SuppressLint("StringFormatMatches")
     private void cogerExtras()
     {
 
         reglas="0";
         Intent intent = getIntent();
-        collection = intent.getStringExtra("collection");
+        collection = intent.getStringExtra("pelioserie");
         capitulos =intent.getIntExtra("capitulos",0);
-            mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         id = intent.getStringExtra("ID");
         if(intent.getStringExtra("pelioserie").equals("series"))
@@ -241,10 +301,10 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
 
         for (int i = 0 ; i<arraycomentarios.size();i++)
         {
-            Comentario com = new Comentario(arrayusuarios.get(i),arraycomentarios.get(i),arraynombres.get(i));
+            Comentario com = new Comentario(arraynombres.get(i),arrayusuarios.get(i),arraycomentarios.get(i));
             coment.add(com);
         }
-        comentarios.setText(getResources().getString(R.string.comentario,arraycomentarios.size()));
+
         for (int x = 0 ; x<arrayusuariovoto.size();x++)
         {
             if(arrayusuariovoto.get(x).equals(user.getUid()))
@@ -263,7 +323,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         RVComentarios.addItemDecoration(new SpaceItemDecoration(this, R.dimen.list_space, true, true));
         RVComentarios.setHasFixedSize(true);
         RVComentarios.setLayoutManager(llmRVCO);
-        AdaptadorComentarios adaptadorComentarios = new AdaptadorComentarios(this,coment);
+        AdaptadorComentarios adaptadorComentarios = new AdaptadorComentarios(this,collection,id,coment);
         RVComentarios.setAdapter(adaptadorComentarios);
         adaptadorComentarios.refrescar();
 
@@ -293,7 +353,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         imagenvotopositivo.setOnClickListener(this);
         imagenvotonegativos.setOnClickListener(this);
 
-
+        metodoCambio();
     }
     private void actualizarVotos()
     {
@@ -304,8 +364,14 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
     }
     private void insertarComentarios()
     {
-
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        Comentario comentario = new Comentario(user.getDisplayName(),user.getUid(),cajacomentario.getText().toString());
+        coment.add(comentario);
+        actualizarDatosBD();
+        actualizarRecyclerComentarios();
     }
+
 
     @Override
     public void onClick(View v) {
@@ -317,17 +383,18 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     vpositivo = false;
                     reglas="1";
                     votomas++;
-                    imagenvotonegativos.setImageResource(R.drawable.unnolike);
+                    imagenvotonegativos.setEnabled(false);
                     vnegativo = true;
-                    if (votomenos > 0) {votomenos--;
-                    }
+                    /**
 
+*/
 
                     actualizarVotos();
             }
                 else if (!vpositivo)
             {
                 imagenvotopositivo.setImageResource(R.drawable.unlike);
+                imagenvotonegativos.setEnabled(true);
                 reglas="0";
                 vpositivo=true;
                 votomas--;
@@ -342,12 +409,9 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     imagenvotonegativos.setImageResource(R.drawable.nolike);
                     votomenos++;
                     reglas="2";
-                    imagenvotopositivo.setImageResource(R.drawable.unlike);
+                    imagenvotopositivo.setEnabled(false);
                     vpositivo=true;
                     vnegativo = false;
-                    if(votomas>0) {
-                        votomas--;
-                    }
                     actualizarVotos();
                 }
                 else if (!vnegativo)
@@ -356,17 +420,43 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                 vnegativo = true;
                 reglas="0";
                 votomenos--;
-
+                imagenvotopositivo.setEnabled(true);
                 actualizarVotos();
             }
                 break;
             case R.id.imagenvoto:
-                new DialogoNumberPickerValoracion(contexto,ContenedorMultimedia.class,imagenvoto);
+
+                new DialogoNumberPickerValoracion(contexto,ContenedorMultimedia.class,imagenvoto,collection,id);
+                break;
+            case R.id.botonmandarComentario:
+                if(!cajacomentario.getText().equals(""))
+                {
+                    insertarComentarios();
+                    cajacomentario.setText("");
+                }
+                else
+                {
+
+                }
+                break;
+            case R.id.mostrarmasomenos:
+
+                if(mostrarmas_boolean==true)
+                {
+                  mostrar.setVisibility(View.VISIBLE);
+                  mostrarmas.setText(R.string.mostrarmenos);
+                    mostrarmas_boolean=false;
+                }
+                else if(mostrarmas_boolean == false)
+                {
+                    mostrar.setVisibility(View.GONE);
+                    mostrarmas.setText(R.string.mostrarmas);
+                    mostrarmas_boolean=true;
+                }
                 break;
         }
 
     }
-
     /**
      * Metodo que llama a una función de firebase para subir los nuevos datos actualizados
      */
@@ -377,53 +467,14 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        db.collection("usuarios")
-                .whereEqualTo("uid", user.getUid())
+        db.collection(pelioserie)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Usuario usuario = document.toObject(Usuario.class);
 
-                                db = FirebaseFirestore.getInstance();
-                                if(reglas.equals("0")) {
-                                    if (usuario.getVotosNegativos()>0) {
-                                        Usuario user = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getRecibir(), usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
-                                        db.collection("usuarios").document(user.getUID()).set(user);
-                                    }
-                                    else if(usuario.getVotosPositivos()>0)
-                                    {
-                                        Usuario user = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getRecibir(), usuario.getVotosPositivos() - 1, usuario.getVotosNegativos());
-                                        db.collection("usuarios").document(user.getUID()).set(user);
-                                    }
-                                }
-                                else if(reglas.equals("1"))
-                                {
-
-                                    if(usuario.getVotosNegativos()>0) {
-                                        Usuario user = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getRecibir(), 1 + usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
-                                        db.collection("usuarios").document(user.getUID()).set(user);
-                                    }
-                                    else
-                                    {
-                                        Usuario user = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getRecibir(), 1 + usuario.getVotosPositivos(), usuario.getVotosNegativos());
-                                        db.collection("usuarios").document(user.getUID()).set(user);
-                                    }
-                                }
-                                else if(reglas.equals("2"))
-                                {
-
-                                    if(usuario.getVotosPositivos()>0) {
-                                        Usuario user = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getRecibir(), usuario.getVotosPositivos() - 1, 1 + usuario.getVotosNegativos());
-                                        db.collection("usuarios").document(user.getUID()).set(user);
-                                    }
-                                    else {
-                                        Usuario user = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getRecibir(), usuario.getVotosPositivos(), 1 + usuario.getVotosNegativos());
-                                        db.collection("usuarios").document(user.getUID()).set(user);
-                                    }
-                                }
                             }
                         }
                     }
@@ -443,10 +494,19 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                 votos.add(vo);
                 db = FirebaseFirestore.getInstance();
 
-                Pelicula pelicula = new Pelicula(collection,id, titulo, descripcion, productora, genero, imagen, votomas, votomenos, votantes, 0, votos, coment);
-                db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
-                refrescarRecyclers(pelicula, null);
+                DocumentReference docRef = db.collection("peliculas").document(id);
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Pelicula peli = documentSnapshot.toObject(Pelicula.class);
+
+                        Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(),id, titulo, descripcion, productora, genero, imagen, votomas, votomenos, votantes, 0, votos, coment);
+                        db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
+                        refrescarRecyclers(pelicula, null);
+                    }
+                });
             }
+
         }
         else if(pelioserie.equals("series"))
         {
@@ -463,9 +523,20 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                 Votos vo = new Votos(user.getUid(), reglas);
                 votos.add(vo);
                 db = FirebaseFirestore.getInstance();
-                Serie serie = new Serie(collection,id, titulo, descripcion, productora, genero, imagen, votomas, votomenos, votantes,capitulos,0, votos, coment);
-                db.collection("series").document(serie.getID_Serie()).set(serie);
-                refrescarRecyclers(null, serie);
+
+
+                DocumentReference docRef = db.collection("series").document(id);
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Serie ser = documentSnapshot.toObject(Serie.class);
+
+                        Serie serie = new Serie(ser.getCollection_Serie(),id, titulo, descripcion, productora, genero, imagen, votomas, votomenos, votantes,capitulos,0, votos, coment);
+                        db.collection("series").document(serie.getID_Serie()).set(serie);
+                        refrescarRecyclers(null, serie);
+                    }
+                });
+
             }
         }
     }

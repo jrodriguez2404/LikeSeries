@@ -121,25 +121,24 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
         intent.putExtra("arrayvotantes",arrayvotantes);
         intent.putExtra("arrayreglas",arrayreglas);
         intent.putExtra("pelioserie","peliculas");
-        intent.putExtra("collection", listaPeliculas.get(i).getCollection_Pelicula());
         intent.putExtra("urlimagen",listaPeliculas.get(i).getImagen_Pelicula());
         intent.putExtra("numero",i);
 
 
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference gsReference = storage.getReferenceFromUrl(listaPeliculas.get(i).getImagen_Pelicula() + "");
-            final long ONE_MEGABYTE = 1024 * 1024;
-            gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    viewHolderPeliculas.imagen.setImageBitmap(bmp);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                }
-            });
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference gsReference = storage.getReferenceFromUrl(listaPeliculas.get(i).getImagen_Pelicula() + "");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                viewHolderPeliculas.imagen.setImageBitmap(bmp);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+            }
+        });
             viewHolderPeliculas.titulo.setText(listaPeliculas.get(i).getTitulo_Pelicula());
             viewHolderPeliculas.numvotosmas.setText(res.getString(R.string.votomas, listaPeliculas.get(i).getVotosPositivos_Pelicula()));
             viewHolderPeliculas.numvotosmenos.setText(res.getString(R.string.votomenos, listaPeliculas.get(i).getVotosNegativos_Pelicula()));

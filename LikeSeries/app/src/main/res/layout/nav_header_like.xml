@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@color/azul"
+    android:background="@color/primary_light"
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/bienvenida"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
+            android:textColor="@color/letras" />
 
     </LinearLayout>
 

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -15,10 +17,10 @@ import java.util.TimerTask;
 public class SplashScreen extends Activity {
     // Tiempo de duracion de la pantalla de carga en segundos
     private static final long SPLASH_SCREEN_DELAY = 1000;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 // Orientacion de la actividad
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 // Oculto la barra de titulo

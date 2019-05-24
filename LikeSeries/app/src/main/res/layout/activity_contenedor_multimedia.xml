@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context=".ContenedorMultimedia">
 
-    <include android:id="@+id/appbar"
-        layout="@layout/toolbar"/>
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/toolbar" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -31,7 +33,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="5sp"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@color/letras" />
             </LinearLayout>
 
             <LinearLayout
@@ -58,7 +61,8 @@
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:gravity="center|left"
-                        android:text="@string/nohavotado" />
+                        android:text="@string/nohavotado"
+                        android:textColor="@color/letras" />
 
                     <ImageView
                         android:id="@+id/imagenvoto"
@@ -89,7 +93,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textColor="@color/letras" />
 
                     <ImageView
                         android:id="@+id/nolike"
@@ -103,14 +108,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textColor="@color/letras" />
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/mostrar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/descripcion_Multimedia"
@@ -119,6 +127,7 @@
                         android:layout_marginTop="10sp"
                         android:layout_marginEnd="5sp"
                         android:text="TextView"
+                        android:textColor="@color/letras"
                         android:textSize="14sp" />
 
                     <TextView
@@ -127,7 +136,17 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10sp"
                         android:layout_marginEnd="5sp"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textColor="@color/letras" />
+
+                    <TextView
+                        android:id="@+id/fechaextreno_Multimedia"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10sp"
+                        android:layout_marginEnd="5sp"
+                        android:text="TextView"
+                        android:textColor="@color/letras" />
 
                     <TextView
                         android:id="@+id/capitulos_Multimedia"
@@ -135,6 +154,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10sp"
                         android:layout_marginEnd="10sp"
+                        android:textColor="@color/letras"
                         tools:visibility="gone" />
 
                     <LinearLayout
@@ -150,7 +170,8 @@
                             android:layout_marginTop="10sp"
                             android:layout_marginBottom="5sp"
                             android:layout_weight="1"
-                            android:text="Genero" />
+                            android:text="Genero"
+                            android:textColor="@color/letras" />
 
                         <LinearLayout
                             android:layout_width="fill_parent"
@@ -161,17 +182,20 @@
                             <TextView
                                 android:id="@+id/genero1_multimedia"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/letras" />
 
                             <TextView
                                 android:id="@+id/genero2_multimedia"
                                 android:layout_width="match_parent"
-                                android:layout_height="30dp" />
+                                android:layout_height="30dp"
+                                android:textColor="@color/letras" />
 
                             <TextView
                                 android:id="@+id/genero3_multimedia"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/letras" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -184,20 +208,27 @@
                         android:layout_weight="1"
                         android:background="@color/common_google_signin_btn_text_dark_focused" />
 
-                    <TextView
-                        android:id="@+id/comenta"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5sp"
-                        android:text="@string/comenta" />
-
-                    <include
-                        android:id="@+id/cajacomentario"
-                        layout="@layout/cajacomentario" />
-
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/mostrarmasomenos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20sp"
+                    android:gravity="center"
+                    android:text="@string/mostrarmas" />
+
             </LinearLayout>
+
+            <include
+                android:id="@+id/cajacomentario"
+                layout="@layout/cajacomentario"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20sp"
+                android:background="@color/colorPrimary" />
+
         </LinearLayout>
     </ScrollView>
 

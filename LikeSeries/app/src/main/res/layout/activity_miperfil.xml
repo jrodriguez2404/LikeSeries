@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".miperfil" >
+    tools:context=".miperfil">
 
-    <include android:id="@+id/appbar"
+    <include
+        android:id="@+id/appbar"
         layout="@layout/toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
-        android:layout_marginTop="8dp"
         android:layout_weight="2"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
@@ -24,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
-            android:text="@string/datos_perfil" />
+            android:text="@string/datos_perfil"
+            android:textColor="@color/letras" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,9 +35,10 @@
 
             <TextView
                 android:id="@+id/nombre_perfil"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textColor="@color/letras" />
 
         </LinearLayout>
 
@@ -51,7 +53,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:autoText="false" />
+                android:autoText="false"
+                android:textColor="@color/letras" />
 
         </LinearLayout>
     </LinearLayout>

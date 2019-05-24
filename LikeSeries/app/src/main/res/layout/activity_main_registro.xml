@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:keepScreenOn="false"
     android:orientation="vertical">
 
-    <include android:id="@+id/appbar"
+    <include
+        android:id="@+id/appbar"
         layout="@layout/toolbar" />
 
     <LinearLayout
@@ -30,6 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text="@string/nombre"
+                android:textColor="@color/letras"
                 android:textSize="24sp" />
 
             <EditText
@@ -38,7 +41,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/letras" />
         </LinearLayout>
 
         <LinearLayout
@@ -54,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text="@string/correor"
+                android:textColor="@color/letras"
                 android:textSize="24sp" />
 
             <EditText
@@ -62,7 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName|textEmailAddress" />
+                android:inputType="textPersonName|textEmailAddress"
+                android:textColor="@color/letras" />
 
         </LinearLayout>
 
@@ -79,6 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text="@string/contrasena"
+                android:textColor="@color/letras"
                 android:textSize="24sp" />
 
             <EditText
@@ -89,7 +96,8 @@
                 android:layout_margin="5dp"
                 android:ems="10"
                 android:inputType="textPassword"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textColor="@color/letras" />
         </LinearLayout>
 
         <LinearLayout

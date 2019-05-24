@@ -12,6 +12,7 @@ public class Multimedia {
     private long notamedia_Pelicula,notamedia_Serie;
     private ArrayList<Votos> votosusuarios;
     private ArrayList<Comentario> comentarios;
+    private ArrayList<Votacion_media> votacion_media;
 
     public Multimedia() {
     }

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,7 +42,8 @@ import java.util.HashMap;
 
 public class Like extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-private TextView bienvenida,hola;
+private TextView bienvenida,hola, mispositivos,misnegativos;
+private ImageView imagenlogo;
 private String usuario;
 private RecyclerView RVP,RVS,RVVP,RVVN;
 private FirebaseAuth mAuth;
@@ -49,12 +51,18 @@ private FirebaseUser user;
 private FirebaseFirestore db;
 private LinearLayout Peliculas,Series,principal_like;
 private Spinner spiner;
+private ArrayList<Multimedia> multipositiva,multinegativa;
 Context contexto;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like);
         cargarNombreUsuario();
+        imagenlogo = findViewById(R.id.imagenlogo_like);
+        int ancho = 250;
+        int alto = 250;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+        imagenlogo.setLayoutParams(params);
         principal_like = findViewById(R.id.principal_like);
         principal_like.setVisibility(View.VISIBLE);
         //Cargo los recyclerview
@@ -68,8 +76,7 @@ Context contexto;
         //Pantalla de series
         Series=findViewById(R.id.Series);
         contexto = this;
-        cargarVotosPositivosenListaHorizontal();
-        cargarVotosNegativosenListaHorizontal();
+
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -121,8 +128,12 @@ Context contexto;
     @Override
     protected void onStart() {
         super.onStart();
+        mispositivos = findViewById(R.id.mispositivos);
+        misnegativos = findViewById(R.id.misnegativos);
         cargarRecycleview();
         cargarRecycerViewVotos();
+        cargarVotosPositivosenListaHorizontal();
+        cargarVotosNegativosenListaHorizontal();
     }
 
     public void cerrarActividad()
@@ -229,7 +240,12 @@ comentarios.add(c);
 
     public void cargarRecycerViewVotos()
     {
-        final ArrayList<Multimedia> multipositiva = new ArrayList<>(),multinegativa = new ArrayList<>();
+        multipositiva = new ArrayList<>();
+        multinegativa = new ArrayList<>();
+        db= FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+//Aqui falta algo
         db.collection("peliculas")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -237,27 +253,28 @@ comentarios.add(c);
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Multimedia multimedia = document.toObject(Multimedia.class);
-                                try {
-                                    if (multimedia.getVotosusuarios().get(0).getReglas().equals("1") && multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
-                                        multipositiva.add(multimedia);
-                                    } else if (multimedia.getVotosusuarios().get(0).getReglas().equals("2") && multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
-                                        multinegativa.add(multimedia);
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                }
-                        }
-                            AdaptadorMutimediaLike adaptadorlike = new AdaptadorMutimediaLike(contexto, multipositiva);
-                            RVVP.setAdapter(adaptadorlike);
-                            RVVP.setHasFixedSize(true);
-                            adaptadorlike.refrescar();
 
-                            AdaptadorMutimediaDisLike adaptadornolike = new AdaptadorMutimediaDisLike(contexto, multinegativa);
-                            RVVN.setAdapter(adaptadornolike);
-                            RVVN.setHasFixedSize(true);
-                            adaptadornolike.refrescar();
+                                for (int i = 0; i <= task.getResult().size(); i++) {
+                                    Multimedia multimedia = document.toObject(Multimedia.class);
+                                    try {
+                                        if (multimedia.getVotosusuarios().get(i).getReglas().equals("1") && multimedia.getVotosusuarios().get(i).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
+                                            multipositiva.add(multimedia);
+                                        } else if (multimedia.getVotosusuarios().get(i).getReglas().equals("2") && multimedia.getVotosusuarios().get(i).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
+                                            multinegativa.add(multimedia);
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                    AdaptadorMutimediaLike adaptadorlike = new AdaptadorMutimediaLike(contexto, multipositiva);
+                                    RVVP.setAdapter(adaptadorlike);
+                                    RVVP.setHasFixedSize(true);
+                                    adaptadorlike.refrescar();
+
+                                    AdaptadorMutimediaDisLike adaptadornolike = new AdaptadorMutimediaDisLike(contexto, multinegativa);
+                                    RVVN.setAdapter(adaptadornolike);
+                                    RVVN.setHasFixedSize(true);
+                                    adaptadornolike.refrescar();
+                                }
+                            }
                         }
                     }
                 });
@@ -268,27 +285,27 @@ comentarios.add(c);
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Multimedia multimedia = document.toObject(Multimedia.class);
+                                for (int i = 0; i <= task.getResult().size(); i++) {
+                                    Multimedia multimedia = document.toObject(Multimedia.class);
 
-                                     if (multimedia.getVotosusuarios().get(0).getReglas().equals("1")&&multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()) )
-                                     {
-                                     multipositiva.add(multimedia);
-                                     }
-                                     else if (multimedia.getVotosusuarios().get(0).getReglas().equals("2")&&multimedia.getVotosusuarios().get(0).getUsuariovoto().equals(user.getUid()))
-                                     {
-                                     multinegativa.add(multimedia);
-                                     }
 
+                                    if (multimedia.getVotosusuarios().get(i).getReglas().equals("1") && multimedia.getVotosusuarios().get(i).getUsuariovoto().equals(user.getUid())) {
+                                        multipositiva.add(multimedia);
+                                    } else if (multimedia.getVotosusuarios().get(i).getReglas().equals("2") && multimedia.getVotosusuarios().get(i).getUsuariovoto().equals(user.getUid())) {
+                                        multinegativa.add(multimedia);
+                                    }
+
+                                }
+                                AdaptadorMutimediaLike adaptadorlike = new AdaptadorMutimediaLike(contexto, multipositiva);
+                                RVVP.setAdapter(adaptadorlike);
+                                RVVP.setHasFixedSize(true);
+                                adaptadorlike.refrescar();
+
+                                AdaptadorMutimediaDisLike adaptadornolike = new AdaptadorMutimediaDisLike(contexto, multinegativa);
+                                RVVN.setAdapter(adaptadornolike);
+                                RVVN.setHasFixedSize(true);
+                                adaptadornolike.refrescar();
                             }
-                            AdaptadorMutimediaLike adaptadorlike = new AdaptadorMutimediaLike(contexto, multipositiva);
-                            RVVP.setAdapter(adaptadorlike);
-                            RVVP.setHasFixedSize(true);
-                            adaptadorlike.refrescar();
-
-                            AdaptadorMutimediaDisLike adaptadornolike = new AdaptadorMutimediaDisLike(contexto, multinegativa);
-                            RVVN.setAdapter(adaptadornolike);
-                            RVVN.setHasFixedSize(true);
-                            adaptadornolike.refrescar();
                         }
                     }
                 });
@@ -525,10 +542,33 @@ comentarios.add(c);
             }
         });
     }
+
+    @SuppressLint("StringFormatMatches")
     private void cargarVotosPositivosenListaHorizontal() {
-        //RVVP.
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Usuario user = documentSnapshot.toObject(Usuario.class);
+                    mispositivos.setText(getString(R.string.mispositivos,));
+            }
+        });
+
+
     }
+        @SuppressLint("StringFormatMatches")
         private void cargarVotosNegativosenListaHorizontal() {
-            //RVVN
+            mAuth = FirebaseAuth.getInstance();
+            db = FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Usuario user = documentSnapshot.toObject(Usuario.class);
+                    misnegativos.setText(getString(R.string.misnegativos,));
+                }
+            });
         }
 }

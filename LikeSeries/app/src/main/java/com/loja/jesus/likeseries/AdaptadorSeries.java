@@ -99,7 +99,6 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
         Resources res = viewHolderseries.itemView.getContext().getResources();
         final Intent intent = new Intent(context, ContenedorMultimedia.class);
         intent.putExtra("ID", listaSeries.get(i).getID_Serie());
-        intent.putExtra("collection", listaSeries.get(i).getCollection_Serie());
         intent.putExtra("capitulos", listaSeries.get(i).getNCapitulos());
         intent.putExtra("titulo", listaSeries.get(i).getTitulo_Serie());
         intent.putExtra("descripcion", listaSeries.get(i).getDescripcion_Serie());
