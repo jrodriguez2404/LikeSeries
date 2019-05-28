@@ -11,8 +11,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ContenedorMultimedia"
-            android:theme="@style/EstiloContenedor"></activity>
+        <activity
+            android:name=".FullScreenYoutube"
+            android:label="@string/title_activity_full_screen_youtube"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ContenedorMultimedia"
+            android:theme="@style/EstiloContenedor" />
         <activity
             android:name=".miperfil"
             android:theme="@style/EstiloPerfil" />
@@ -25,12 +30,11 @@
             android:theme="@style/EstiloLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SplashScreen"
-             />
+        <activity android:name=".SplashScreen" />
     </application>
 
 </manifest>

@@ -13,11 +13,13 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String UID, String nombre, String email, Boolean recibir) {
+    public Usuario(String UID, String nombre, String email, Boolean recibir,int votosPositivos,int votosNegativos) {
         this.UID = UID;
         Nombre = nombre;
         Email = email;
         Recibir = recibir;
+        this.votosPositivos=votosPositivos;
+        this.votosNegativos=votosNegativos;
     }
 
     public String getUID() {
@@ -52,4 +54,19 @@ public class Usuario {
         Recibir = recibir;
     }
 
+    public int getVotosPositivos() {
+        return votosPositivos;
+    }
+
+    public void setVotosPositivos(int votosPositivos) {
+        this.votosPositivos = votosPositivos;
+    }
+
+    public int getVotosNegativos() {
+        return votosNegativos;
+    }
+
+    public void setVotosNegativos(int votosNegativos) {
+        this.votosNegativos = votosNegativos;
+    }
 }

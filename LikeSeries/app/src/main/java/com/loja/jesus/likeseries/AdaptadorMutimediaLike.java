@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -112,6 +113,10 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
                 intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Pelicula());
                 intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Pelicula());
                 intent.putExtra("numero", i);
+                intent.putExtra("director",listaMultimedia.get(i).getDirector_Pelicula());
+                intent.putExtra("fechaestreno",listaMultimedia.get(i).getFechaEstreno_Pelicula());
+                intent.putExtra("trailer",listaMultimedia.get(i).getTrailer_Pelicula());
+                intent.putExtra("duracion",listaMultimedia.get(i).getDuración_Pelicula());
 
                 try {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -139,7 +144,12 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
                     @Override
                     public void onClick(View v) {
                         context.startActivity(intent);
-                        new Like().cerrarActividad();
+                        try {
+                            new Like().cerrarActividad();
+                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                            Toast.makeText(context.getApplicationContext(),
+                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }
@@ -183,7 +193,10 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
                 intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Serie());
                 intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Serie());
                 intent.putExtra("numero", i);
-
+                intent.putExtra("director",listaMultimedia.get(i).getDirector_Serie());
+                intent.putExtra("fechaestreno",listaMultimedia.get(i).getPrimeraEmision_Serie());
+                intent.putExtra("trailer",listaMultimedia.get(i).getTrailer_Serie());
+                intent.putExtra("duracion",listaMultimedia.get(i).getDuración_Serie());
 
                 try {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -211,7 +224,12 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
                     @Override
                     public void onClick(View v) {
                         context.startActivity(intent);
-                        new Like().cerrarActividad();
+                        try {
+                            new Like().cerrarActividad();
+                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                            Toast.makeText(context.getApplicationContext(),
+                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }

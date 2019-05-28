@@ -80,7 +80,12 @@ public class MainRegistro extends AppCompatActivity {
                     if (!tcontrasenaregistro.getText().toString().equals("")) {
                         if (acuerdolegal.isChecked() == true) {
                             //Registramos un usuario con firebase
-                            registrarUsuarioFirebase(temailregistro.getText().toString(), tcontrasenaregistro.getText().toString(), tnombre.getText().toString(), recibir.isChecked());
+                            try {
+                                registrarUsuarioFirebase(temailregistro.getText().toString(), tcontrasenaregistro.getText().toString(), tnombre.getText().toString(), recibir.isChecked());
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
 
 
                         }
@@ -118,7 +123,7 @@ public class MainRegistro extends AppCompatActivity {
      * @param nombre
      * @param recibir
      */
-    public void registrarUsuarioFirebase(String email , String password, final String nombre, final Boolean recibir) {
+    public void registrarUsuarioFirebase(String email , String password, final String nombre, final Boolean recibir) throws LikeSeriesExceptionClass{
         mAuth = FirebaseAuth.getInstance();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -129,7 +134,12 @@ public class MainRegistro extends AppCompatActivity {
                             user = mAuth.getCurrentUser();
                             Intent intent = new Intent(getApplication(), SplashScreen.class);
                             intent.putExtra("cambioclase", false);
-                            enviarAuthEmail1(user.getUid(), nombre, recibir);
+                            try {
+                                enviarAuthEmail1(user.getUid(), nombre, recibir);
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -182,7 +192,7 @@ public class MainRegistro extends AppCompatActivity {
      * Envia un correo de verificación , a parte inserta los datos en la BD , no obstante hasta que no nos registremos no podemos entrar
      * @param uid
      */
-    private void enviarAuthEmail1(final String uid, final String nombre, final Boolean recibir) {
+    private void enviarAuthEmail1(final String uid, final String nombre, final Boolean recibir) throws LikeSeriesExceptionClass {
         user = mAuth.getInstance().getCurrentUser();
         user.sendEmailVerification()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -194,7 +204,12 @@ public class MainRegistro extends AppCompatActivity {
 
                             Usuario usuario = new Usuario(uid,nombre, user.getEmail(),recibir,0,0);
 
-                            insertarBasedeDatosFireBaseUsuario(usuario);
+                            try {
+                                insertarBasedeDatosFireBaseUsuario(usuario);
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
 
 
                             //Cierro la actividad
@@ -208,7 +223,7 @@ public class MainRegistro extends AppCompatActivity {
      * Este metodo se encargara de guardar nuestros datos registrados en la nube
      * @param usuario
      */
-    private void insertarBasedeDatosFireBaseUsuario(Usuario usuario) {
+    private void insertarBasedeDatosFireBaseUsuario(Usuario usuario) throws LikeSeriesExceptionClass{
         // Creamos un usuario y lo guardamos en la base de datos
         db = FirebaseFirestore.getInstance();
         db.collection("usuarios").document(usuario.getUID())

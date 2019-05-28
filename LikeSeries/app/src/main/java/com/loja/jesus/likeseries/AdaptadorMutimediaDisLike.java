@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +24,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMutimediaDisLike.ViewHolderMultimedia> {
 
@@ -74,7 +74,6 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
     @SuppressLint("StringFormatMatches")
     @Override
     public void onBindViewHolder(@NonNull final AdaptadorMutimediaDisLike.ViewHolderMultimedia viewHolderMultimedia, final int i) {
-
         try {
             if (listaMultimedia.get(i).getCollection_Pelicula().equals("peliculas")) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -113,7 +112,10 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Pelicula());
                 intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Pelicula());
                 intent.putExtra("numero", i);
-
+                intent.putExtra("director",listaMultimedia.get(i).getDirector_Pelicula());
+                intent.putExtra("fechaestreno",listaMultimedia.get(i).getFechaEstreno_Pelicula());
+                intent.putExtra("trailer",listaMultimedia.get(i).getTrailer_Pelicula());
+                intent.putExtra("duracion",listaMultimedia.get(i).getDuración_Pelicula());
                 try {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference gsReference = storage.getReferenceFromUrl(listaMultimedia.get(i).getImagen_Pelicula() + "");
@@ -140,7 +142,12 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                     @Override
                     public void onClick(View v) {
                         context.startActivity(intent);
-                        new Like().cerrarActividad();
+                        try {
+                            new Like().cerrarActividad();
+                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                            Toast.makeText(context.getApplicationContext(),
+                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }
@@ -184,7 +191,10 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 intent.putExtra("pelioserie", listaMultimedia.get(i).getCollection_Serie());
                 intent.putExtra("urlimagen", listaMultimedia.get(i).getImagen_Serie());
                 intent.putExtra("numero", i);
-
+                intent.putExtra("director",listaMultimedia.get(i).getDirector_Serie());
+                intent.putExtra("fechaestreno",listaMultimedia.get(i).getPrimeraEmision_Serie());
+                intent.putExtra("trailer",listaMultimedia.get(i).getTrailer_Serie());
+                intent.putExtra("duracion",listaMultimedia.get(i).getDuración_Serie());
 
                 try {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -212,7 +222,12 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                     @Override
                     public void onClick(View v) {
                         context.startActivity(intent);
-                        new Like().cerrarActividad();
+                        try {
+                            new Like().cerrarActividad();
+                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                            Toast.makeText(context.getApplicationContext(),
+                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }

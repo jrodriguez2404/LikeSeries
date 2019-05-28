@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -117,8 +118,10 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
 
         intent.putExtra("urlimagen",listaSeries.get(i).getImagen_Serie());
         intent.putExtra("numero",i);
-
-
+        intent.putExtra("director",listaSeries.get(i).getDirector_Serie());
+        intent.putExtra("fechaestreno",listaSeries.get(i).getPrimeraEmision_Serie());
+        intent.putExtra("trailer",listaSeries.get(i).getTrailer_Serie());
+        intent.putExtra("duracion",listaSeries.get(i).getDuración_Serie());
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference gsReference = storage.getReferenceFromUrl(listaSeries.get(i).getImagen_Serie() + "");
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -141,7 +144,12 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
             @Override
             public void onClick(View v) {
                 context.startActivity(intent);
-                new Like().cerrarActividad();
+                try {
+                    new Like().cerrarActividad();
+                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                    Toast.makeText(context.getApplicationContext(),
+                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

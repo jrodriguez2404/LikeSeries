@@ -4,11 +4,12 @@
     <!--Menú recordatorio-->
     <string name="action_settings">¿Olvido la contraseña?</string>
     <!--LOGIN-->
-    <string name="LOGIN">LOGIN</string>
+    <string name="LOGIN">LOGIN-LikeSeries</string>
     <string name="correo">Correo:</string>
     <string name="contrasena">Contraseña:</string>
     <string name="isesion">Iniciar Sesión</string>
     <string name="noregistrado">¿No estas registrado?</string>
+    <string name="noverificado">¿No ha podido verificar su correo?</string>
     <!--Cambio contraseña-->
     <string name="cambiarcontraseña">Va a enviar un email para cambiar la contraseña</string>
     <string name="olvidocontraseña">Olvidé mi contraseña</string>
@@ -17,7 +18,7 @@
     <string name="emailmalformado">El email no esta bien formado</string>
     <string name="errorgeneralemail">No se ha podido mandar el email</string>
     <!--REGISTRO-->
-    <string name="REGISTRO">REGISTRO</string>
+    <string name="REGISTRO">REGISTRO-LikeSeries</string>
     <string name="correor">Su correo electrónico:</string>
     <string name="nombre">Nombre de usuario:</string>
     <string name="nombreerror">Nombre de usuario mal formado</string>
@@ -34,7 +35,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="emailinvalido">Email invalido</string>
     <string name="contraseñadebil">Contraseña debil</string>
-<string name="usuarioregistrado">Usuario ya registrado</string>
+    <string name="usuarioregistrado">Usuario ya registrado</string>
     <string name="usuarioinvalido">Usuario invalido</string>
     <string name="errousuario">Error al registrar usuario</string>
     <string name="acuerdolegal">Acuerdo Legal necesario</string>
@@ -44,7 +45,7 @@
     <string name="ComboBox2">Acepto los términos y condiciones de uso</string>
     <string name="ComboBox1">Deseo recibir mensajes de las ultimas actualizaciones</string>
     <!--Perfil -->
-    <string name="miperfil">Mi Perfil</string>
+    <string name="miperfil">Mi Perfil-LikeSeries</string>
     <string name="nombre_perfil">Nombre de usuario: %1$s</string>
     <string name="bienvenida">Bienvenido %1$s</string>
     <string name="email_perfil">Correo: %1$s</string>
@@ -66,9 +67,11 @@
     <string name="votomas">Votos positivos : %1$s</string>
     <string name="votomenos">Votos negativos : %1$s</string>
     <!--Contenedor-->
+    <string name="votacionmedia">La nota media es %1$s</string>
+    <string name="votantes"> de %1$s votantes</string>
     <string name="nohavotado">Votar -> </string>
     <string name="botonnumberpickervoto"></string>
-    <string name="estaseguro">Esta votación no se puede deshacer</string>
+    <string name="estaseguro">Usted podra editar su votación</string>
     <string name="eliminarcomentario">Eliminar Comentario</string>
     <string name="seguro">¿Está seguro?</string>
     <string name="delete">Eliminar</string>
@@ -77,10 +80,26 @@
     <string name="productora">Producida por %1$s</string>
     <string name="capitulos">Número de capitulos %1$s</string>
     <string name="mostrarmas">Mostrar más</string>
+    <string name="direccion">Director %1$s</string>
     <string name="mostrarmenos">Mostrar menos</string>
+    <string name="fechae">Fecha de estreno %1$s</string>
+    <string name="duracionhoras">Duración en horas %1$s</string>
+    <string name="duracionminutos">Duración en minutos %1$s</string>
+    <string name="trailer">Pulsa para ver el trailer</string>
     <!--Voto-->
     <string name="mispositivos">Me han gustado (%1$s)</string>
     <string name="misnegativos">No me han gustado (%1$s)</string>
 
     <string name="votar">Votar</string>
+
+    <string name="title_activity_fullscreen_youtube">FullscreenActivityYoutube</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_full_screen_youtube">FullScreenYoutube</string>
+    <!--Trailer-->
+    <string name="toolbarTrailer">Trailer-LikeSeries</string>
+    <!--ChatRapido-->
+    <string name="eliminarmensaje">Eliminar mensaje</string>
+    <string name="cerrarchat">Cerrar chat</string>
+    <string name="Respeta">Respeta a los demas en el chat general</string>
 </resources>

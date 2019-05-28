@@ -12,4 +12,6 @@
     <!--Errores-->
     <color name="invisible">#02000000</color>
     <color name="azul">#A7B7FF</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

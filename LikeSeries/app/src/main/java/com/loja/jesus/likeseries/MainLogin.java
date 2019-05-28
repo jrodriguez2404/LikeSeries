@@ -27,8 +27,9 @@ public class MainLogin extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     //Declaración de elementos del login
-    private Button isesion,iregistro,iolvidar;
+    private Button isesion,iregistro,iolvidar,inoverificado;
     //Login
+    private View view;
     private EditText temail, tcontra;
 
     @Override
@@ -39,8 +40,11 @@ public class MainLogin extends AppCompatActivity {
 // *************************************************
 // Pongo el titulo en la toolbar
         appToolbar.setTitle(getResources().getString(R.string.LOGIN));
+        view=this.getCurrentFocus();
         isesion = findViewById(R.id.login);
         iolvidar = findViewById(R.id.olvidarcontraseña);
+        inoverificado = findViewById(R.id.sielusuarionoestaverificado);
+        inoverificado.setVisibility(View.GONE);
         temail = findViewById(R.id.temail);
         tcontra = findViewById(R.id.tcontrasena);
         iregistro=findViewById(R.id.registro);
@@ -56,7 +60,12 @@ public class MainLogin extends AppCompatActivity {
             public void onClick(View v) {
                         if (!temail.getText().toString().equals("")) {
                             if (!tcontra.getText().toString().equals("")) {
-                                logearUsuarioFirebase(temail.getText().toString(), tcontra.getText().toString());
+                                try {
+                                    logearUsuarioFirebase(temail.getText().toString(), tcontra.getText().toString());
+                                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                                }
                             } else {
                                 Toast.makeText(getApplicationContext(),
                                         "Contraseña vacia", Toast.LENGTH_LONG).show();
@@ -130,7 +139,12 @@ public class MainLogin extends AppCompatActivity {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             if (user.isEmailVerified()) {
-                updateUI();
+                try {
+                    updateUI();
+                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                    Toast.makeText(getApplicationContext(),
+                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                }
             }
 
     }
@@ -143,8 +157,9 @@ public class MainLogin extends AppCompatActivity {
      * @param email
      * @param password
      */
-    public void logearUsuarioFirebase(final String email, final String password) {
+    private void logearUsuarioFirebase(final String email, final String password) throws LikeSeriesExceptionClass {
         mAuth = FirebaseAuth.getInstance();
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -154,22 +169,41 @@ public class MainLogin extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             user = mAuth.getInstance().getCurrentUser();
                             if (user.isEmailVerified()) {
-                                updateUI();
-
+                                try {
+                                    updateUI();
+                                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                                }
                             }
                             else
                             {
-                                Snackbar.make(getCurrentFocus(), "¿Email no verificado , reenviar email?", Snackbar.LENGTH_INDEFINITE)
-                                        .setActionTextColor(Color.CYAN)
-                                        .setActionTextColor(Color.GRAY)
-                                        .setAction("Aceptar", new View.OnClickListener() {
-                                            @Override
-                                           public void onClick(View view) {
+                                try {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Usuario no verificado", Toast.LENGTH_LONG).show();
+                                    inoverificado.setVisibility(View.VISIBLE);
 
-                                                user.sendEmailVerification();
+                                        inoverificado.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                if(!user.isEmailVerified()) {
+                                                    Toast.makeText(getApplicationContext(),
+                                                            "Verificacion enviada correctamente", Toast.LENGTH_LONG).show();
+                                                    user.sendEmailVerification();
+                                                }
+                                                else
+                                                {
+                                                    Toast.makeText(getApplicationContext(),
+                                                            "Usted ya ha verificado su cuenta", Toast.LENGTH_LONG).show();
+                                                }
                                             }
-                                        })
-                                        .show();
+                                        });
+
+                                }
+                                catch (Exception e)
+                                {
+                                    e.printStackTrace();
+                                }
                             }
 
 
@@ -180,10 +214,8 @@ public class MainLogin extends AppCompatActivity {
                                 throw task.getException();
 
                             } catch (Exception e) {
-                                Snackbar.make(getCurrentFocus(), "Error al logear usuario", Snackbar.LENGTH_LONG)
-                                        .setActionTextColor(Color.CYAN)
-                                        .setActionTextColor(Color.GREEN)
-                                        .show();
+                                Toast.makeText(getApplicationContext(),
+                                        "Error al logear usuario", Toast.LENGTH_LONG).show();
                             }
                         }
                     }
@@ -193,7 +225,7 @@ public class MainLogin extends AppCompatActivity {
      * Metodo encargado de abrir la SplashScrren
 
      */
-    private void abrirSplashScreen()
+    private void abrirSplashScreen() throws LikeSeriesExceptionClass
     {
         Intent intent = new Intent(getApplicationContext(),SplashScreen.class);
         intent.putExtra("cambioclase", true);
@@ -202,7 +234,7 @@ public class MainLogin extends AppCompatActivity {
     /**
      * Método que se encarga de abrir la nueva pantalla de la actividad principal una vez logeado
      */
-    private void updateUI()
+    private void updateUI() throws LikeSeriesExceptionClass
     {
         abrirSplashScreen();
         cerrarPagina();

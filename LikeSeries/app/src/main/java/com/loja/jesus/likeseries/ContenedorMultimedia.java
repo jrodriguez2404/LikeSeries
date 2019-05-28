@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,26 +34,28 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static android.support.constraint.Constraints.TAG;
+
 public class ContenedorMultimedia extends AppCompatActivity implements View.OnClickListener {
-private TextView titulo_multi,descripcion_multi,genero0_multi,genero1_multi,genero2_multi,votopositivo,votonegativo,productora_multi,capitulos_multi ,comentarios,mostrarmas;
+private TextView titulo_multi,descripcion_multi,genero0_multi,genero1_multi,genero2_multi,votopositivo,votonegativo,productora_multi,capitulos_multi ,director_multi,fechaestreno_multi,trailer_multi,duracion_multi,comentarios,mostrarmas,votacionmedia_multi,votantes_multi,compartir_multimedia;
 private ImageView imagenvotopositivo,imagenvotonegativos,imagen_multi,like,nolike;
-private Boolean vnegativo,vpositivo,mostrarmas_boolean;
-private Integer votantes,votomas,votomenos,usuariovotopositivo,usuariovotonegativo;
+private Boolean vnegativo,vpositivo,mostrarmas_boolean,negativo,positivo,volveravotar=false;
+private Integer votantes,votomas,votomenos,usuariovotopositivo,usuariovotonegativo,capitulos;
 private FirebaseUser user;
 private FirebaseAuth mAuth;
 private long media;
 private FirebaseFirestore db;
 private RecyclerView RVComentarios,RVP,RVS;
 private ImageView imagenvoto;
-private int capitulos;
-Context contexto = this;
-private String titulo,descripcion,productora,imagen,id,reglas;
+private Context contexto = this;
+private String titulo,descripcion,productora,imagen,id,reglas,director,fechaestreno,trailer,duracion,collection;
 private ArrayList<String> genero;
 private ArrayList<Multimedia>peliculasyseries;
 private ArrayList<Comentario> coment;
@@ -60,7 +63,6 @@ private ArrayList<Votos> votos;
 private ArrayList<String> arrayusuariovoto;
 private ArrayList<String> arrayusuarios;
 private Intent intentlike;
-private String collection;
 private Button insertarcomentario;
 private EditText cajacomentario;
 private LinearLayout mostrar;
@@ -70,11 +72,17 @@ private LinearLayout mostrar;
         startActivity(intentlike);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contenedor_multimedia);
-        declaraciones();
+        try {
+            declaraciones();
+        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+            Toast.makeText(getApplicationContext(),
+                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+        }
         Toolbar toolbar = findViewById(R.id.appbar);
         setSupportActionBar(toolbar);
         like=findViewById(R.id.like);
@@ -88,11 +96,16 @@ private LinearLayout mostrar;
                 startActivity(intentlike);
             }
         });
+        try {
+            refrescarDatosPantalla();
+        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+            Toast.makeText(getApplicationContext(),
+                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+        }
 
 
     }
-
-public void refrescarRecyclers(final Pelicula peli , final Serie ser)
+public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws LikeSeriesExceptionClass
     {
         final Intent intent = getIntent();
         if(intent.getStringExtra("pelioserie").equals("peliculas")) {
@@ -138,7 +151,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
 
         }
     @SuppressLint("StringFormatMatches")
-    private void actualizarRecyclerComentarios() {
+    private void actualizarRecyclerComentarios() throws LikeSeriesExceptionClass{
         AdaptadorComentarios adaptadorComentarios = new AdaptadorComentarios(this,collection,id,coment);
         RVComentarios.setAdapter(adaptadorComentarios);
         adaptadorComentarios.refrescar();
@@ -149,8 +162,13 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
     protected void onStart() {
         super.onStart();
         mostrarmas_boolean=true;
-        declaraciones();
-      if(reglas.equals("0"))
+        try {
+            declaraciones();
+        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+            Toast.makeText(getApplicationContext(),
+                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+        }
+        if(reglas.equals("0"))
       {
           vpositivo=true;
           vnegativo=true;
@@ -176,15 +194,16 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
           imagenvotonegativos.setEnabled(true);
           imagenvotopositivo.setImageResource(R.drawable.unlike);
           imagenvotonegativos.setImageResource(R.drawable.nolike);
-
       }
         votopositivo.setText(votomas.toString());
         votonegativo.setText(votomenos.toString());
     }
 
-    private void declaraciones()
+    private void declaraciones() throws LikeSeriesExceptionClass
     {
-
+        compartir_multimedia=findViewById(R.id.compartirresultado);
+        votantes_multi = findViewById(R.id.votantes);
+        votacionmedia_multi = findViewById(R.id.votacionmedia);
         mostrar=findViewById(R.id.mostrar);
         mostrarmas = findViewById(R.id.mostrarmasomenos);
         mostrarmas.setOnClickListener(this);
@@ -212,10 +231,58 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         imagenvoto= findViewById(R.id.imagenvoto);
         imagenvoto.setOnClickListener(this);
         RVComentarios = findViewById(R.id.RVComentarios);
-
+        director_multi = findViewById(R.id.Direccion_Multimedia);
+        fechaestreno_multi= findViewById(R.id.fechaEstreno_Multimedia);
+        trailer_multi= findViewById(R.id.trailer_Multimedia);
+        trailer_multi.setOnClickListener(this);
+        duracion_multi= findViewById(R.id.duracion_Multimedia);
         cogerExtras();
     }
-    public void metodoCambio()
+    private  void abrirCompartir()
+    {
+        db=FirebaseFirestore.getInstance();
+        final DocumentReference docRef = db.collection(collection).document(id);
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @SuppressLint("StringFormatMatches")
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    if(collection.equals("peliculas")) {
+                        Pelicula peli = snapshot.toObject(Pelicula.class);
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
+                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s." + "\n" +
+                                "A demas esta valorada en un "+peli.getNotamedia_Pelicula() + "de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n" +
+                                user.getDisplayName() + " gracias por compartir esta información con tus amigos");
+                        sendIntent.setType("text/plain");
+                        startActivity(sendIntent);
+                    }
+                    else if(collection.equals("series"))
+                    {
+                        Serie ser = snapshot.toObject(Serie.class);
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
+                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s." + "\n" +
+                                "A demas esta valorada en un "+ser.getNotamedia_Serie() + "de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n" +
+                                user.getDisplayName() + " gracias por compartir esta información con tus amigos");
+                        sendIntent.setType("text/plain");
+                        startActivity(sendIntent);
+                    }
+                } else {
+                }
+            }
+        });
+    }
+    private void refrescarDatosPantalla() throws LikeSeriesExceptionClass
     {
         db=FirebaseFirestore.getInstance();
         final DocumentReference docRef = db.collection(collection).document(id);
@@ -232,12 +299,16 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     if(collection.equals("peliculas")) {
                         Pelicula peli = snapshot.toObject(Pelicula.class);
                         comentarios.setText(getResources().getString(R.string.comentario,peli.getComentarios().size()));
+                        votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,peli.getNotamedia_Pelicula()));
+                        votantes_multi.setText(getResources().getString(R.string.votantes,peli.getVotantes_Pelicula()));
 
                     }
                     else if(collection.equals("series"))
                     {
                         Serie ser = snapshot.toObject(Serie.class);
                         comentarios.setText(getResources().getString(R.string.comentario,ser.getComentarios().size()));
+                        votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,ser.getNotamedia_Serie()));
+                        votantes_multi.setText(getResources().getString(R.string.votantes,ser.getVotantes_Serie()));
                     }
                 } else {
                 }
@@ -246,7 +317,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
 
     }
     @SuppressLint("StringFormatMatches")
-    private void cogerExtras()
+    private void cogerExtras() throws LikeSeriesExceptionClass
     {
 
         reglas="0";
@@ -258,9 +329,15 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         id = intent.getStringExtra("ID");
         if(intent.getStringExtra("pelioserie").equals("series"))
         {
+
+
+            duracion_multi.setText(getResources().getString(R.string.duracionminutos,duracion));
             capitulos_multi.setText(getResources().getString(R.string.capitulos,intent.getIntExtra("capitulos",0)));
             capitulos_multi.setVisibility(View.VISIBLE);
-
+        }
+        else
+        {
+            duracion_multi.setText(getResources().getString(R.string.duracionhoras,duracion));
         }
 
         titulo =intent.getStringExtra("titulo");
@@ -288,7 +365,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         votomenos = intent.getIntExtra("votosmenos",0);
         //Para la votacion de la media
         votantes = intent.getIntExtra("votantes",0);
-        media = intent.getLongExtra("nmedia",0);
+        media = intent.getIntExtra("nmedia",0);
 
         //Cojo todos los comentarios de la BD
         ArrayList<String> arraynombres = intent.getStringArrayListExtra("arraynombres");
@@ -349,20 +426,34 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
         imagen_multi.setLayoutParams(params);
 
 
+        director=intent.getStringExtra("director");
+        director_multi.setText(getResources().getString(R.string.direccion,director));
+        fechaestreno=intent.getStringExtra("fechaestreno");
+        fechaestreno_multi.setText(getResources().getString(R.string.fechae,fechaestreno));
+        trailer=intent.getStringExtra("trailer");
+        trailer_multi.setText(R.string.trailer);
+        duracion=intent.getStringExtra("duracion");
+
+
+
 
         imagenvotopositivo.setOnClickListener(this);
         imagenvotonegativos.setOnClickListener(this);
-
-        metodoCambio();
+        //Arreglar los votantes y la media
+        votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,media));
+        votantes_multi.setText(getResources().getString(R.string.votantes,votantes));
+        compartir_multimedia.setOnClickListener(this);
+        refrescarDatosPantalla();
+        metodoVotacionActiva();
     }
-    private void actualizarVotos()
+    private void actualizarVotos() throws LikeSeriesExceptionClass
     {
         votopositivo.setText(votomas.toString());
         votonegativo.setText(votomenos.toString());
 
         actualizarDatosBD();
     }
-    private void insertarComentarios()
+    private void insertarComentarios() throws LikeSeriesExceptionClass
     {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -384,21 +475,37 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     reglas="1";
                     votomas++;
                     imagenvotonegativos.setEnabled(false);
-                    vnegativo = true;
-                    /**
 
-*/
+                    try {
+                        actualizarVotosUsuario(null,null);
+                        actualizarVotos();
+                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                        Toast.makeText(getApplicationContext(),
+                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                    }
 
-                    actualizarVotos();
-            }
+                }
                 else if (!vpositivo)
             {
                 imagenvotopositivo.setImageResource(R.drawable.unlike);
                 imagenvotonegativos.setEnabled(true);
                 reglas="0";
                 vpositivo=true;
+                vnegativo=true;
+                negativo = false;
+                positivo = true;
                 votomas--;
-                actualizarVotos();
+
+
+
+                try {
+                    actualizarVotosUsuario(positivo,negativo);
+                    actualizarVotos();
+                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                    Toast.makeText(getApplicationContext(),
+                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                }
+
             }
                 break;
 
@@ -410,33 +517,61 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     votomenos++;
                     reglas="2";
                     imagenvotopositivo.setEnabled(false);
-                    vpositivo=true;
-                    vnegativo = false;
-                    actualizarVotos();
+                    vnegativo=false;
+
+
+                    try {
+                        actualizarVotosUsuario(null,null);
+                        actualizarVotos();
+                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                        Toast.makeText(getApplicationContext(),
+                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                    }
+
                 }
                 else if (!vnegativo)
             {
                 imagenvotonegativos.setImageResource(R.drawable.unnolike);
                 vnegativo = true;
+                vpositivo=true;
                 reglas="0";
                 votomenos--;
                 imagenvotopositivo.setEnabled(true);
-                actualizarVotos();
+                negativo = true;
+                positivo = false;
+
+                try {
+                    actualizarVotosUsuario(positivo,negativo);
+                    actualizarVotos();
+
+                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                    Toast.makeText(getApplicationContext(),
+                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                }
             }
                 break;
             case R.id.imagenvoto:
-
-                new DialogoNumberPickerValoracion(contexto,ContenedorMultimedia.class,imagenvoto,collection,id);
+                new DialogoNumberPickerValoracion(contexto,ContenedorMultimedia.class,imagenvoto,collection,id,volveravotar);
+                try {
+                    refrescarDatosPantalla();
+                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                    Toast.makeText(getApplicationContext(),
+                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.compartirresultado:
+                abrirCompartir();
                 break;
             case R.id.botonmandarComentario:
                 if(!cajacomentario.getText().equals(""))
                 {
-                    insertarComentarios();
+                    try {
+                        insertarComentarios();
+                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                        Toast.makeText(getApplicationContext(),
+                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                    }
                     cajacomentario.setText("");
-                }
-                else
-                {
-
                 }
                 break;
             case R.id.mostrarmasomenos:
@@ -454,31 +589,142 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     mostrarmas_boolean=true;
                 }
                 break;
+            case R.id.trailer_Multimedia:
+                Intent intent = new Intent(this,FullScreenYoutube.class);
+                intent.putExtra("trailer",trailer);
+                startActivity(intent);
+                break;
         }
 
+    }
+
+    /**
+     * Este metodo comprueba si el usuario a votado alguna vez en la app , si esto es positivo la imagen se vuelve de color
+     */
+    private void metodoVotacionActiva() throws LikeSeriesExceptionClass
+    {
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        user= mAuth.getCurrentUser();
+
+        DocumentReference docRef = db.collection(collection).document(id);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Pelicula peli = documentSnapshot.toObject(Pelicula.class);
+                Serie ser =documentSnapshot.toObject(Serie.class);
+
+                if(collection.equals("peliculas"))
+                {
+
+                    for(int i = 0 ; i<peli.getVotacion_media().size();i++) {
+                        if(peli.getVotacion_media().get(i).getUid().equals(user.getUid()))
+                        {
+                            volveravotar=true;
+                            imagenvoto.setImageResource(R.drawable.estrella_on);
+
+                        }
+                    }
+
+                }
+                else if(collection.equals("series"))
+                {
+
+                    for(int i = 0 ; i<ser.getVotacion_media().size();i++) {
+                        if(ser.getVotacion_media().get(i).getUid().equals(user.getUid()))
+                        {
+                            volveravotar=true;
+                            imagenvoto.setImageResource(R.drawable.estrella_on);
+                        }
+                    }
+
+                }
+            }
+        });
+
+    }
+    /**
+     * Este metodo se va a encargar de actualizar los votos segun el usuario pulse positivo o negativo
+     */
+    private void actualizarVotosUsuario(Boolean positivo,Boolean negativo) throws LikeSeriesExceptionClass
+    {
+        mAuth = FirebaseAuth.getInstance();
+        user= mAuth.getCurrentUser();
+        if(reglas.equals("0")&&negativo)
+        {
+//quitar 1 al negativo
+            db= FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos(),usuario.getVotosNegativos()-1);
+                    db.collection("usuarios").document(usuario.getUID()).set(usua);
+
+
+                }
+            });
+        }
+        else if(reglas.equals("0") && positivo)
+        {
+            //quitar 1 al positivo
+            db= FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos()-1,usuario.getVotosNegativos());
+                    db.collection("usuarios").document(usuario.getUID()).set(usua);
+
+
+                }
+            });
+        }
+        else if(reglas.equals("1")&&!vpositivo)
+        {
+          //sumar 1 al positivo
+            db= FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos()+1,usuario.getVotosNegativos());
+                    db.collection("usuarios").document(usuario.getUID()).set(usua);
+
+
+                }
+            });
+        }
+        else if(reglas.equals("2")&&!vnegativo)
+        {
+            //sumar 1 al negativo
+            db= FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos(),usuario.getVotosNegativos()+1);
+                    db.collection("usuarios").document(usuario.getUID()).set(usua);
+
+
+                }
+            });
+        }
     }
     /**
      * Metodo que llama a una función de firebase para subir los nuevos datos actualizados
      */
-    private void actualizarDatosBD()
+    private void actualizarDatosBD() throws LikeSeriesExceptionClass
     {
         Intent intent = getIntent();
-        String pelioserie = intent.getStringExtra("pelioserie");
+        final String pelioserie = intent.getStringExtra("pelioserie");
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        db.collection(pelioserie)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                            }
-                        }
-                    }
-                });
 
         if(pelioserie.equals("peliculas")) {
             db = FirebaseFirestore.getInstance();
@@ -500,9 +746,14 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Pelicula peli = documentSnapshot.toObject(Pelicula.class);
 
-                        Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(),id, titulo, descripcion, productora, genero, imagen, votomas, votomenos, votantes, 0, votos, coment);
+                        Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(),id, titulo, descripcion, productora,director,fechaestreno,trailer,duracion, genero, imagen, votomas, votomenos, votantes, peli.getNotamedia_Pelicula(), votos, coment,peli.getVotacion_media());
                         db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
-                        refrescarRecyclers(pelicula, null);
+                        try {
+                            refrescarRecyclers(pelicula, null);
+                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }
@@ -531,17 +782,23 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser)
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Serie ser = documentSnapshot.toObject(Serie.class);
 
-                        Serie serie = new Serie(ser.getCollection_Serie(),id, titulo, descripcion, productora, genero, imagen, votomas, votomenos, votantes,capitulos,0, votos, coment);
+                        Serie serie = new Serie(ser.getCollection_Serie(),id, titulo, descripcion, productora,director,fechaestreno,trailer,duracion,genero, imagen, votomas, votomenos, votantes,capitulos,ser.getNotamedia_Serie(), votos, coment,ser.getVotacion_media());
                         db.collection("series").document(serie.getID_Serie()).set(serie);
-                        refrescarRecyclers(null, serie);
+                        try {
+                            refrescarRecyclers(null, serie);
+                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
 
             }
         }
     }
+    //Comenzar compartir contenido
     public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
-        public SpaceItemDecoration(ContenedorMultimedia contenedorMultimedia, Object p1, boolean b, boolean b1) {
+        public SpaceItemDecoration(ContenedorMultimedia contenedorMultimedia, Object p1, boolean b, boolean b1) throws LikeSeriesExceptionClass {
         }
     }
 }

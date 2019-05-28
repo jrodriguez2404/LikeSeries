@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -122,8 +123,10 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
         intent.putExtra("arrayreglas",arrayreglas);
         intent.putExtra("pelioserie","peliculas");
         intent.putExtra("urlimagen",listaPeliculas.get(i).getImagen_Pelicula());
-        intent.putExtra("numero",i);
-
+        intent.putExtra("director",listaPeliculas.get(i).getDirector_Pelicula());
+        intent.putExtra("fechaestreno",listaPeliculas.get(i).getFechaEstreno_Pelicula());
+        intent.putExtra("trailer",listaPeliculas.get(i).getTrailer_Pelicula());
+        intent.putExtra("duracion",listaPeliculas.get(i).getDuración_Pelicula());
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference gsReference = storage.getReferenceFromUrl(listaPeliculas.get(i).getImagen_Pelicula() + "");
@@ -147,7 +150,12 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
             @Override
             public void onClick(View v) {
                 context.startActivity(intent);
-                new Like().cerrarActividad();
+                try {
+                    new Like().cerrarActividad();
+                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                    Toast.makeText(context.getApplicationContext(),
+                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                }
             }
             });
 
