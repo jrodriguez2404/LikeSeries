@@ -11,11 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Administrador"></activity>
         <activity
             android:name=".FullScreenYoutube"
             android:label="@string/title_activity_full_screen_youtube"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ContenedorMultimedia"
             android:theme="@style/EstiloContenedor" />

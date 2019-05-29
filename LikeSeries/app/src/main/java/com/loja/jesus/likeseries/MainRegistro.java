@@ -37,7 +37,7 @@ public class MainRegistro extends AppCompatActivity {
     private Button registrar;
     private EditText temailregistro, tcontrasenaregistro, tnombre;
     //Mensajes y acuerdos
-    private CheckBox acuerdolegal;
+    private CheckBox recibir, acuerdolegal;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseFirestore db;
@@ -45,8 +45,7 @@ public class MainRegistro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_registro);
-        PersistenciaFirebase p = new PersistenciaFirebase();
-        p.persistenciaFirebase();
+
         Toolbar appToolbar = (Toolbar) findViewById(R.id.appbar);
 // *************************************************
 // Pongo el titulo en la toolbar
@@ -66,6 +65,7 @@ public class MainRegistro extends AppCompatActivity {
 
 
         acuerdolegal = findViewById(R.id.acuerdolegal);
+        recibir = findViewById(R.id.mensajes);
 
 
 
@@ -81,7 +81,7 @@ public class MainRegistro extends AppCompatActivity {
                         if (acuerdolegal.isChecked() == true) {
                             //Registramos un usuario con firebase
                             try {
-                                registrarUsuarioFirebase(temailregistro.getText().toString(), tcontrasenaregistro.getText().toString(), tnombre.getText().toString(),false);
+                                registrarUsuarioFirebase(temailregistro.getText().toString(), tcontrasenaregistro.getText().toString(), tnombre.getText().toString(), recibir.isChecked());
                             } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
                                 Toast.makeText(getApplicationContext(),
                                         "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
@@ -117,13 +117,13 @@ public class MainRegistro extends AppCompatActivity {
     }
 
     /**
-     * Registra el usuario , el valor de administrador se da directamente por el Creador
+     * Registra el usuario
      * @param email
      * @param password
      * @param nombre
-     * @param Administrador
+     * @param recibir
      */
-    public void registrarUsuarioFirebase(String email , String password, final String nombre, final Boolean Administrador) throws LikeSeriesExceptionClass{
+    public void registrarUsuarioFirebase(String email , String password, final String nombre, final Boolean recibir) throws LikeSeriesExceptionClass{
         mAuth = FirebaseAuth.getInstance();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -135,7 +135,7 @@ public class MainRegistro extends AppCompatActivity {
                             Intent intent = new Intent(getApplication(), SplashScreen.class);
                             intent.putExtra("cambioclase", false);
                             try {
-                                enviarAuthEmail1(user.getUid(), nombre, Administrador);
+                                enviarAuthEmail1(user.getUid(), nombre, recibir);
                             } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
                                 Toast.makeText(getApplicationContext(),
                                         "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
@@ -192,7 +192,7 @@ public class MainRegistro extends AppCompatActivity {
      * Envia un correo de verificación , a parte inserta los datos en la BD , no obstante hasta que no nos registremos no podemos entrar
      * @param uid
      */
-    private void enviarAuthEmail1(final String uid, final String nombre, final Boolean Administrador) throws LikeSeriesExceptionClass {
+    private void enviarAuthEmail1(final String uid, final String nombre, final Boolean recibir) throws LikeSeriesExceptionClass {
         user = mAuth.getInstance().getCurrentUser();
         user.sendEmailVerification()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -202,7 +202,7 @@ public class MainRegistro extends AppCompatActivity {
                             //Creo un usuario y lo agrego a la base de datos de FireBase Cloud
 
 
-                            Usuario usuario = new Usuario(uid,nombre, user.getEmail(),Administrador,0,0);
+                            Usuario usuario = new Usuario(uid,nombre, user.getEmail(),recibir,0,0);
 
                             try {
                                 insertarBasedeDatosFireBaseUsuario(usuario);

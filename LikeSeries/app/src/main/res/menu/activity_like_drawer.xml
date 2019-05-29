@@ -32,20 +32,11 @@
                 android:id="@+id/cerrar_sesion"
                 android:icon="@drawable/account_remove_outline"
                 android:title="@string/cerrarsesion_menu" />
-        </menu>
-    </item>
-    <item android:title="Sobre el creador">
-        <menu>
             <item
                 android:id="@+id/creador"
                 android:icon="@drawable/ic_info_black_24dp"
                 android:title="@string/info_menu" />
-
         </menu>
     </item>
-    <item
-        android:id="@+id/administrador"
-        android:icon="@drawable/administrador"
-        android:title="Administración" />
 
 </menu>

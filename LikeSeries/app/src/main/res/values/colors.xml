@@ -12,7 +12,6 @@
     <!--Errores-->
     <color name="invisible">#02000000</color>
     <color name="azul">#A7B7FF</color>
-    <color name="rojo">@android:color/holo_red_dark</color>
+
     <color name="black_overlay">#66000000</color>
-    <color name="administrador_color">#FF9800</color>
 </resources>
