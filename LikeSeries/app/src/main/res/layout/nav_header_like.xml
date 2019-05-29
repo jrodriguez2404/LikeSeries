@@ -35,9 +35,14 @@
             android:id="@+id/bienvenida"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginRight="5sp"
             android:text="@string/bienvenida"
             android:textColor="@color/letras" />
+
+        <TextView
+            android:id="@+id/tipousuariodrawer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

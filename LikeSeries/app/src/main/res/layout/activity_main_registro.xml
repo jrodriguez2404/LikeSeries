@@ -116,14 +116,6 @@
                 android:text="@string/ComboBox2"
                 android:textSize="12sp" />
 
-            <CheckBox
-                android:id="@+id/mensajes"
-                style="@style/EstiloRegistro"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/ComboBox1"
-                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout

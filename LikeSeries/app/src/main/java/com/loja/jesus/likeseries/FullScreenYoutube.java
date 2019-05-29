@@ -21,6 +21,8 @@ public class FullScreenYoutube extends YouTubeBaseActivity implements YouTubePla
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_full_screen_youtube);
+        PersistenciaFirebase p = new PersistenciaFirebase();
+        p.persistenciaFirebase();
         youtube = (YouTubePlayerView) findViewById(R.id.youtubeplayer);
         youtube.initialize(clave, this);
     }

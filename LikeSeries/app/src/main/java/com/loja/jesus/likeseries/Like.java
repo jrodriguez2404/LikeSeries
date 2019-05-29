@@ -1,6 +1,7 @@
 package com.loja.jesus.likeseries;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,7 +51,7 @@ import java.util.HashMap;
 
 public class Like extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-private TextView bienvenida,hola, mispositivos,misnegativos,botoncomentario_chat,cajaTexto_chat,cerrar_chat;
+private TextView bienvenida,hola, mispositivos,misnegativos,botoncomentario_chat,cajaTexto_chat,cerrar_chat,tipousuariodrawer,tipousuario,vaciarchat;
 private ImageView imagenlogo;
 private String usuario;
 private RecyclerView RVP,RVS,RVVP,RVVN,RVCR;
@@ -66,7 +67,9 @@ Context contexto;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like);
-
+        vaciarchat = findViewById(R.id.eliminartodo_administrador);
+        PersistenciaFirebase p = new PersistenciaFirebase();
+        p.persistenciaFirebase();
         chatmenu_linear = findViewById(R.id.chat_linear);
         pantalla_linear = findViewById(R.id.pantalla_linear);
         arraychat=new ArrayList<>();
@@ -83,19 +86,41 @@ Context contexto;
             FloatingActionButton chat = findViewById(R.id.chat);
             chat.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    pantalla_linear.setVisibility(View.GONE);
-                    chatmenu_linear.setVisibility(View.VISIBLE);
-                    actualizarTablaChat();
-                    cerrar_chat = findViewById(R.id.cerrar_chat);
-                    cerrar_chat.setOnClickListener(new View.OnClickListener() {
+                public void onClick(final View view) {
+
+                    mAuth = FirebaseAuth.getInstance();
+                    user = mAuth.getCurrentUser();
+                    db = FirebaseFirestore.getInstance();
+                    DocumentReference admin = db.collection("usuarios").document(user.getUid());
+                    admin.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
-                        public void onClick(View v) {
-                            pantalla_linear.setVisibility(View.VISIBLE);
-                            chatmenu_linear.setVisibility(View.GONE);
-                            cajaTexto_chat.setText("");
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Usuario user = documentSnapshot.toObject(Usuario.class);
+
+                            pantalla_linear.setVisibility(View.GONE);
+                            chatmenu_linear.setVisibility(View.VISIBLE);
+                            actualizarTablaChat();
+                            cerrar_chat = findViewById(R.id.cerrar_chat);
+                            cerrar_chat.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    pantalla_linear.setVisibility(View.VISIBLE);
+                                    chatmenu_linear.setVisibility(View.GONE);
+                                    cajaTexto_chat.setText("");
+                                }
+                            });
+
+                            if(user.getAdministrador()==true)
+                            {
+                                vaciarchat.setVisibility(View.VISIBLE);
+                            }
+                            else
+                            {
+                                vaciarchat.setVisibility(View.GONE);
+                            }
                         }
                     });
+
 
 
 
@@ -157,15 +182,37 @@ Context contexto;
             @SuppressLint("StringFormatMatches")
             public void onDrawerOpened(@NonNull View view) {
                 bienvenida = drawer.findViewById(R.id.bienvenida);
+                tipousuariodrawer=drawer.findViewById(R.id.tipousuariodrawer);
                 mAuth = FirebaseAuth.getInstance();
                 user = mAuth.getCurrentUser();
                 db= FirebaseFirestore.getInstance();
                 DocumentReference docRef = db.collection("usuarios").document(user.getUid());
                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @SuppressLint("ResourceType")
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Usuario user = documentSnapshot.toObject(Usuario.class);
                         bienvenida.setText(getResources().getString(R.string.bienvenida,user.getNombre()));
+                        if(user.getAdministrador()==true)
+                        {
+
+                            bienvenida.setTextColor(R.color.administrador_color);
+                            tipousuariodrawer.setBackgroundResource(R.drawable.administrador);
+                            int ancho = 50;
+                            int alto = 50;
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                            tipousuariodrawer.setLayoutParams(params);
+                        }
+                        else
+                        {
+                            tipousuariodrawer.setBackgroundResource(R.drawable.usuario);
+                            int ancho = 50;
+                            int alto = 50;
+
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                            tipousuariodrawer.setLayoutParams(params);
+                        }
+
                     }
                 });
 
@@ -182,6 +229,22 @@ Context contexto;
             @Override
             public void onDrawerStateChanged(int i) {
 
+            }
+        });
+        vaciarchat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final FirebaseFirestore db;
+                db = FirebaseFirestore.getInstance();
+                arraychat.clear();
+                DocumentReference docRef = db.collection("chatgeneral").document("chat");
+                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Chat chat= new Chat(arraychat);
+                        db.collection("chatgeneral").document("chat").set(chat);
+                    }
+                });
             }
         });
         botoncomentario_chat.setOnClickListener(new View.OnClickListener() {
@@ -261,6 +324,8 @@ Context contexto;
         super.onStart();
         mispositivos = findViewById(R.id.mispositivos);
         misnegativos = findViewById(R.id.misnegativos);
+        tipousuario=findViewById(R.id.tipousuario);
+
         try {
             cargarRecycleview();
             cargarRecycerViewVotos();
@@ -273,6 +338,7 @@ Context contexto;
                     "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
         }
     }
+
 
     public void cerrarActividad() throws LikeSeriesExceptionClass
     {
@@ -287,11 +353,30 @@ Context contexto;
         DocumentReference docRef = db.collection("usuarios").document(user.getUid());
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            @SuppressLint("StringFormatMatches")
+            @SuppressLint({"StringFormatMatches", "ResourceType"})
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Usuario user = documentSnapshot.toObject(Usuario.class);
                 usuario=user.getNombre();
                 hola.setText(getResources().getString(R.string.bienvenida,usuario));
+                if(user.getAdministrador()==true)
+                {
+                    tipousuario.setBackgroundResource(R.drawable.administrador);
+                    int ancho = 50;
+                    int alto = 50;
+
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                    tipousuario.setLayoutParams(params);
+                    hola.setTextColor(R.color.administrador_color);
+                }
+                else
+                {
+                    tipousuario.setBackgroundResource(R.drawable.usuario);
+                    int ancho = 50;
+                    int alto = 50;
+
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                    tipousuario.setLayoutParams(params);
+                }
             }
         });
     }
@@ -474,84 +559,108 @@ Context contexto;
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(final MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.votacion)
-        {
-            Peliculas.setVisibility(View.GONE);
-            Series.setVisibility(View.GONE);
-            principal_like.setVisibility(View.VISIBLE);
-            pantalla_linear.setVisibility(View.VISIBLE);
-            cajaTexto_chat.setText("");
-        }
-        else if (id == R.id.pelicula) {
 
-            Peliculas.setVisibility(View.VISIBLE);
-            Series.setVisibility(View.GONE);
-            principal_like.setVisibility(View.GONE);
-            pantalla_linear.setVisibility(View.VISIBLE);
-            spiner = findViewById(R.id.spinerPelicula);
-            cajaTexto_chat.setText("");
-            try {
-                rellenarSpinner(spiner);
-            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                Toast.makeText(getApplicationContext(),
-                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-            }
-
-        } else if (id == R.id.series) {
-            Peliculas.setVisibility(View.GONE);
-            Series.setVisibility(View.VISIBLE);
-            principal_like.setVisibility(View.GONE);
-            pantalla_linear.setVisibility(View.VISIBLE);
-            spiner = findViewById(R.id.spinerSerie);
-            cajaTexto_chat.setText("");
-            try {
-                rellenarSpinner(spiner);
-            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                Toast.makeText(getApplicationContext(),
-                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-            }
-        }
-        else if (id == R.id.mi_perfil) {
-            Intent miperfil = new Intent(this, miperfil.class);
-            startActivity(miperfil);
-            pantalla_linear.setVisibility(View.VISIBLE);
-            cajaTexto_chat.setText("");
-        }
-        else if (id == R.id.cerrar_sesion) {
-            mAuth = FirebaseAuth.getInstance();
-            user = mAuth.getCurrentUser();
-            db= FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Usuario user = documentSnapshot.toObject(Usuario.class);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(contexto);
-                    builder.setTitle(getResources().getString(R.string.cerrarsesion,user.getNombre()));
-                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            FirebaseAuth.getInstance().signOut();
-                            finish();
-                            Intent login = new Intent(getApplication(), MainLogin.class);
-                            startActivity(login);
-                        }
-                    });
-                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    builder.show();
+        mAuth = FirebaseAuth.getInstance();
+        db= FirebaseFirestore.getInstance();
+        user=mAuth.getCurrentUser();
+        DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Usuario user = documentSnapshot.toObject(Usuario.class);
+                int id = item.getItemId();
+                if (id == R.id.votacion)
+                {
+                    Peliculas.setVisibility(View.GONE);
+                    Series.setVisibility(View.GONE);
+                    principal_like.setVisibility(View.VISIBLE);
+                    pantalla_linear.setVisibility(View.VISIBLE);
+                    cajaTexto_chat.setText("");
                 }
-            });
-        }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+                else if (id == R.id.pelicula) {
+
+                    Peliculas.setVisibility(View.VISIBLE);
+                    Series.setVisibility(View.GONE);
+                    principal_like.setVisibility(View.GONE);
+                    pantalla_linear.setVisibility(View.VISIBLE);
+                    spiner = findViewById(R.id.spinerPelicula);
+                    cajaTexto_chat.setText("");
+                    try {
+                        rellenarSpinner(spiner);
+                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                        Toast.makeText(getApplicationContext(),
+                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                    }
+
+                } else if (id == R.id.series) {
+                    Peliculas.setVisibility(View.GONE);
+                    Series.setVisibility(View.VISIBLE);
+                    principal_like.setVisibility(View.GONE);
+                    pantalla_linear.setVisibility(View.VISIBLE);
+                    spiner = findViewById(R.id.spinerSerie);
+                    cajaTexto_chat.setText("");
+                    try {
+                        rellenarSpinner(spiner);
+                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                        Toast.makeText(getApplicationContext(),
+                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else if (id == R.id.mi_perfil) {
+                    Intent miperfil = new Intent(contexto, miperfil.class);
+                    startActivity(miperfil);
+                    pantalla_linear.setVisibility(View.VISIBLE);
+                    cajaTexto_chat.setText("");
+                }
+                else if (id == R.id.cerrar_sesion) {
+                    mAuth = FirebaseAuth.getInstance();
+                    db= FirebaseFirestore.getInstance();
+
+                    DocumentReference docRef = db.collection("usuarios").document(user.getUID());
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Usuario user = documentSnapshot.toObject(Usuario.class);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(contexto);
+                            builder.setTitle(getResources().getString(R.string.cerrarsesion,user.getNombre()));
+                            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    FirebaseAuth.getInstance().signOut();
+                                    finish();
+                                    Intent login = new Intent(getApplication(), MainLogin.class);
+                                    startActivity(login);
+                                }
+                            });
+                            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            builder.show();
+                        }
+                    });
+                }
+                else if (id == R.id.administrador) {
+                    if(user.getAdministrador()==true)
+                    {
+                        Intent intent = new Intent(contexto,Administrador.class);
+                        startActivity(intent);
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),
+                                "Usted no es administrador", Toast.LENGTH_LONG).show();
+                    }
+                }
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        });
+
         return true;
     }
 

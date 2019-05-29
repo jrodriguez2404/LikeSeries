@@ -161,6 +161,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
     @Override
     protected void onStart() {
         super.onStart();
+        PersistenciaFirebase p = new PersistenciaFirebase();
+        p.persistenciaFirebase();
         mostrarmas_boolean=true;
         try {
             declaraciones();
@@ -258,8 +260,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
                         sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s." + "\n" +
-                                "A demas esta valorada en un "+peli.getNotamedia_Pelicula() + "de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n" +
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s. " + "\n" +
+                                "A demas esta valorada en un "+peli.getNotamedia_Pelicula() + " de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n" +
                                 user.getDisplayName() + " gracias por compartir esta información con tus amigos");
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
@@ -271,8 +273,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
                         sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s." + "\n" +
-                                "A demas esta valorada en un "+ser.getNotamedia_Serie() + "de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n" +
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s. " + "\n" +
+                                "A demas esta valorada en un "+ser.getNotamedia_Serie() + " de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n" +
                                 user.getDisplayName() + " gracias por compartir esta información con tus amigos");
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
@@ -659,7 +661,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos(),usuario.getVotosNegativos()-1);
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos(),usuario.getVotosNegativos()-1);
                     db.collection("usuarios").document(usuario.getUID()).set(usua);
 
 
@@ -675,7 +677,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos()-1,usuario.getVotosNegativos());
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos()-1,usuario.getVotosNegativos());
                     db.collection("usuarios").document(usuario.getUID()).set(usua);
 
 
@@ -691,7 +693,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos()+1,usuario.getVotosNegativos());
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos()+1,usuario.getVotosNegativos());
                     db.collection("usuarios").document(usuario.getUID()).set(usua);
 
 
@@ -707,7 +709,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getRecibir(),usuario.getVotosPositivos(),usuario.getVotosNegativos()+1);
+                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos(),usuario.getVotosNegativos()+1);
                     db.collection("usuarios").document(usuario.getUID()).set(usua);
 
 
