@@ -102,4 +102,11 @@
     <string name="eliminarmensaje">Eliminar mensaje</string>
     <string name="cerrarchat">Cerrar chat</string>
     <string name="Respeta">Respeta a los demas en el chat general</string>
+    <string name="eliminartodo_administrador">Vaciar chat</string>
+    <string name="title_activity_administrador">Administrador</string>
+    <!--Administrador-->
+    <string name="titulo_Administración">Administración - LikeSeries</string>
+    <string name="insertar_pelicula_admin">Insertar Pelicula</string>
+    <string name="insertar_serie_admin">Insertar Serie</string>
+    <string name="administrarusuarios">Administrar Usuarios</string>
 </resources>

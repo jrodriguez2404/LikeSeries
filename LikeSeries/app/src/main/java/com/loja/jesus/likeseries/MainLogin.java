@@ -36,6 +36,8 @@ public class MainLogin extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_login);
+        PersistenciaFirebase p = new PersistenciaFirebase();
+        p.persistenciaFirebase();
         Toolbar appToolbar = (Toolbar) findViewById(R.id.appbar);
 // *************************************************
 // Pongo el titulo en la toolbar
