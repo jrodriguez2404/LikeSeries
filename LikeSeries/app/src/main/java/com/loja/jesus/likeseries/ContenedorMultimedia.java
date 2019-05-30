@@ -240,46 +240,38 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
         duracion_multi= findViewById(R.id.duracion_Multimedia);
         cogerExtras();
     }
-    private  void abrirCompartir()
+    private void abrirCompartir()
     {
         db=FirebaseFirestore.getInstance();
-        final DocumentReference docRef = db.collection(collection).document(id);
-        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @SuppressLint("StringFormatMatches")
+        DocumentReference docRef = db.collection(collection).document(id);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    return;
+            @SuppressLint("StringFormatMatches")
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(collection.equals("peliculas")) {
+                    Pelicula peli = documentSnapshot.toObject(Pelicula.class);
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
+                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s. " + "\n" +
+                            "A demas esta valorada en un "+peli.getNotamedia_Pelicula() + " de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n" +
+                            user.getDisplayName() + " gracias por compartir esta información con tus amigos");
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
                 }
-
-                if (snapshot != null && snapshot.exists()) {
-                    if(collection.equals("peliculas")) {
-                        Pelicula peli = snapshot.toObject(Pelicula.class);
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
-                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s. " + "\n" +
-                                "A demas esta valorada en un "+peli.getNotamedia_Pelicula() + " de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n" +
-                                user.getDisplayName() + " gracias por compartir esta información con tus amigos");
-                        sendIntent.setType("text/plain");
-                        startActivity(sendIntent);
-                    }
-                    else if(collection.equals("series"))
-                    {
-                        Serie ser = snapshot.toObject(Serie.class);
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
-                        sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s. " + "\n" +
-                                "A demas esta valorada en un "+ser.getNotamedia_Serie() + " de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n" +
-                                user.getDisplayName() + " gracias por compartir esta información con tus amigos");
-                        sendIntent.setType("text/plain");
-                        startActivity(sendIntent);
-                    }
-                } else {
+                else if(collection.equals("series"))
+                {
+                    Serie ser = documentSnapshot.toObject(Serie.class);
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
+                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s. " + "\n" +
+                            "A demas esta valorada en un "+ser.getNotamedia_Serie() + " de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n" +
+                            user.getDisplayName() + " gracias por compartir esta información con tus amigos");
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
                 }
             }
         });
