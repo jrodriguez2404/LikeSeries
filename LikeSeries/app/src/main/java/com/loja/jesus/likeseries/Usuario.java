@@ -8,18 +8,19 @@ import java.util.HashMap;
 
 public class Usuario {
     private String UID,Nombre,Email;
-    private Boolean Administrador;
+    private int administrador;
     private int votosPositivos,votosNegativos;
+
     public Usuario() {
     }
 
-    public Usuario(String UID, String nombre, String email, Boolean Administrador,int votosPositivos,int votosNegativos) {
+    public Usuario(String UID, String nombre, String email, int administrador, int votosPositivos, int votosNegativos) {
         this.UID = UID;
         Nombre = nombre;
         Email = email;
-        this.Administrador = Administrador;
-        this.votosPositivos=votosPositivos;
-        this.votosNegativos=votosNegativos;
+        this.administrador = administrador;
+        this.votosPositivos = votosPositivos;
+        this.votosNegativos = votosNegativos;
     }
 
     public String getUID() {
@@ -46,12 +47,12 @@ public class Usuario {
         Email = email;
     }
 
-    public Boolean getAdministrador() {
-        return Administrador;
+    public int getAdministrador() {
+        return administrador;
     }
 
-    public void setAdministrador(Boolean Administrador) {
-        Administrador = Administrador;
+    public void setAdministrador(int administrador) {
+        this.administrador = administrador;
     }
 
     public int getVotosPositivos() {

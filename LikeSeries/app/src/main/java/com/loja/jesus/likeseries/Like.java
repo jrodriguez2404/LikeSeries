@@ -110,7 +110,7 @@ Context contexto;
                                 }
                             });
 
-                            if(user.getAdministrador()==true)
+                            if(user.getAdministrador()==1)
                             {
                                 vaciarchat.setVisibility(View.VISIBLE);
                             }
@@ -186,38 +186,39 @@ Context contexto;
                 mAuth = FirebaseAuth.getInstance();
                 user = mAuth.getCurrentUser();
                 db= FirebaseFirestore.getInstance();
-                DocumentReference docRef = db.collection("usuarios").document(user.getUid());
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @SuppressLint("ResourceType")
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Usuario user = documentSnapshot.toObject(Usuario.class);
-                        bienvenida.setText(getResources().getString(R.string.bienvenida,user.getNombre()));
-                        if(user.getAdministrador()==true)
-                        {
 
-                            bienvenida.setTextColor(R.color.administrador_color);
-                            tipousuariodrawer.setBackgroundResource(R.drawable.administrador);
-                            int ancho = 50;
-                            int alto = 50;
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
-                            tipousuariodrawer.setLayoutParams(params);
+
+
+                    DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @SuppressLint("ResourceType")
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Usuario user = documentSnapshot.toObject(Usuario.class);
+                            bienvenida.setText(getResources().getString(R.string.bienvenida, user.getNombre()));
+                            try {
+                                if (user.getAdministrador() == 1) {
+
+                                    bienvenida.setTextColor(R.color.administrador_color);
+                                    tipousuariodrawer.setBackgroundResource(R.drawable.administrador);
+                                    int ancho = 50;
+                                    int alto = 50;
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                                    tipousuariodrawer.setLayoutParams(params);
+                                } else {
+                                    tipousuariodrawer.setBackgroundResource(R.drawable.usuario);
+                                    int ancho = 50;
+                                    int alto = 50;
+
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                                    tipousuariodrawer.setLayoutParams(params);
+                                }
+                            }
+                            catch (Exception e) {
+                            }
+
                         }
-                        else
-                        {
-                            tipousuariodrawer.setBackgroundResource(R.drawable.usuario);
-                            int ancho = 50;
-                            int alto = 50;
-
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
-                            tipousuariodrawer.setLayoutParams(params);
-                        }
-
-                    }
-                });
-
-
-
+                    });
 
             }
 
@@ -331,6 +332,7 @@ Context contexto;
             cargarRecycerViewVotos();
             cargarVotosPositivosenListaHorizontal();
             cargarVotosNegativosenListaHorizontal();
+            cargarNombreUsuario();
         }
         catch (LikeSeriesExceptionClass likeSeriesExceptionClass)
         {
@@ -358,77 +360,36 @@ Context contexto;
                 Usuario user = documentSnapshot.toObject(Usuario.class);
                 usuario=user.getNombre();
                 hola.setText(getResources().getString(R.string.bienvenida,usuario));
-                if(user.getAdministrador()==true)
-                {
-                    tipousuario.setBackgroundResource(R.drawable.administrador);
-                    int ancho = 50;
-                    int alto = 50;
+                try {
+                    if (user.getAdministrador() == 1) {
+                        tipousuario.setBackgroundResource(R.drawable.administrador);
+                        int ancho = 50;
+                        int alto = 50;
 
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
-                    tipousuario.setLayoutParams(params);
-                    hola.setTextColor(R.color.administrador_color);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                        tipousuario.setLayoutParams(params);
+                        hola.setTextColor(R.color.administrador_color);
+                    } else {
+                        tipousuario.setBackgroundResource(R.drawable.usuario);
+                        int ancho = 50;
+                        int alto = 50;
+
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
+                        tipousuario.setLayoutParams(params);
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    tipousuario.setBackgroundResource(R.drawable.usuario);
-                    int ancho = 50;
-                    int alto = 50;
 
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ancho, alto);
-                    tipousuario.setLayoutParams(params);
                 }
             }
         });
     }
 
-    private void agregarPeliculasRapidamente()
-    {
-        ArrayList<String> array = new ArrayList<>();
-        array.add("Drama");
-        array.add("Escolares");
-        array.add("Shounen");
-        array.add("Anime");
 
-        ArrayList<Votos> votos = new ArrayList<>();
-        Votos v = new Votos("F6Z6lvukr7c1wioZprva2SpCHnH3","0");
-        votos.add(v);
-
-        ArrayList<Comentario> comentarios = new ArrayList<>();
-        Comentario c = new Comentario("Jesus","F6Z6lvukr7c1wioZprva2SpCHnH3","hola");
-        comentarios.add(c);
-        ArrayList<Votacion_media> votacion_media = new ArrayList<>();
-        //Votacion_media vm = new Votacion_media("PR1n0WS7eGepWHObst5MXEbTZbB2",0,false);
-        //votacion_media.add(vm);
-
-
-        db= FirebaseFirestore.getInstance();
-        Pelicula pelicula = new Pelicula("peliculas","KoenoKatachi","Koe no Katachi","La historia gira en torno a Shoko Nishimiya, una estudiante de primaria que es sorda de nacimiento y que al cambiarse de colegio comienza a recibir acoso escolar por parte de sus nuevos compañeros. Uno de los principales responsables es Ishida Shouya quien termina por forzar que Nishimiya se cambie de escuela. Como resultado de los actos contra Shoko las autoridades del colegio toman cartas en el asunto y el curso señala como único responsable a Ishida, quien comienza a sentir el acoso impuesto por sus propios compañeros, al mismo tiempo que termina aislándose de los que alguna vez fueron sus amigos. Años después, Ishida intenta corregir su mal actuar, buscando la redención frente a Nishimiya.","Selecta Vision","Naoko Yamada","16/03/2018","19WaToCSwyg","2",array,"gs://likeseries-c426a.appspot.com/imagenesPeliculas/koeno.jpg",0,0,0,0,votos,comentarios,votacion_media);
-        db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
-    }
     private void agregarSeriesRapidamente()
     {
-        ArrayList<String> array = new ArrayList<>();
-        array.add("Acción");
-        array.add("Aventura");
-        array.add("SuperHeroes");
-        array.add("Anime");
 
-        ArrayList<Votos> votos = new ArrayList<>();
-        Votos v = new Votos("F6Z6lvukr7c1wioZprva2SpCHnH3","0");
-        votos.add(v);
-
-        ArrayList<Comentario> comentarios = new ArrayList<>();
-        Comentario c = new Comentario("Jesus","F6Z6lvukr7c1wioZprva2SpCHnH3","hola");
-        comentarios.add(c);
-
-        ArrayList<Votacion_media> votacion_media = new ArrayList<>();
-        //Votacion_media vm = new Votacion_media("PR1n0WS7eGepWHObst5MXEbTZbB2",0,false);
-        //votacion_media.add(vm);
-
-
-        db= FirebaseFirestore.getInstance();
-        Serie serie = new Serie("series","BokunoHero","Boku no Hero","Un día, tras conocer personalmente a All Might, este le ofrece heredar sus poderes al ver la gran determinación de Midoriya aunque no tenga poderes; desde entonces, Midoriya accede y empieza a estudiar en la U.A; donde hace nuevos amigos, conoce otros héroes profesionales, aprende a dominar sus poderes y hasta hacer frente a auténticos villanos.","Bones","Kenji Nagasaki","03/04/2016","wIb3nnOeves","25",array,"gs://likeseries-c426a.appspot.com/imagenesSeries/bokunohero.jpg",0,0,0,15,0,votos,comentarios,votacion_media);
-        db.collection("series").document(serie.getID_Serie()).set(serie);
     }
     private void cargarRecycleview() throws LikeSeriesExceptionClass{
         RVP = findViewById(R.id.RVP);
@@ -645,7 +606,7 @@ Context contexto;
                     });
                 }
                 else if (id == R.id.administrador) {
-                    if(user.getAdministrador()==true)
+                    if(user.getAdministrador()==1)
                     {
                         Intent intent = new Intent(contexto,Administrador.class);
                         startActivity(intent);
@@ -682,7 +643,8 @@ Context contexto;
     array.add("SuperHeroes");
     array.add("Terror");
     array.add("Escolares");
-    array.add("Más Votados");
+    array.add("Los 5 más votados");
+    array.add("Los 5 mejor valorados");
     return array;
 }
 
@@ -704,11 +666,18 @@ Context contexto;
         spiner.setAdapter(adapter);
         spiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(final AdapterView<?> parent, View view, final int position, long id) {
                 final ArrayList<Pelicula>peliculas = new ArrayList<>();
+                peliculas.clear();
                 db = FirebaseFirestore.getInstance();
                 final ArrayList<Serie>series = new ArrayList<>();
-                if(!parent.getItemAtPosition(position).toString().equals("Más Votados") && !parent.getItemAtPosition(position).toString().equals("Sin filtro")) {
+                series.clear();
+                if(!parent.getItemAtPosition(position).toString().equals("Los 5 más votados") && !parent.getItemAtPosition(position).toString().equals("Sin filtro")&&!parent.getItemAtPosition(position).toString().equals("Los 5 mejor valorados")) {
+
+                    AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas);
+                    RVP.setAdapter(adaptadorPeliculas);
+                    adaptadorPeliculas.refrescar();
+
                     db.collection("peliculas")
                             .whereArrayContains("genero_Pelicula", parent.getItemAtPosition(position).toString())
                             .get()
@@ -719,14 +688,23 @@ Context contexto;
                                         for (QueryDocumentSnapshot document : task.getResult()) {
                                             System.out.println(document.getData());
                                             Pelicula pelicula = document.toObject(Pelicula.class);
-                                            peliculas.add(pelicula);
-                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
-                                            RVP.setAdapter(adaptadorPeliculas);
-                                            adaptadorPeliculas.refrescar();
+                                                peliculas.add(pelicula);
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas);
+                                                RVP.setAdapter(adaptadorPeliculas);
+                                                adaptadorPeliculas.refrescar();
+
+
+
                                         }
+
                                     }
                                 }
                             });
+
+                    AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series);
+                    RVS.setAdapter(adaptadorSeries);
+                    adaptadorSeries.refrescar();
+
                     db.collection("series")
                             .whereArrayContains("genero_Serie", parent.getItemAtPosition(position).toString())
                             .get()
@@ -736,10 +714,12 @@ Context contexto;
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
                                             Serie serie = document.toObject(Serie.class);
-                                            series.add(serie);
-                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
-                                            RVS.setAdapter(adaptadorSeries);
-                                            adaptadorSeries.refrescar();
+                                            if(serie.getGenero_Serie().contains(parent.getItemAtPosition(position).toString())) {
+                                                series.add(serie);
+                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series);
+                                                RVS.setAdapter(adaptadorSeries);
+                                                adaptadorSeries.refrescar();
+                                            }
                                         }
                                     }
                                 }
@@ -750,6 +730,7 @@ Context contexto;
                 {
 
                     db.collection("peliculas")
+                            .orderBy("titulo_Pelicula", Query.Direction.ASCENDING)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -762,11 +743,13 @@ Context contexto;
                                             AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
                                             RVP.setAdapter(adaptadorPeliculas);
                                             adaptadorPeliculas.refrescar();
+
                                         }
                                     }
                                 }
                             });
                     db.collection("series")
+                            .orderBy("titulo_Serie", Query.Direction.ASCENDING)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -778,16 +761,18 @@ Context contexto;
                                             AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
                                             RVS.setAdapter(adaptadorSeries);
                                             adaptadorSeries.refrescar();
+
                                         }
                                     }
                                 }
                             });
                 }
-                else if(parent.getItemAtPosition(position).toString().equals("Más Votados"))
+                else if(parent.getItemAtPosition(position).toString().equals("Los 5 más votados"))
                 {
 
                     db.collection("peliculas")
-                            .orderBy("votosPositivos_Pelicula", Query.Direction.ASCENDING)
+                            .orderBy("votosPositivos_Pelicula", Query.Direction.DESCENDING)
+                            .limit(5)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -800,12 +785,14 @@ Context contexto;
                                             AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
                                             RVP.setAdapter(adaptadorPeliculas);
                                             adaptadorPeliculas.refrescar();
+
                                         }
                                     }
                                 }
                             });
                     db.collection("series")
-                            .orderBy("votosPositivos_Series", Query.Direction.ASCENDING)
+                            .orderBy("votosPositivos_Series", Query.Direction.DESCENDING)
+                            .limit(5)
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -817,7 +804,52 @@ Context contexto;
                                             AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
                                             RVS.setAdapter(adaptadorSeries);
                                             adaptadorSeries.refrescar();
+
                                         }
+                                    }
+                                }
+                            });
+                }
+                else if(parent.getItemAtPosition(position).toString().equals("Los 5 mejor valorados"))
+                {
+
+                    db.collection("peliculas")
+                            .orderBy("notamedia_Pelicula", Query.Direction.DESCENDING)
+                            .limit(5)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Pelicula pelicula = document.toObject(Pelicula.class);
+                                            peliculas.add(pelicula);
+                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
+                                            RVP.setAdapter(adaptadorPeliculas);
+                                            adaptadorPeliculas.refrescar();
+
+                                        }
+
+                                    }
+                                }
+                            });
+                    db.collection("series")
+                            .orderBy("notamedia_Series", Query.Direction.DESCENDING)
+                            .limit(5)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Serie serie = document.toObject(Serie.class);
+                                            series.add(serie);
+                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
+                                            RVS.setAdapter(adaptadorSeries);
+                                            adaptadorSeries.refrescar();
+
+                                        }
+
                                     }
                                 }
                             });

@@ -30,7 +30,7 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
 
 
     public class ViewHolderMultimedia extends RecyclerView.ViewHolder {
-        private TextView titulo,numvotosmas,numvotosmenos;
+        private TextView titulo,numvotosmas,numvotosmenos,votomas,votomenos;
         private ImageView imagen;
         private LinearLayout seleccion;
         public ViewHolderMultimedia(@NonNull View itemView) {
@@ -40,6 +40,8 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
             numvotosmenos = itemView.findViewById(R.id.numvotosmenos);
             imagen = itemView.findViewById(R.id.imagen);
             seleccion = itemView.findViewById(R.id.seleccion);
+            votomas = itemView.findViewById(R.id.imagenmas);
+            votomenos = itemView.findViewById(R.id.imagenmenos);
 
         }
     }
@@ -137,8 +139,10 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
 
                 }
                 viewHolderMultimedia.titulo.setText(listaMultimedia.get(i).getTitulo_Pelicula());
-                viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas, listaMultimedia.get(i).getVotosPositivos_Pelicula()));
+                viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas,listaMultimedia.get(i).getVotosPositivos_Pelicula()));
+                viewHolderMultimedia.votomas.setBackgroundResource(R.drawable.like);
                 viewHolderMultimedia.numvotosmenos.setText(res.getString(R.string.votomenos, listaMultimedia.get(i).getVotosNegativos_Pelicula()));
+                viewHolderMultimedia.votomenos.setBackgroundResource(R.drawable.nolike);
 
                 viewHolderMultimedia.seleccion.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -217,8 +221,10 @@ public class AdaptadorMutimediaLike extends RecyclerView.Adapter<AdaptadorMutime
 
                 }
                 viewHolderMultimedia.titulo.setText(listaMultimedia.get(i).getTitulo_Serie());
-                viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas, listaMultimedia.get(i).getVotosPositivos_Serie()));
+                viewHolderMultimedia.numvotosmas.setText(res.getString(R.string.votomas,listaMultimedia.get(i).getVotosPositivos_Serie()));
+                viewHolderMultimedia.votomas.setBackgroundResource(R.drawable.like);
                 viewHolderMultimedia.numvotosmenos.setText(res.getString(R.string.votomenos, listaMultimedia.get(i).getVotosNegativos_Serie()));
+                viewHolderMultimedia.votomenos.setBackgroundResource(R.drawable.nolike);
 
                 viewHolderMultimedia.seleccion.setOnClickListener(new View.OnClickListener() {
                     @Override

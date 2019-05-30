@@ -661,9 +661,14 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos(),usuario.getVotosNegativos()-1);
-                    db.collection("usuarios").document(usuario.getUID()).set(usua);
-
+                    if(usuario.getAdministrador()==1) {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
+                    else {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
 
                 }
             });
@@ -677,9 +682,15 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos()-1,usuario.getVotosNegativos());
-                    db.collection("usuarios").document(usuario.getUID()).set(usua);
-
+                    if(usuario.getAdministrador()==1) {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos() - 1, usuario.getVotosNegativos());
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
+                    else
+                    {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos() - 1, usuario.getVotosNegativos());
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
 
                 }
             });
@@ -693,9 +704,15 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos()+1,usuario.getVotosNegativos());
-                    db.collection("usuarios").document(usuario.getUID()).set(usua);
-
+                    if(usuario.getAdministrador()==1) {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos() + 1, usuario.getVotosNegativos());
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
+                    else
+                    {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos() + 1, usuario.getVotosNegativos());
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
 
                 }
             });
@@ -709,10 +726,15 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    Usuario usua = new Usuario(usuario.getUID(),usuario.getNombre(),usuario.getEmail(),usuario.getAdministrador(),usuario.getVotosPositivos(),usuario.getVotosNegativos()+1);
-                    db.collection("usuarios").document(usuario.getUID()).set(usua);
-
-
+                    if(usuario.getAdministrador()==1) {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos(), usuario.getVotosNegativos() + 1);
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
+                    else
+                    {
+                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos(), usuario.getVotosNegativos() + 1);
+                        db.collection("usuarios").document(usuario.getUID()).set(usua);
+                    }
                 }
             });
         }

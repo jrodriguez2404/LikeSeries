@@ -39,7 +39,7 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
 
 
     public class ViewHolderPeliculas extends RecyclerView.ViewHolder {
-        private TextView titulo,numvotosmas,numvotosmenos;
+        private TextView titulo,numvotosmas,numvotosmenos,notamedia,votomas,votomenos;
         private ImageView imagen;
         private LinearLayout seleccion;
         public ViewHolderPeliculas(@NonNull View itemView) {
@@ -49,7 +49,9 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
             numvotosmenos = itemView.findViewById(R.id.numvotosmenos);
             imagen = itemView.findViewById(R.id.imagen);
             seleccion = itemView.findViewById(R.id.seleccion);
-
+            notamedia = itemView.findViewById(R.id.notamedia_recycler);
+            votomas = itemView.findViewById(R.id.imagenmas);
+            votomenos = itemView.findViewById(R.id.imagenmenos);
         }
     }
     private ArrayList<Pelicula> listaPeliculas ;
@@ -143,9 +145,11 @@ public class AdaptadorPeliculas extends RecyclerView.Adapter<AdaptadorPeliculas.
             }
         });
             viewHolderPeliculas.titulo.setText(listaPeliculas.get(i).getTitulo_Pelicula());
-            viewHolderPeliculas.numvotosmas.setText(res.getString(R.string.votomas, listaPeliculas.get(i).getVotosPositivos_Pelicula()));
+            viewHolderPeliculas.numvotosmas.setText(res.getString(R.string.votomas,listaPeliculas.get(i).getVotosPositivos_Pelicula()));
+            viewHolderPeliculas.votomas.setBackgroundResource(R.drawable.like);
             viewHolderPeliculas.numvotosmenos.setText(res.getString(R.string.votomenos, listaPeliculas.get(i).getVotosNegativos_Pelicula()));
-
+            viewHolderPeliculas.votomenos.setBackgroundResource(R.drawable.nolike);
+            viewHolderPeliculas.notamedia.setText(res.getString(R.string.notamedia,listaPeliculas.get(i).getNotamedia_Pelicula()));
             viewHolderPeliculas.seleccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

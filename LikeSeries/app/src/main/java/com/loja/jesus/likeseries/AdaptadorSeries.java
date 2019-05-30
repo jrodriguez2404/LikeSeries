@@ -32,7 +32,7 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
 
 
     public class ViewHolderSeries extends RecyclerView.ViewHolder {
-        private TextView titulo,numvotosmas,numvotosmenos;
+        private TextView titulo,numvotosmas,numvotosmenos,notamedia;
         private ImageView imagen;
         private LinearLayout seleccion;
         public ViewHolderSeries(@NonNull View itemView) {
@@ -42,6 +42,7 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
             numvotosmenos = itemView.findViewById(R.id.numvotosmenos);
             imagen = itemView.findViewById(R.id.imagen);
             seleccion = itemView.findViewById(R.id.seleccion);
+            notamedia = itemView.findViewById(R.id.notamedia_recycler);
         }
     }
     private ArrayList<Serie> listaSeries ;
@@ -139,7 +140,7 @@ public class AdaptadorSeries extends RecyclerView.Adapter<AdaptadorSeries.ViewHo
         viewHolderseries.titulo.setText(listaSeries.get(i).getTitulo_Serie());
         viewHolderseries.numvotosmas.setText(res.getString(R.string.votomas, listaSeries.get(i).getVotosPositivos_Serie()));
         viewHolderseries.numvotosmenos.setText(res.getString(R.string.votomenos, listaSeries.get(i).getVotosNegativos_Serie()));
-
+        viewHolderseries.notamedia.setText(res.getString(R.string.notamedia,listaSeries.get(i).getNotamedia_Serie()));
         viewHolderseries.seleccion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

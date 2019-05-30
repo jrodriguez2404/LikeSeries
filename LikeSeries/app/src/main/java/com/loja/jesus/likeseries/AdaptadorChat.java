@@ -113,7 +113,7 @@ public class AdaptadorChat extends RecyclerView.Adapter<AdaptadorChat.ViewHolder
                     {
                         viewHolderChat.eliminar.setVisibility(View.GONE);
                     }
-                    if(user.getAdministrador() == true)
+                    if(user.getAdministrador() == 1)
                     {
                         viewHolderChat.eliminar.setTextColor(R.color.rojo);
                         viewHolderChat.eliminar.setVisibility(View.VISIBLE);
