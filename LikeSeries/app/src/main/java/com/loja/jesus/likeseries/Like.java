@@ -449,11 +449,9 @@ Context contexto;
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                    for (int i = 0; i <= task.getResult().size(); i++) {
-                                        Multimedia multimedia = document.toObject(Multimedia.class);
+                                    Multimedia multimedia = document.toObject(Multimedia.class);
+                                    for (int i = 0; i < multimedia.getVotosusuarios().size(); i++) {
                                         try {
-
                                             if (multimedia.getVotosusuarios().get(i).getReglas().equals("1") && multimedia.getVotosusuarios().get(i).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
                                                 multipositiva.add(multimedia);
                                             } else if (multimedia.getVotosusuarios().get(i).getReglas().equals("2") && multimedia.getVotosusuarios().get(i).getUsuariovoto().equals(user.getUid()) && multimedia.getVotosusuarios() != null) {
@@ -485,8 +483,9 @@ Context contexto;
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    for (int i = 0; i <= task.getResult().size(); i++) {
-                                        Multimedia multimedia = document.toObject(Multimedia.class);
+                                    Multimedia multimedia = document.toObject(Multimedia.class);
+                                    for (int i = 0; i < multimedia.getVotosusuarios().size(); i++) {
+
                                         try {
                                             if (multimedia.getVotosusuarios().get(i).getReglas().equals("1") && multimedia.getVotosusuarios().get(i).getUsuariovoto().equals(user.getUid())) {
                                                 multipositiva.add(multimedia);
