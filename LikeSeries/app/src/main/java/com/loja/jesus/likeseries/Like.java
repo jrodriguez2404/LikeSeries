@@ -604,6 +604,11 @@ Context contexto;
                         }
                     });
                 }
+                else if(id==R.id.creador)
+                {
+                    Intent intent = new Intent(contexto,Info.class);
+                    startActivity(intent);
+                }
                 else if (id == R.id.administrador) {
                     if(user.getAdministrador()==1)
                     {
