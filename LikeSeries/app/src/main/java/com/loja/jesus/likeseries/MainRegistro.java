@@ -28,7 +28,11 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+
+import java.util.ArrayList;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -80,12 +84,40 @@ public class MainRegistro extends AppCompatActivity {
                     if (!tcontrasenaregistro.getText().toString().equals("")) {
                         if (acuerdolegal.isChecked() == true) {
                             //Registramos un usuario con firebase
-                            try {
-                                registrarUsuarioFirebase(temailregistro.getText().toString(), tcontrasenaregistro.getText().toString(), tnombre.getText().toString(),0);
-                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                                Toast.makeText(getApplicationContext(),
-                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-                            }
+                            db = FirebaseFirestore.getInstance();
+                                db.collection("usuarios")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    ArrayList<String> array = new ArrayList<>();
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        Usuario user = document.toObject(Usuario.class);
+                                                        array.add(user.getNombre());
+                                                    }
+                                                    if(array.contains(tnombre.getText().toString()))
+                                                    {
+                                                        Toast.makeText(getApplicationContext(),
+                                                                "Este nombre ya esta elegido", Toast.LENGTH_LONG).show();
+                                                        tnombre.setText("");
+                                                    }
+                                                    else {
+                                                        try {
+                                                            registrarUsuarioFirebase(temailregistro.getText().toString(), tcontrasenaregistro.getText().toString(), tnombre.getText().toString(), 0);
+                                                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                                            Toast.makeText(getApplicationContext(),
+                                                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
+
+
+
+
+
 
 
                         }
@@ -125,7 +157,6 @@ public class MainRegistro extends AppCompatActivity {
      */
     public void registrarUsuarioFirebase(String email , String password, final String nombre, final int administrador) throws LikeSeriesExceptionClass{
         mAuth = FirebaseAuth.getInstance();
-
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

@@ -91,6 +91,8 @@ Context contexto;
                     mAuth = FirebaseAuth.getInstance();
                     user = mAuth.getCurrentUser();
                     db = FirebaseFirestore.getInstance();
+
+
                     DocumentReference admin = db.collection("usuarios").document(user.getUid());
                     admin.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
@@ -195,8 +197,10 @@ Context contexto;
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             Usuario user = documentSnapshot.toObject(Usuario.class);
-                            bienvenida.setText(getResources().getString(R.string.bienvenida, user.getNombre()));
+                            usuario=user.getNombre();
                             try {
+                            bienvenida.setText(getResources().getString(R.string.bienvenida,usuario));
+
                                 if (user.getAdministrador() == 1) {
 
                                     bienvenida.setTextColor(R.color.administrador_color);
@@ -260,24 +264,43 @@ Context contexto;
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         arraychat.clear();
                         Chat chat = documentSnapshot.toObject(Chat.class);
-                        ChatGeneral chatGeneral = new ChatGeneral(user.getDisplayName(),user.getUid(),cajaTexto_chat.getText().toString());
-                        arraychat.add(chatGeneral);
+                        if(!cajaTexto_chat.getText().toString().equals("")) {
+                            ChatGeneral chatGeneral = new ChatGeneral(user.getDisplayName(), user.getUid(), cajaTexto_chat.getText().toString(), null);
+                            arraychat.add(chatGeneral);
+                        }
+                        else if(cajaTexto_chat.getText().toString().equals(""))
+                        {
+                            Toast.makeText(getApplicationContext(),
+                                    "Porfavor, escribe algo", Toast.LENGTH_LONG).show();
+                        }
                         try {
                             for (int i = 0; i < chat.getChatgeneral().size(); i++) {
-                                arraychat.add(chat.getChatgeneral().get(i));
+
+                                    if(arraychat.get(i).getNombre().equals(chat.getChatgeneral().get(i).getNombre())&&arraychat.get(i).getMensaje().equals(chat.getChatgeneral().get(i).getMensaje()))
+                                    {
+                                        Toast.makeText(getApplicationContext(),
+                                                "Porfavor, no escribas lo mismo", Toast.LENGTH_LONG).show();
+                                    }
+                                    else {
+                                        arraychat.add(chat.getChatgeneral().get(i));
+                                    }
+
                             }
+                                chat = new Chat(arraychat);
+                                db.collection("chatgeneral").document("chat").set(chat);
+                                AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, arraychat,"chat");
+                                RVCR.setAdapter(adaptadorChat);
+                                RVCR.setHasFixedSize(true);
+                                adaptadorChat.refrescar();
+
+
                         }
                         catch (Exception e)
                         {
 
                         }
 
-                        chat = new Chat(arraychat);
-                        db.collection("chatgeneral").document("chat").set(chat);
-                        AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, arraychat);
-                        RVCR.setAdapter(adaptadorChat);
-                        RVCR.setHasFixedSize(true);
-                        adaptadorChat.refrescar();
+
                     }
                 });
 
@@ -285,7 +308,6 @@ Context contexto;
             }
         });
     }
-
     private void actualizarTablaChat() {
         db = FirebaseFirestore.getInstance();
         final DocumentReference docRef = db.collection("chatgeneral").document("chat");
@@ -310,7 +332,7 @@ Context contexto;
                     {
 
                     }
-                    AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, arraychat);
+                    AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, arraychat,"chat");
                     RVCR.setAdapter(adaptadorChat);
                     RVCR.setHasFixedSize(true);
                     adaptadorChat.refrescar();
@@ -386,11 +408,6 @@ Context contexto;
         });
     }
 
-
-    private void agregarSeriesRapidamente()
-    {
-
-    }
     private void cargarRecycleview() throws LikeSeriesExceptionClass{
         RVP = findViewById(R.id.RVP);
         RVS = findViewById(R.id.RVS);
@@ -609,6 +626,11 @@ Context contexto;
                     Intent intent = new Intent(contexto,Info.class);
                     startActivity(intent);
                 }
+                else if(id==R.id.tertulia)
+                {
+                    Intent intent = new Intent(contexto,TertuliaLike.class);
+                    startActivity(intent);
+                }
                 else if (id == R.id.administrador) {
                     if(user.getAdministrador()==1)
                     {
@@ -673,12 +695,13 @@ Context contexto;
             public void onItemSelected(final AdapterView<?> parent, View view, final int position, long id) {
                 final ArrayList<Pelicula>peliculas = new ArrayList<>();
                 peliculas.clear();
-                db = FirebaseFirestore.getInstance();
                 final ArrayList<Serie>series = new ArrayList<>();
                 series.clear();
+                db = FirebaseFirestore.getInstance();
+
                 if(!parent.getItemAtPosition(position).toString().equals("Los 5 más votados") && !parent.getItemAtPosition(position).toString().equals("Sin filtro")&&!parent.getItemAtPosition(position).toString().equals("Los 5 mejor valorados")) {
 
-                    AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas);
+                    AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas,"vacio");
                     RVP.setAdapter(adaptadorPeliculas);
                     adaptadorPeliculas.refrescar();
 
@@ -689,26 +712,24 @@ Context contexto;
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
+                                        peliculas.clear();
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            System.out.println(document.getData());
-                                            Pelicula pelicula = document.toObject(Pelicula.class);
+                                                Pelicula pelicula = document.toObject(Pelicula.class);
                                                 peliculas.add(pelicula);
-                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas);
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas, "");
                                                 RVP.setAdapter(adaptadorPeliculas);
                                                 adaptadorPeliculas.refrescar();
-
-
-
                                         }
 
                                     }
+
                                 }
                             });
 
-                    AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series);
+
+                    AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "vacio");
                     RVS.setAdapter(adaptadorSeries);
                     adaptadorSeries.refrescar();
-
                     db.collection("series")
                             .whereArrayContains("genero_Serie", parent.getItemAtPosition(position).toString())
                             .get()
@@ -716,16 +737,19 @@ Context contexto;
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
+                                        series.clear();
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Serie serie = document.toObject(Serie.class);
-                                            if(serie.getGenero_Serie().contains(parent.getItemAtPosition(position).toString())) {
-                                                series.add(serie);
-                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series);
-                                                RVS.setAdapter(adaptadorSeries);
-                                                adaptadorSeries.refrescar();
-                                            }
+                                                Serie serie = document.toObject(Serie.class);
+                                                    series.add(serie);
+                                                    AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "");
+                                                    RVS.setAdapter(adaptadorSeries);
+                                                    adaptadorSeries.refrescar();
+
+
+
                                         }
                                     }
+
                                 }
                             });
 
@@ -741,12 +765,19 @@ Context contexto;
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            System.out.println(document.getData());
-                                            Pelicula pelicula = document.toObject(Pelicula.class);
-                                            peliculas.add(pelicula);
-                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
-                                            RVP.setAdapter(adaptadorPeliculas);
-                                            adaptadorPeliculas.refrescar();
+                                            if(task.getResult().size()>0) {
+                                                Pelicula pelicula = document.toObject(Pelicula.class);
+                                                peliculas.add(pelicula);
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas, "");
+                                                RVP.setAdapter(adaptadorPeliculas);
+                                                adaptadorPeliculas.refrescar();
+                                            }
+                                            else
+                                            {
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas, "vacio");
+                                                RVP.setAdapter(adaptadorPeliculas);
+                                                adaptadorPeliculas.refrescar();
+                                            }
 
                                         }
                                     }
@@ -760,12 +791,19 @@ Context contexto;
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Serie serie = document.toObject(Serie.class);
-                                            series.add(serie);
-                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
-                                            RVS.setAdapter(adaptadorSeries);
-                                            adaptadorSeries.refrescar();
-
+                                            if(task.getResult().size()>0) {
+                                                Serie serie = document.toObject(Serie.class);
+                                                series.add(serie);
+                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "");
+                                                RVS.setAdapter(adaptadorSeries);
+                                                adaptadorSeries.refrescar();
+                                            }
+                                            else
+                                            {
+                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "vacio");
+                                                RVS.setAdapter(adaptadorSeries);
+                                                adaptadorSeries.refrescar();
+                                            }
                                         }
                                     }
                                 }
@@ -783,13 +821,19 @@ Context contexto;
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            System.out.println(document.getData());
-                                            Pelicula pelicula = document.toObject(Pelicula.class);
-                                            peliculas.add(pelicula);
-                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
-                                            RVP.setAdapter(adaptadorPeliculas);
-                                            adaptadorPeliculas.refrescar();
-
+                                            if(task.getResult().size()>0) {
+                                                Pelicula pelicula = document.toObject(Pelicula.class);
+                                                peliculas.add(pelicula);
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas, "");
+                                                RVP.setAdapter(adaptadorPeliculas);
+                                                adaptadorPeliculas.refrescar();
+                                            }
+                                            else
+                                            {
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas, "vacio");
+                                                RVP.setAdapter(adaptadorPeliculas);
+                                                adaptadorPeliculas.refrescar();
+                                            }
                                         }
                                     }
                                 }
@@ -803,12 +847,19 @@ Context contexto;
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Serie serie = document.toObject(Serie.class);
-                                            series.add(serie);
-                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
-                                            RVS.setAdapter(adaptadorSeries);
-                                            adaptadorSeries.refrescar();
-
+                                            if(task.getResult().size()>0) {
+                                                Serie serie = document.toObject(Serie.class);
+                                                series.add(serie);
+                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "");
+                                                RVS.setAdapter(adaptadorSeries);
+                                                adaptadorSeries.refrescar();
+                                            }
+                                            else
+                                            {
+                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "vacio");
+                                                RVS.setAdapter(adaptadorSeries);
+                                                adaptadorSeries.refrescar();
+                                            }
                                         }
                                     }
                                 }
@@ -826,12 +877,21 @@ Context contexto;
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Pelicula pelicula = document.toObject(Pelicula.class);
-                                            peliculas.add(pelicula);
-                                            AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,peliculas);
-                                            RVP.setAdapter(adaptadorPeliculas);
-                                            adaptadorPeliculas.refrescar();
+                                            if(task.getResult().size()>0) {
 
+
+                                                Pelicula pelicula = document.toObject(Pelicula.class);
+                                                peliculas.add(pelicula);
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas, "");
+                                                RVP.setAdapter(adaptadorPeliculas);
+                                                adaptadorPeliculas.refrescar();
+                                            }
+                                            else
+                                            {
+                                                AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto, peliculas, "vacio");
+                                                RVP.setAdapter(adaptadorPeliculas);
+                                                adaptadorPeliculas.refrescar();
+                                            }
                                         }
 
                                     }
@@ -846,12 +906,19 @@ Context contexto;
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Serie serie = document.toObject(Serie.class);
-                                            series.add(serie);
-                                            AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,series);
-                                            RVS.setAdapter(adaptadorSeries);
-                                            adaptadorSeries.refrescar();
-
+                                            if(task.getResult().size()>0) {
+                                                Serie serie = document.toObject(Serie.class);
+                                                series.add(serie);
+                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "");
+                                                RVS.setAdapter(adaptadorSeries);
+                                                adaptadorSeries.refrescar();
+                                            }
+                                            else
+                                            {
+                                                AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto, series, "vacio");
+                                                RVS.setAdapter(adaptadorSeries);
+                                                adaptadorSeries.refrescar();
+                                            }
                                         }
 
                                     }

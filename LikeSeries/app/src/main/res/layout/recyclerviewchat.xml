@@ -7,63 +7,71 @@
     android:orientation="vertical"
     tools:visibility="visible">
 
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="match_parent"
-        android:layout_height="2sp"
-        android:background="@color/letras" />
-
-    <TextView
-        android:id="@+id/nombre_chat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginLeft="10sp"
-        android:layout_marginTop="5sp"
-        android:layout_marginBottom="15sp"
-        android:gravity="left"
-        android:textColor="@color/letras" />
-
-    <TextView
-        android:id="@+id/mensaje_chat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30sp"
-        android:layout_marginRight="30sp"
-        android:layout_marginBottom="10sp"
-        android:textColor="@color/letras" />
-
     <LinearLayout
+        android:id="@+id/chat_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:gravity="right"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="2sp"
+            android:background="@color/letras" />
 
         <TextView
-            android:id="@+id/vacio"
-            android:layout_width="wrap_content"
+            android:id="@+id/nombre_chat"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/eliminarmensaje"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_horizontal"
-            android:layout_marginLeft="15sp"
-            android:layout_marginRight="15sp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10sp"
+            android:layout_marginTop="5sp"
             android:layout_marginBottom="15sp"
-            android:gravity="center|right"
-            android:text="@string/eliminarmensaje"
-            android:textColor="@color/letras"
-            tools:visibility="gone" />
-    </LinearLayout>
+            android:gravity="left"
+            android:textColor="@color/letras" />
 
-    <View
-        android:id="@+id/divider6"
-        android:layout_width="match_parent"
-        android:layout_height="2sp"
-        android:background="@color/letras" />
+        <TextView
+            android:id="@+id/mensaje_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30sp"
+            android:layout_marginRight="30sp"
+            android:layout_marginBottom="10sp"
+            android:textColor="@color/letras" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/vacio_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/eliminarmensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_horizontal"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="15sp"
+                android:gravity="center|right"
+                android:text="@string/eliminarmensaje"
+                android:textColor="@color/letras"
+                tools:visibility="gone" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider6"
+            android:layout_width="match_parent"
+            android:layout_height="2sp"
+            android:background="@color/letras" />
+
+    </LinearLayout>
 
 </LinearLayout>

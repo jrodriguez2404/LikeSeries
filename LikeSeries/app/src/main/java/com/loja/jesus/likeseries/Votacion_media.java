@@ -2,13 +2,14 @@ package com.loja.jesus.likeseries;
 
 public class Votacion_media {
     private String uid;
-    private int nota;
+    private int nota,votado;
     public Votacion_media() {
     }
 
-    public Votacion_media(String uid, int nota) {
+    public Votacion_media(String uid, int nota, int votado) {
         this.uid = uid;
         this.nota = nota;
+        this.votado = votado;
     }
 
     public String getUid() {
@@ -27,4 +28,11 @@ public class Votacion_media {
         this.nota = nota;
     }
 
+    public int getVotado() {
+        return votado;
+    }
+
+    public void setVotado(int votado) {
+        this.votado = votado;
+    }
 }

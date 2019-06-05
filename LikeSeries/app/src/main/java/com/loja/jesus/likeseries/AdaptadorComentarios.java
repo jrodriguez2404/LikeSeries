@@ -109,14 +109,14 @@ public class AdaptadorComentarios extends RecyclerView.Adapter<AdaptadorComentar
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if(collection.equals("peliculas")) {
                                     Pelicula peli = documentSnapshot.toObject(Pelicula.class);
-                                    Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(), ident, peli.getTitulo_Pelicula(), peli.getDescripcion_Pelicula(), peli.getProductora_Pelicula(),peli.getDirector_Pelicula(),peli.getFechaEstreno_Pelicula(),peli.getTrailer_Pelicula(),peli.getDuración_Pelicula(), peli.getGenero_Pelicula(), peli.getImagen_Pelicula(), peli.getVotosPositivos_Pelicula(), peli.getVotosNegativos_Pelicula(), peli.getVotantes_Pelicula(),peli.getNotamedia_Pelicula(), peli.getVotosusuarios(), listaComentarios,peli.getVotacion_media());
+                                    Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(), ident, peli.getTitulo_Pelicula(), peli.getDescripcion_Pelicula(), peli.getProductora_Pelicula(),peli.getDirector_Pelicula(),peli.getFechaEstreno_Pelicula(),peli.getTrailer_Pelicula(),peli.getDuración_Pelicula(), peli.getGenero_Pelicula(), peli.getImagen_Pelicula(), peli.getVotosPositivos_Pelicula(), peli.getVotosNegativos_Pelicula(), peli.getVotantes_Pelicula(),peli.getNotamedia_Pelicula(), peli.getVotosusuarios(), listaComentarios,peli.getVotacion_media(),peli.getActores_peliculas());
                                     db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
                                     notifyItemRemoved(i);
                                 }
                                 else if(collection.equals("series"))
                                 {
                                             Serie ser = documentSnapshot.toObject(Serie.class);
-                                            Serie serie = new Serie(ser.getCollection_Serie(),ident, ser.getTitulo_Serie(), ser.getDescripcion_Serie(), ser.getProductora_Serie(),ser.getDirector_Serie(),ser.getPrimeraEmision_Serie(),ser.getTrailer_Serie(),ser.getDuración_Serie(), ser.getGenero_Serie(), ser.getImagen_Serie(), ser.getVotosPositivos_Serie(), ser.getVotosNegativos_Serie(), ser.getVotantes_Serie(),ser.getNCapitulos(),ser.getNotamedia_Serie(), ser.getVotosusuarios(), listaComentarios,ser.getVotacion_media());
+                                            Serie serie = new Serie(ser.getCollection_Serie(),ident, ser.getTitulo_Serie(), ser.getDescripcion_Serie(), ser.getProductora_Serie(),ser.getDirector_Serie(),ser.getPrimeraEmision_Serie(),ser.getTrailer_Serie(),ser.getDuración_Serie(), ser.getGenero_Serie(), ser.getImagen_Serie(), ser.getVotosPositivos_Serie(), ser.getVotosNegativos_Serie(), ser.getVotantes_Serie(),ser.getNCapitulos(),ser.getNotamedia_Serie(), ser.getVotosusuarios(), listaComentarios,ser.getVotacion_media(),ser.getActores_series());
                                             db.collection("series").document(serie.getID_Serie()).set(serie);
                                             notifyItemRemoved(i);
                                 }

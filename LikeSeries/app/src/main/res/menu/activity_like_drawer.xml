@@ -18,6 +18,10 @@
                     android:id="@+id/series"
                     android:icon="@drawable/cellphone_android"
                     android:title="@string/series_menu" />
+                <item
+                    android:id="@+id/tertulia"
+                    android:icon="@drawable/tertulia"
+                    android:title="@string/tertulia" />
             </menu>
         </item>
     </group>

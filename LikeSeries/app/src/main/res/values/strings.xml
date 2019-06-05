@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Like-Series</string>
+    <string name="app_name">LikeSeries</string>
     <string name="SplasScream">splash</string>
     <!--Menú recordatorio-->
     <string name="action_settings">¿Olvido la contraseña?</string>
     <!--LOGIN-->
-    <string name="LOGIN">LOGIN-LikeSeries</string>
+    <string name="LOGIN">LOGIN - LikeSeries</string>
     <string name="correo">Correo:</string>
     <string name="contrasena">Contraseña:</string>
     <string name="isesion">Iniciar Sesión</string>
@@ -18,7 +18,7 @@
     <string name="emailmalformado">El email no esta bien formado</string>
     <string name="errorgeneralemail">No se ha podido mandar el email</string>
     <!--REGISTRO-->
-    <string name="REGISTRO">REGISTRO-LikeSeries</string>
+    <string name="REGISTRO">REGISTRO - LikeSeries</string>
     <string name="correor">Su correo electrónico:</string>
     <string name="nombre">Nombre de usuario:</string>
     <string name="nombreerror">Nombre de usuario mal formado</string>
@@ -27,7 +27,7 @@
     <string name="correou">Correo Invalido</string>
     <string name="existente">El usuario ya esta registrado</string>
     <string name="title_activity_registrado">Registrado</string>
-    <string name="title_activity_like">Like-Series</string>
+    <string name="title_activity_like">LikeSeries</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -44,7 +44,7 @@
     <!--Acuerdo-->
     <string name="ComboBox2">Acepto los términos y condiciones de uso</string>
     <!--Perfil -->
-    <string name="miperfil">Mi Perfil-LikeSeries</string>
+    <string name="miperfil">Mi Perfil - LikeSeries</string>
     <string name="nombre_perfil">Nombre de usuario: %1$s</string>
     <string name="bienvenida">Bienvenido %1$s</string>
     <string name="email_perfil">Correo: %1$s</string>
@@ -58,6 +58,7 @@
     <string name="perfil_menu">Mi perfil</string>
     <string name="cerrarsesion_menu">Cerrar Sesión</string>
     <string name="info_menu">Creador App/Términos</string>
+    <string name="tertulia">Tertulia</string>
     <!--Respecto a la sesion-->
     <string name="cerrarsesion">¿Está seguro de que quiere cerrar sesión %1$s?</string>
     <string name="ok">Aceptar</string>
@@ -71,13 +72,12 @@
     <string name="votacionmedia">La nota media es %1$s</string>
     <string name="votantes"> de %1$s votantes</string>
     <string name="nohavotado">Votar -> </string>
-    <string name="botonnumberpickervoto"></string>
     <string name="estaseguro">Usted podra editar su votación</string>
     <string name="eliminarcomentario">Eliminar Comentario</string>
     <string name="seguro">¿Está seguro?</string>
     <string name="delete">Eliminar</string>
     <string name="comenta">Comenta que te ha parecido</string>
-    <string name="comentario">Comentarios: (%1$s)</string>
+    <string name="comentario">Críticas: (%1$s)</string>
     <string name="productora">Producida por %1$s</string>
     <string name="capitulos">Número de capitulos %1$s</string>
     <string name="mostrarmas">Mostrar más</string>
@@ -86,7 +86,8 @@
     <string name="fechae">Fecha de estreno %1$s</string>
     <string name="duracionhoras">Duración en horas %1$s</string>
     <string name="duracionminutos">Duración en minutos %1$s</string>
-    <string name="trailer">Pulsa para ver el trailer</string>
+    <string name="trailer">Púlsame para ver el trailer</string>
+    <string name="actor_peli">Actores</string>
     <!--Voto-->
     <string name="mispositivos">Me han gustado (%1$s)</string>
     <string name="misnegativos">No me han gustado (%1$s)</string>
@@ -109,7 +110,6 @@
     <string name="titulo_Administración">Administración - LikeSeries</string>
     <string name="insertar_pelicula_admin">Insertar Pelicula</string>
     <string name="insertar_serie_admin">Insertar Serie</string>
-    <string name="administrarusuarios">Administrar Usuarios</string>
 
     <string name="trailer_peli">Trailer Pelicula</string>
     <string name="titulo_peli">Titulo Pelicula</string>
@@ -133,4 +133,11 @@
     <string name="numero_capitulos">Número capítulos Serie</string>
     <!--Info-->
     <string name="tituloinfo">Info-LikeSeries</string>
+    <!--Tertulia-->
+    <string name="titulotertulia">Tertulia - LikeSeries</string>
+    <string name="nombretertulia">Nombre Tertulia</string>
+    <string name="iniciotertulia">Inicio Tertulia</string>
+    <string name="fintertulia">Fin de la Tertulia</string>
+    <string name="activartertulia">Activar Tertulia</string>
+    <string name="administrartertulia">Administrar Tertulias</string>
 </resources>

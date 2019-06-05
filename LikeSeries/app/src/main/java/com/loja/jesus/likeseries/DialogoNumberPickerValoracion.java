@@ -37,7 +37,7 @@ public class DialogoNumberPickerValoracion {
 
     private Class<ContenedorMultimedia> interfaz;
 
-    public DialogoNumberPickerValoracion(Context contexto, Class<ContenedorMultimedia> actividad, final ImageView imagenvoto, final String collection, final String idcontenido, final Boolean volveravotar) {
+    public DialogoNumberPickerValoracion(Context contexto, Class<ContenedorMultimedia> actividad, final ImageView imagenvoto, final String collection, final String idcontenido) {
 
         interfaz = actividad;
         final Dialog dialogo = new Dialog(contexto);
@@ -66,66 +66,69 @@ public class DialogoNumberPickerValoracion {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 ArrayList<Votacion_media> votapersona = new ArrayList<>();
-                                Boolean votado=volveravotar;
                                 Pelicula peli = documentSnapshot.toObject(Pelicula.class);
                                 Serie ser = documentSnapshot.toObject(Serie.class);
                                 Votacion_media vm;
                                 try {
                                     if (collection.equals("peliculas")) {
-                                        int votacionmedia = 0;
+                                        Boolean noentrarmas = false;
+                                        double votacionmedia = 0;
                                         for (int i = 0; i < peli.getVotacion_media().size(); i++) {
                                             //Aqui se insertan los que no son del usuario
-                                            if(peli.getVotacion_media().size()>0)
-                                            {
-                                                if(!peli.getVotacion_media().get(i).getUid().equals(user.getUid()))
+                                                if(peli.getVotacion_media().get(i).getUid().equals(user.getUid())&&peli.getVotacion_media().get(i).getVotado()==1)
                                                 {
-                                                    vm = new Votacion_media(peli.getVotacion_media().get(i).getUid(), peli.getVotacion_media().get(i).getNota());
+                                                    vm = new Votacion_media(user.getUid(), valoracion.getValue(),1);
                                                     votapersona.add(vm);
+                                                    noentrarmas=true;
 
                                                 }
-                                                if(!peli.getVotacion_media().get(i).getUid().equals(user.getUid())&&!votado)
+                                                if(!peli.getVotacion_media().get(i).getUid().equals(user.getUid())&&peli.getVotacion_media().get(i).getVotado()==1)
                                                 {
-                                                    vm = new Votacion_media(user.getUid(), valoracion.getValue());
+                                                    vm = new Votacion_media(peli.getVotacion_media().get(i).getUid(), peli.getVotacion_media().get(i).getNota(),peli.getVotacion_media().get(i).getVotado());
                                                     votapersona.add(vm);
-                                                    votado=true;
                                                 }
 
-                                            }
-
-
-                                            }
-                                        if (peli.getVotacion_media().size() == 0) {
-                                            vm = new Votacion_media(user.getUid(), valoracion.getValue());
-                                            votapersona.add(vm);
 
                                         }
+
+                                        if (peli.getVotacion_media().size() == 0) {
+                                            vm = new Votacion_media(user.getUid(), valoracion.getValue(),1);
+                                            votapersona.add(vm);
+                                            noentrarmas=true;
+
+                                        }
+                                        if(noentrarmas==false)
+                                        {
+                                            vm = new Votacion_media(user.getUid(), valoracion.getValue(),1);
+                                            votapersona.add(vm);
+                                        }
+
 
 
                                         for (int x = 0; x < votapersona.size(); x++) {
                                             votacionmedia += votapersona.get(x).getNota();
-
                                         }
                                         votacionmedia = votacionmedia / votapersona.size();
-                                        Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(), idcontenido, peli.getTitulo_Pelicula(), peli.getDescripcion_Pelicula(), peli.getProductora_Pelicula(), peli.getDirector_Pelicula(), peli.getFechaEstreno_Pelicula(), peli.getTrailer_Pelicula(), peli.getDuración_Pelicula(), peli.getGenero_Pelicula(), peli.getImagen_Pelicula(), peli.getVotosPositivos_Pelicula(), peli.getVotosNegativos_Pelicula(), votapersona.size(), votacionmedia, peli.getVotosusuarios(), peli.getComentarios(), votapersona);
+                                        Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(), idcontenido, peli.getTitulo_Pelicula(), peli.getDescripcion_Pelicula(), peli.getProductora_Pelicula(), peli.getDirector_Pelicula(), peli.getFechaEstreno_Pelicula(), peli.getTrailer_Pelicula(), peli.getDuración_Pelicula(), peli.getGenero_Pelicula(), peli.getImagen_Pelicula(), peli.getVotosPositivos_Pelicula(), peli.getVotosNegativos_Pelicula(),votapersona.size(), votacionmedia, peli.getVotosusuarios(), peli.getComentarios(), votapersona,peli.getActores_peliculas());
                                         db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
 
 
                                     } else if (collection.equals("series")) {
-                                        int votacionmedia = 0;
+                                        double votacionmedia = 0;
                                         for (int i = 0; i < ser.getVotacion_media().size(); i++) {
                                             //Aqui se insertan los que no son del usuario
-                                            if(peli.getVotacion_media().size()>0)
+                                            if(ser.getVotacion_media().size()>0)
                                             {
-                                                if(!ser.getVotacion_media().get(i).getUid().equals(user.getUid()))
+                                                if(ser.getVotacion_media().get(i).getUid().equals(user.getUid()))
                                                 {
-                                                    vm = new Votacion_media(peli.getVotacion_media().get(i).getUid(), ser.getVotacion_media().get(i).getNota());
+                                                    vm = new Votacion_media(user.getUid(), valoracion.getValue(),1);
                                                     votapersona.add(vm);
+
                                                 }
-                                                if(!ser.getVotacion_media().get(i).getUid().equals(user.getUid())&&!votado)
+                                                if(!ser.getVotacion_media().get(i).getUid().equals(user.getUid())&&ser.getVotacion_media().get(i).getVotado()==1)
                                                 {
-                                                    vm = new Votacion_media(user.getUid(), valoracion.getValue());
+                                                    vm = new Votacion_media(peli.getVotacion_media().get(i).getUid(), peli.getVotacion_media().get(i).getNota(),peli.getVotacion_media().get(i).getVotado());
                                                     votapersona.add(vm);
-                                                    votado=true;
                                                 }
 
                                             }
@@ -133,9 +136,8 @@ public class DialogoNumberPickerValoracion {
 
                                         }
                                         if (ser.getVotacion_media().size() == 0) {
-                                            vm = new Votacion_media(user.getUid(), valoracion.getValue());
+                                            vm = new Votacion_media(user.getUid(), valoracion.getValue(),1);
                                             votapersona.add(vm);
-
                                         }
 
 
@@ -144,7 +146,7 @@ public class DialogoNumberPickerValoracion {
 
                                         }
                                         votacionmedia = votacionmedia / votapersona.size();
-                                        Serie serie = new Serie(ser.getCollection_Serie(), idcontenido, ser.getTitulo_Serie(), ser.getDescripcion_Serie(), ser.getProductora_Serie(), ser.getDirector_Serie(), ser.getPrimeraEmision_Serie(), ser.getTrailer_Serie(), ser.getDuración_Serie(), ser.getGenero_Serie(), ser.getImagen_Serie(), ser.getVotosPositivos_Serie(), ser.getVotosNegativos_Serie(), votapersona.size(), ser.getNCapitulos(), votacionmedia, ser.getVotosusuarios(), ser.getComentarios(), votapersona);
+                                        Serie serie = new Serie(ser.getCollection_Serie(), idcontenido, ser.getTitulo_Serie(), ser.getDescripcion_Serie(), ser.getProductora_Serie(), ser.getDirector_Serie(), ser.getPrimeraEmision_Serie(), ser.getTrailer_Serie(), ser.getDuración_Serie(), ser.getGenero_Serie(), ser.getImagen_Serie(), ser.getVotosPositivos_Serie(), ser.getVotosNegativos_Serie(), votapersona.size(), ser.getNCapitulos(), votacionmedia, ser.getVotosusuarios(), ser.getComentarios(), votapersona,ser.getActores_series());
                                         db.collection("series").document(ser.getID_Serie()).set(serie);
                                     }
 

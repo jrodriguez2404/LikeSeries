@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Chat {
     private ArrayList<ChatGeneral> chatgeneral;
-
     public Chat() {
     }
 

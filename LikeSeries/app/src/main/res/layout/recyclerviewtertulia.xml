@@ -4,30 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primary_light"
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/recyclerviewvacio"
+        android:id="@+id/recyclerviewvacio_tertulia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:visibility="visible">
 
         <TextView
-            android:id="@+id/vacio"
+            android:id="@+id/vacio_tertulia"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="No hay nada para mostrar "
-            android:textColor="@color/letras"
-            tools:visibility="gone" />
+            android:text="No hay tertulias creadas"
+            android:textColor="@color/letras" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/seleccion"
+        android:id="@+id/seleccion_tertulia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/primary_light"
         android:orientation="vertical">
 
         <LinearLayout
@@ -42,10 +41,20 @@
                 android:layout_weight="2"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/imagen"
+                <TextView
+                    android:id="@+id/nombretertulia"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/letras" />
+
+                <View
+                    android:id="@+id/divider15"
+                    android:layout_width="2sp"
+                    android:layout_height="match_parent"
+                    android:background="@color/letras" />
             </LinearLayout>
 
             <LinearLayout
@@ -53,20 +62,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/titulo"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:textColor="@color/letras" />
-                </LinearLayout>
 
                 <View
                     android:id="@+id/divider10"
@@ -82,25 +77,41 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/imagenmas"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/numvotosmas"
+                        android:id="@+id/fechainiciotertulia"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_gravity="center"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:textColor="@color/letras" />
 
+                    <View
+                        android:id="@+id/divider13"
+                        android:layout_width="2sp"
+                        android:layout_height="match_parent"
+                        android:background="@color/letras" />
+
                     <TextView
-                        android:id="@+id/notamedia_recycler"
+                        android:id="@+id/fechafintertulia"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:foregroundGravity="center"
                         android:textColor="@color/letras" />
+
+                    <View
+                        android:id="@+id/divider14"
+                        android:layout_width="2sp"
+                        android:layout_height="match_parent"
+                        android:background="@color/letras" />
+
+                    <TextView
+                        android:id="@+id/activadotertulia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:foregroundGravity="center" />
                 </LinearLayout>
 
                 <View
@@ -109,25 +120,6 @@
                     android:layout_height="3sp"
                     android:layout_weight="1"
                     android:background="@color/letras" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/imagenmenos"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/numvotosmenos"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:textColor="@color/letras" />
-
-                </LinearLayout>
 
             </LinearLayout>
 

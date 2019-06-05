@@ -1,5 +1,7 @@
 package com.loja.jesus.likeseries;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,27 +19,29 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
 public class Administrador extends AppCompatActivity implements View.OnClickListener {
-private LinearLayout insertarpeli,insertarserie;
-private EditText trailer_peli,trailer_serie,titulo_peli,titulo_serie,descripcion_peli,descripcion_serie,genero1_peli,genero1_serie,genero2_peli,genero2_serie,genero3_peli,genero3_serie,genero4_peli,genero4_serie,imagen_peli,imagen_serie,director_peli,director_serie,estreno_peli,primeraemision_serie,duracion_peli,duracion_serie,productora_peli,productora_serie,numerocapitulos_serie;
-private Button insertar_peli,insertar_serie;
+private LinearLayout insertarpeli,insertarserie,agregartertulia;
+private EditText trailer_peli,trailer_serie,titulo_peli,titulo_serie,descripcion_peli,descripcion_serie,genero1_peli,genero1_serie,genero2_peli,genero2_serie,genero3_peli,genero3_serie,genero4_peli,genero4_serie,imagen_peli,imagen_serie,director_peli,director_serie,estreno_peli,primeraemision_serie,duracion_peli,duracion_serie,productora_peli,productora_serie,numerocapitulos_serie,nombre_tertulia,inicio_tertulia,fin_tertulia,activar_tertulia,actores1_peli,actores1_serie,actores2_peli,actores2_serie,actores3_peli,actores3_serie;
+private Button insertar_peli,insertar_serie,insertar_tertulia;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseFirestore db;
+    private Context contexto=this;
 @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_administrador);
         declaraciones();
-        insertarpeli=findViewById(R.id.insertarpelicula_view);
-        insertarserie=findViewById(R.id.insertarserie_view);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.appbar);
         toolbar.setTitle(R.string.titulo_Administración);
         setSupportActionBar(toolbar);
+
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.addTab(tabs.newTab().setText(R.string.insertar_pelicula_admin));
         tabs.addTab(tabs.newTab().setText(R.string.insertar_serie_admin));
-        tabs.addTab(tabs.newTab().setText(R.string.administrarusuarios));
+        tabs.addTab(tabs.newTab().setText(R.string.administrartertulia));
         tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
+
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -46,11 +50,19 @@ private Button insertar_peli,insertar_serie;
                 {
                     insertarpeli.setVisibility(View.VISIBLE);
                     insertarserie.setVisibility(View.GONE);
+                    agregartertulia.setVisibility(View.GONE);
                 }
                 else if(tab.getPosition()==1)
                 {
                     insertarpeli.setVisibility(View.GONE);
                     insertarserie.setVisibility(View.VISIBLE);
+                    agregartertulia.setVisibility(View.GONE);
+                }
+                else if(tab.getPosition()==2)
+                {
+                    insertarpeli.setVisibility(View.GONE);
+                    insertarserie.setVisibility(View.GONE);
+                    agregartertulia.setVisibility(View.VISIBLE);
                 }
 
             }
@@ -67,8 +79,29 @@ private Button insertar_peli,insertar_serie;
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     private void declaraciones()
     {
+                        actores1_peli = findViewById(R.id.textoactor1_peli);
+                        actores1_serie=findViewById(R.id.textoactor1_serie);
+        actores2_peli = findViewById(R.id.textoactor2_peli);
+        actores2_serie=findViewById(R.id.textoactor2_serie);
+        actores3_peli = findViewById(R.id.textoactor3_peli);
+        actores3_serie=findViewById(R.id.textoactor3_serie);
+                        insertar_tertulia=findViewById(R.id.insertar__);
+                        insertar_tertulia.setOnClickListener(this);
+                        nombre_tertulia=findViewById(R.id.textontertulia);
+                        inicio_tertulia=findViewById(R.id.textoitertulia);
+                        fin_tertulia=findViewById(R.id.textoftertulia);
+                        activar_tertulia=findViewById(R.id.textoatertulia);
+                        insertarpeli=findViewById(R.id.insertarpelicula_view);
+                        insertarserie=findViewById(R.id.insertarserie_view);
+                        agregartertulia=findViewById(R.id.agregartertulia_view);
                         insertar_peli=findViewById(R.id.insertar);
                         insertar_peli.setOnClickListener(this);
                         insertar_serie=findViewById(R.id.insertar_);
@@ -109,7 +142,10 @@ private Button insertar_peli,insertar_serie;
         array.add(genero2_peli.getText().toString());
         array.add(genero3_peli.getText().toString());
         array.add(genero4_peli.getText().toString());
-
+        ArrayList<String>arrayactores = new ArrayList<>();
+                arrayactores.add(actores1_peli.getText().toString());
+        arrayactores.add(actores2_peli.getText().toString());
+        arrayactores.add(actores3_peli.getText().toString());
         ArrayList<Votos> votos = new ArrayList<>();
 
         ArrayList<Comentario> comentarios = new ArrayList<>();
@@ -119,9 +155,11 @@ private Button insertar_peli,insertar_serie;
 
         db= FirebaseFirestore.getInstance();
 
-        Pelicula pelicula = new Pelicula("peliculas",titulo_peli.getText().toString().replace(" ",""),titulo_peli.getText().toString(),descripcion_peli.getText().toString(),productora_peli.getText().toString(),director_peli.getText().toString(),estreno_peli.getText().toString(),trailer_peli.getText().toString(),duracion_peli.getText().toString(),array,imagen_peli.getText().toString(),0,0,0,0,votos,comentarios,votacion_media);
+        Pelicula pelicula = new Pelicula("peliculas",titulo_peli.getText().toString().replace(" ",""),titulo_peli.getText().toString(),descripcion_peli.getText().toString(),productora_peli.getText().toString(),director_peli.getText().toString(),estreno_peli.getText().toString(),trailer_peli.getText().toString(),duracion_peli.getText().toString(),array,imagen_peli.getText().toString(),0,0,0,0,votos,comentarios,votacion_media,arrayactores);
         db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
-
+        actores1_peli.setText("");
+        actores2_peli.setText("");
+        actores3_peli.setText("");
         trailer_peli.setText("");
         titulo_peli.setText("");
         descripcion_peli.setText("");
@@ -152,8 +190,12 @@ private Button insertar_peli,insertar_serie;
 
         ArrayList<Votacion_media> votacion_media = new ArrayList<>();
 
+        ArrayList<String>arrayactores = new ArrayList<>();
+        arrayactores.add(actores1_serie.getText().toString());
+        arrayactores.add(actores2_serie.getText().toString());
+        arrayactores.add(actores3_serie.getText().toString());
         db= FirebaseFirestore.getInstance();
-        Serie serie = new Serie("series",titulo_serie.getText().toString().replace(" ",""),titulo_serie.getText().toString(),descripcion_serie.getText().toString(),productora_serie.getText().toString(),director_serie.getText().toString(),primeraemision_serie.getText().toString(),trailer_serie.getText().toString(),duracion_serie.getText().toString(),array,imagen_serie.getText().toString(),0,0,0, Integer.parseInt(numerocapitulos_serie.getText().toString()),0,votos,comentarios,votacion_media);
+        Serie serie = new Serie("series",titulo_serie.getText().toString().replace(" ",""),titulo_serie.getText().toString(),descripcion_serie.getText().toString(),productora_serie.getText().toString(),director_serie.getText().toString(),primeraemision_serie.getText().toString(),trailer_serie.getText().toString(),duracion_serie.getText().toString(),array,imagen_serie.getText().toString(),0,0,0, Integer.parseInt(numerocapitulos_serie.getText().toString()),0,votos,comentarios,votacion_media,arrayactores);
         db.collection("series").document(serie.getID_Serie()).set(serie);
 
         genero1_serie.setText("");
@@ -169,11 +211,33 @@ private Button insertar_peli,insertar_serie;
         duracion_serie.setText("");
         productora_serie.setText("");
         numerocapitulos_serie.setText("");
-
+        actores1_serie.setText("");
+        actores2_serie.setText("");
+        actores3_serie.setText("");
 
 
         Toast.makeText(getApplicationContext(),
                 "Serie insertada con exito", Toast.LENGTH_LONG).show();
+    }
+    private void agregarTertulia()
+    {
+        db= FirebaseFirestore.getInstance();
+        ArrayList<Tertulia> arraytertulia = new ArrayList<>();
+        ArrayList<ChatGeneral>chatgeneral = new ArrayList<>();
+        ArrayList<Chat> arraychat = new ArrayList<>();
+        Chat chat = new Chat(chatgeneral);
+        arraychat.add(chat);
+        Tertulia tertulia = new Tertulia(nombre_tertulia.getText().toString(),inicio_tertulia.getText().toString(),fin_tertulia.getText().toString(), Integer.parseInt(activar_tertulia.getText().toString()),arraychat);
+        arraytertulia.add(tertulia);
+        Tertulias tertulias = new Tertulias(arraytertulia);
+        db.collection("tertulia").document(nombre_tertulia.getText().toString().replace(" ","")).set(tertulias);
+
+
+        nombre_tertulia.setText("");
+        inicio_tertulia.setText("");
+        fin_tertulia.setText("");
+        activar_tertulia.setText("");
+
     }
 
     @Override
@@ -189,6 +253,11 @@ private Button insertar_peli,insertar_serie;
             case R.id.insertar_:
                 if(!titulo_serie.equals("")) {
                     insertarSerie();
+                }
+                break;
+            case R.id.insertar__:
+                if(!nombre_tertulia.equals("")) {
+                    agregarTertulia();
                 }
                 break;
         }

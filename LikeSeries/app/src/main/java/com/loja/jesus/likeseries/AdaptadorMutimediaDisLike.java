@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMutimediaDisLike.ViewHolderMultimedia> {
@@ -82,18 +83,24 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 String usuario = "", nombre = "", comentario = "";
                 ArrayList<String> arrayusuarios = new ArrayList<>(), arraynombres = new ArrayList<>(), arraycomentarios = new ArrayList<>(), arrayvotantes = new ArrayList<>(), arrayreglas = new ArrayList<>();
 //Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
-                for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
-                    arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
-                    arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
-                }
-                //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
-                for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
-                    arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
-                    arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
-                    arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
+                try {
+//Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
+                    for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
+                        arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
+                        arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
+                    }
+                    //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
+                    for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
+                        arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
+                        arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
+                        arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
 
+                    }
+                }catch (Exception e)
+                {
 
                 }
+                DecimalFormat formato = new DecimalFormat("#.#");
                 Resources res = viewHolderMultimedia.itemView.getContext().getResources();
                 final Intent intent = new Intent(context, ContenedorMultimedia.class);
                 intent.putExtra("ID", listaMultimedia.get(i).getID_Pelicula());
@@ -104,7 +111,7 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 intent.putExtra("votosmenos", listaMultimedia.get(i).getVotosNegativos_Pelicula());
                 intent.putExtra("votantes", listaMultimedia.get(i).getVotantes_Pelicula());
                 intent.putExtra("productora", listaMultimedia.get(i).getProductora_Pelicula());
-                intent.putExtra("nmedia", listaMultimedia.get(i).getNotamedia_Pelicula());
+                intent.putExtra("nmedia",formato.format(listaMultimedia.get(i).getNotamedia_Pelicula()));
                 intent.putExtra("arrayusuarios", arrayusuarios);
                 intent.putExtra("arraynombres", arraynombres);
                 intent.putExtra("arraycomentarios", arraycomentarios);
@@ -117,6 +124,14 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 intent.putExtra("fechaestreno",listaMultimedia.get(i).getFechaEstreno_Pelicula());
                 intent.putExtra("trailer",listaMultimedia.get(i).getTrailer_Pelicula());
                 intent.putExtra("duracion",listaMultimedia.get(i).getDuración_Pelicula());
+                if(!listaMultimedia.get(i).getGenero_Pelicula().get(3).equals("Anime")) {
+                    intent.putExtra("actores", listaMultimedia.get(i).getActores_peliculas());
+                    intent.putExtra("actoresno","si");
+                }
+                else
+                {
+                    intent.putExtra("actoresno","no");
+                }
                 try {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference gsReference = storage.getReferenceFromUrl(listaMultimedia.get(i).getImagen_Pelicula() + "");
@@ -162,18 +177,24 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 String usuario = "", nombre = "", comentario = "";
                 ArrayList<String> arrayusuarios = new ArrayList<>(), arraynombres = new ArrayList<>(), arraycomentarios = new ArrayList<>(), arrayvotantes = new ArrayList<>(), arrayreglas = new ArrayList<>();
 //Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
-                for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
-                    arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
-                    arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
-                }
-                //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
-                for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
-                    arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
-                    arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
-                    arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
+                try {
+//Este bucle recorre todos los usuarios que han votado alguna vez en la app ,despues con el usuario actual comprueba si existen en el mapa , y recoge los parametros
+                    for (int j = 0; j < listaMultimedia.get(i).getVotosusuarios().size(); j++) {
+                        arrayvotantes.add(listaMultimedia.get(i).getVotosusuarios().get(j).getUsuariovoto());
+                        arrayreglas.add(listaMultimedia.get(i).getVotosusuarios().get(j).getReglas());
+                    }
+                    //Este bucle recoge todos los comentarios de la app , aun tenemos que hacer que el boton eliminar se muestre para los comentarios del usuario actual
+                    for (int j = 0; j < listaMultimedia.get(i).getComentarios().size(); j++) {
+                        arrayusuarios.add(listaMultimedia.get(i).getComentarios().get(j).getUsuario());
+                        arraynombres.add(listaMultimedia.get(i).getComentarios().get(j).getNombre());
+                        arraycomentarios.add(listaMultimedia.get(i).getComentarios().get(j).getComentario());
 
+                    }
+                }catch (Exception x)
+                {
 
                 }
+                DecimalFormat formato = new DecimalFormat("#.#");
                 Resources res = viewHolderMultimedia.itemView.getContext().getResources();
                 final Intent intent = new Intent(context, ContenedorMultimedia.class);
                 intent.putExtra("ID", listaMultimedia.get(i).getID_Serie());
@@ -185,7 +206,7 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 intent.putExtra("votosmenos", listaMultimedia.get(i).getVotosNegativos_Serie());
                 intent.putExtra("votantes", listaMultimedia.get(i).getVotantes_Serie());
                 intent.putExtra("productora", listaMultimedia.get(i).getProductora_Serie());
-                intent.putExtra("nmedia", listaMultimedia.get(i).getNotamedia_Serie());
+                intent.putExtra("nmedia",formato.format(listaMultimedia.get(i).getNotamedia_Serie()));
                 intent.putExtra("arrayusuarios", arrayusuarios);
                 intent.putExtra("arraynombres", arraynombres);
                 intent.putExtra("arraycomentarios", arraycomentarios);
@@ -198,7 +219,14 @@ public class AdaptadorMutimediaDisLike extends RecyclerView.Adapter<AdaptadorMut
                 intent.putExtra("fechaestreno",listaMultimedia.get(i).getPrimeraEmision_Serie());
                 intent.putExtra("trailer",listaMultimedia.get(i).getTrailer_Serie());
                 intent.putExtra("duracion",listaMultimedia.get(i).getDuración_Serie());
-
+                if(!listaMultimedia.get(i).getGenero_Serie().get(3).equals("Anime")) {
+                    intent.putExtra("actores", listaMultimedia.get(i).getActores_series());
+                    intent.putExtra("actoresno","si");
+                }
+                else
+                {
+                    intent.putExtra("actoresno","no");
+                }
                 try {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference gsReference = storage.getReferenceFromUrl(listaMultimedia.get(i).getImagen_Serie() + "");

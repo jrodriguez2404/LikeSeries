@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -38,34 +39,35 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.support.constraint.Constraints.TAG;
 
 public class ContenedorMultimedia extends AppCompatActivity implements View.OnClickListener {
-private TextView titulo_multi,descripcion_multi,genero0_multi,genero1_multi,genero2_multi,votopositivo,votonegativo,productora_multi,capitulos_multi ,director_multi,fechaestreno_multi,trailer_multi,duracion_multi,comentarios,mostrarmas,votacionmedia_multi,votantes_multi,compartir_multimedia;
+private TextView titulo_multi,descripcion_multi,genero0_multi,genero1_multi,genero2_multi,votopositivo,votonegativo,productora_multi,capitulos_multi ,director_multi,fechaestreno_multi,trailer_multi,duracion_multi,comentarios,mostrarmas,votacionmedia_multi,votantes_multi,compartir_multimedia,actor1_multimedia,actor2_multimedia,actor3_multimedia;
 private ImageView imagenvotopositivo,imagenvotonegativos,imagen_multi,like,nolike;
-private Boolean vnegativo,vpositivo,mostrarmas_boolean,negativo,positivo,volveravotar=false;
+private Boolean vnegativo,vpositivo,mostrarmas_boolean,negativo,positivo;
 private Integer votantes,votomas,votomenos,usuariovotopositivo,usuariovotonegativo,capitulos;
 private FirebaseUser user;
 private FirebaseAuth mAuth;
 private long media;
 private FirebaseFirestore db;
-private RecyclerView RVComentarios,RVP,RVS;
+private RecyclerView RVComentarios;
 private ImageView imagenvoto;
 private Context contexto = this;
 private String titulo,descripcion,productora,imagen,id,reglas,director,fechaestreno,trailer,duracion,collection;
-private ArrayList<String> genero;
-private ArrayList<Multimedia>peliculasyseries;
 private ArrayList<Comentario> coment;
 private ArrayList<Votos> votos;
-private ArrayList<String> arrayusuariovoto;
-private ArrayList<String> arrayusuarios;
+private ArrayList<String> arrayusuariovoto,arrayusuarios,genero,actores;
 private Intent intentlike;
 private Button insertarcomentario;
 private EditText cajacomentario;
-private LinearLayout mostrar;
+private LinearLayout mostrar,linearlayoutactores;
+private View dividercapitulos1,dividercapitulos2,divideractores;
  @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -96,12 +98,6 @@ private LinearLayout mostrar;
                 startActivity(intentlike);
             }
         });
-        try {
-            refrescarDatosPantalla();
-        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-            Toast.makeText(getApplicationContext(),
-                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-        }
 
 
     }
@@ -119,7 +115,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                                     Pelicula pel = document.toObject(Pelicula.class);
                                     ArrayList<Pelicula> pe = new ArrayList<>();
                                     pe.add(pel);
-                                    AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,pe);
+                                    AdaptadorPeliculas adaptadorPeliculas = new AdaptadorPeliculas(contexto,pe,"");
                                     adaptadorPeliculas.addItem(peli,intent.getIntExtra("numero",0));
 
                                 }
@@ -140,7 +136,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                                     Serie ser = document.toObject(Serie.class);
                                     ArrayList<Serie> se = new ArrayList<>();
                                     se.add(ser);
-                                    AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,se);
+                                    AdaptadorSeries adaptadorSeries = new AdaptadorSeries(contexto,se,"");
                                     adaptadorSeries.addItem(ser,intent.getIntExtra("numero",0));
                                 }
                             }
@@ -166,6 +162,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
         mostrarmas_boolean=true;
         try {
             declaraciones();
+            refrescarDatosPantalla();
         } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
             Toast.makeText(getApplicationContext(),
                     "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
@@ -203,6 +200,9 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
 
     private void declaraciones() throws LikeSeriesExceptionClass
     {
+        dividercapitulos1 = findViewById(R.id.dividercapitulos1);
+        dividercapitulos2 = findViewById(R.id.dividercapitulos2);
+        divideractores = findViewById(R.id.divideractores);
         compartir_multimedia=findViewById(R.id.compartirresultado);
         votantes_multi = findViewById(R.id.votantes);
         votacionmedia_multi = findViewById(R.id.votacionmedia);
@@ -238,6 +238,11 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
         trailer_multi= findViewById(R.id.trailer_Multimedia);
         trailer_multi.setOnClickListener(this);
         duracion_multi= findViewById(R.id.duracion_Multimedia);
+        actor1_multimedia=findViewById(R.id.actor1_multimedia);
+        actor2_multimedia=findViewById(R.id.actor2_multimedia);
+        actor3_multimedia=findViewById(R.id.actor3_multimedia);
+        linearlayoutactores=findViewById(R.id.linearlayoutactores);
+
         cogerExtras();
     }
     private void abrirCompartir()
@@ -254,7 +259,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s. " + "\n" +
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries"+"\n"+".Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s. " + "\n" +
                             "A demas esta valorada en un "+peli.getNotamedia_Pelicula() + " de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n" +
                             user.getDisplayName() + " gracias por compartir esta información con tus amigos");
                     sendIntent.setType("text/plain");
@@ -267,7 +272,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s. " + "\n" +
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, user.getDisplayName() + " te ha compartido la pelicula "+ ser.getTitulo_Serie() + " desde LikeSeries"+"\n"+"Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s. " + "\n" +
                             "A demas esta valorada en un "+ser.getNotamedia_Serie() + " de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n" +
                             user.getDisplayName() + " gracias por compartir esta información con tus amigos");
                     sendIntent.setType("text/plain");
@@ -293,7 +298,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     if(collection.equals("peliculas")) {
                         Pelicula peli = snapshot.toObject(Pelicula.class);
                         comentarios.setText(getResources().getString(R.string.comentario,peli.getComentarios().size()));
-                        votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,peli.getNotamedia_Pelicula()));
+                        DecimalFormat formato = new DecimalFormat("#.#");
+                        votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,formato.format(peli.getNotamedia_Pelicula())));
                         votantes_multi.setText(getResources().getString(R.string.votantes,peli.getVotantes_Pelicula()));
 
                     }
@@ -301,7 +307,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     {
                         Serie ser = snapshot.toObject(Serie.class);
                         comentarios.setText(getResources().getString(R.string.comentario,ser.getComentarios().size()));
-                        votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,ser.getNotamedia_Serie()));
+                        DecimalFormat formato = new DecimalFormat("#.#");
+                        votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,formato.format(ser.getNotamedia_Serie())));
                         votantes_multi.setText(getResources().getString(R.string.votantes,ser.getVotantes_Serie()));
                     }
                 } else {
@@ -323,14 +330,15 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
         id = intent.getStringExtra("ID");
         if(intent.getStringExtra("pelioserie").equals("series"))
         {
-
-
             duracion_multi.setText(getResources().getString(R.string.duracionminutos,duracion));
             capitulos_multi.setText(getResources().getString(R.string.capitulos,intent.getIntExtra("capitulos",0)));
             capitulos_multi.setVisibility(View.VISIBLE);
+            dividercapitulos1.setVisibility(View.VISIBLE);
+            dividercapitulos2.setVisibility(View.VISIBLE);
         }
         else
         {
+            dividercapitulos1.setVisibility(View.GONE);
             duracion_multi.setText(getResources().getString(R.string.duracionhoras,duracion));
         }
 
@@ -350,7 +358,24 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
         genero1_multi.setText(intent.getStringArrayListExtra("genero").get(1));
         genero2_multi.setText(intent.getStringArrayListExtra("genero").get(2));
 
+        if(intent.getStringExtra("actoresno").equals("no"))
+        {
+            linearlayoutactores.setVisibility(View.GONE);
+            divideractores.setVisibility(View.GONE);
+        }
+        else {
+            divideractores.setVisibility(View.VISIBLE);
+            linearlayoutactores.setVisibility(View.VISIBLE);
 
+            actores = new ArrayList<>();
+            actores.add(intent.getStringArrayListExtra("actores").get(0));
+            actores.add(intent.getStringArrayListExtra("actores").get(1));
+            actores.add(intent.getStringArrayListExtra("actores").get(2));
+
+            actor1_multimedia.setText(intent.getStringArrayListExtra("actores").get(0));
+            actor2_multimedia.setText(intent.getStringArrayListExtra("actores").get(1));
+            actor3_multimedia.setText(intent.getStringArrayListExtra("actores").get(2));
+        }
         productora=intent.getStringExtra("productora");
         productora_multi.setText(getResources().getString(R.string.productora,intent.getStringExtra("productora")));
 
@@ -437,15 +462,15 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
         votacionmedia_multi.setText(getResources().getString(R.string.votacionmedia,media));
         votantes_multi.setText(getResources().getString(R.string.votantes,votantes));
         compartir_multimedia.setOnClickListener(this);
-        refrescarDatosPantalla();
         metodoVotacionActiva();
     }
     private void actualizarVotos() throws LikeSeriesExceptionClass
     {
-        votopositivo.setText(votomas.toString());
-        votonegativo.setText(votomenos.toString());
+            votopositivo.setText(votomas.toString());
+            votonegativo.setText(votomenos.toString());
 
-        actualizarDatosBD();
+            actualizarDatosBD();
+
     }
     private void insertarComentarios() throws LikeSeriesExceptionClass
     {
@@ -459,136 +484,147 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
 
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId())
-        {
-            case R.id.like:
-                if(vpositivo) {
-                    imagenvotopositivo.setImageResource(R.drawable.like);
-                    vpositivo = false;
-                    reglas="1";
-                    votomas++;
-                    imagenvotonegativos.setEnabled(false);
-
-                    try {
-                        actualizarVotosUsuario(null,null);
-                        actualizarVotos();
-                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                        Toast.makeText(getApplicationContext(),
-                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-                    }
-
-                }
-                else if (!vpositivo)
-            {
-                imagenvotopositivo.setImageResource(R.drawable.unlike);
-                imagenvotonegativos.setEnabled(true);
-                reglas="0";
-                vpositivo=true;
-                vnegativo=true;
-                negativo = false;
-                positivo = true;
-                votomas--;
-
-
-
-                try {
-                    actualizarVotosUsuario(positivo,negativo);
-                    actualizarVotos();
-                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                    Toast.makeText(getApplicationContext(),
-                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-                }
-
-            }
-                break;
-
-            case R.id.nolike:
-
-                if(vnegativo)
+    public void onClick(final View v) {
+                switch (v.getId())
                 {
-                    imagenvotonegativos.setImageResource(R.drawable.nolike);
-                    votomenos++;
-                    reglas="2";
-                    imagenvotopositivo.setEnabled(false);
-                    vnegativo=false;
+                    case R.id.like:
+                        if(vpositivo) {
+                            like.setEnabled(false);
+                            nolike.setEnabled(false);
+                            imagenvotopositivo.setImageResource(R.drawable.like);
+                            vpositivo = false;
+                            vnegativo=false;
+                            reglas="1";
+                            votomas++;
+                            imagenvotonegativos.setEnabled(false);
+
+                            try {
+                                actualizarVotosUsuario(null,null);
+                                actualizarVotos();
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                        else if (!vpositivo)
+                        {
+                            like.setEnabled(false);
+                            nolike.setEnabled(false);
+                            imagenvotopositivo.setImageResource(R.drawable.unlike);
+                            imagenvotonegativos.setEnabled(true);
+                            reglas="0";
+                            vpositivo=true;
+                            vnegativo=true;
+                            negativo = false;
+                            positivo = true;
+                            votomas--;
 
 
-                    try {
-                        actualizarVotosUsuario(null,null);
-                        actualizarVotos();
-                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                        Toast.makeText(getApplicationContext(),
-                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-                    }
 
-                }
-                else if (!vnegativo)
-            {
-                imagenvotonegativos.setImageResource(R.drawable.unnolike);
-                vnegativo = true;
-                vpositivo=true;
-                reglas="0";
-                votomenos--;
-                imagenvotopositivo.setEnabled(true);
-                negativo = true;
-                positivo = false;
+                            try {
+                                actualizarVotosUsuario(positivo,negativo);
+                                actualizarVotos();
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
 
-                try {
-                    actualizarVotosUsuario(positivo,negativo);
-                    actualizarVotos();
+                        }
+                        break;
 
-                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                    Toast.makeText(getApplicationContext(),
-                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-                }
-            }
-                break;
-            case R.id.imagenvoto:
-                new DialogoNumberPickerValoracion(contexto,ContenedorMultimedia.class,imagenvoto,collection,id,volveravotar);
-                try {
-                    refrescarDatosPantalla();
-                } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                    Toast.makeText(getApplicationContext(),
-                            "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-                }
-                break;
-            case R.id.compartirresultado:
-                abrirCompartir();
-                break;
-            case R.id.botonmandarComentario:
-                if(!cajacomentario.getText().equals(""))
-                {
-                    try {
-                        insertarComentarios();
-                    } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
-                        Toast.makeText(getApplicationContext(),
-                                "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
-                    }
-                    cajacomentario.setText("");
-                }
-                break;
-            case R.id.mostrarmasomenos:
+                    case R.id.nolike:
 
-                if(mostrarmas_boolean==true)
-                {
-                  mostrar.setVisibility(View.VISIBLE);
-                  mostrarmas.setText(R.string.mostrarmenos);
-                    mostrarmas_boolean=false;
+                        if(vnegativo)
+                        {
+                            nolike.setEnabled(false);
+                            like.setEnabled(false);
+                            imagenvotonegativos.setImageResource(R.drawable.nolike);
+                            votomenos++;
+                            reglas="2";
+                            imagenvotopositivo.setEnabled(false);
+                            vnegativo=false;
+                            vpositivo=false;
+
+                            try {
+                                actualizarVotosUsuario(null,null);
+                                actualizarVotos();
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                        else if (!vnegativo)
+                        {
+                            like.setEnabled(false);
+                            nolike.setEnabled(false);
+                            imagenvotonegativos.setImageResource(R.drawable.unnolike);
+                            vnegativo = true;
+                            vpositivo=true;
+                            reglas="0";
+                            votomenos--;
+                            imagenvotopositivo.setEnabled(true);
+                            negativo = true;
+                            positivo = false;
+
+                            try {
+                                actualizarVotosUsuario(positivo,negativo);
+                                actualizarVotos();
+
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        break;
+                    case R.id.imagenvoto:
+                        new DialogoNumberPickerValoracion(contexto,ContenedorMultimedia.class,imagenvoto,collection,id);
+                        try {
+                            refrescarDatosPantalla();
+                        } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                            Toast.makeText(getApplicationContext(),
+                                    "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    case R.id.compartirresultado:
+                        abrirCompartir();
+                        break;
+                    case R.id.botonmandarComentario:
+                        if(!cajacomentario.getText().toString().equals(""))
+                        {
+                            try {
+                                insertarComentarios();
+                            } catch (LikeSeriesExceptionClass likeSeriesExceptionClass) {
+                                Toast.makeText(getApplicationContext(),
+                                        "Error inesperado , disculpe las molestias", Toast.LENGTH_LONG).show();
+                            }
+                            cajacomentario.setText("");
+                        }
+                        break;
+                    case R.id.mostrarmasomenos:
+
+                        if(mostrarmas_boolean==true)
+                        {
+                            mostrar.setVisibility(View.VISIBLE);
+                            mostrarmas.setText(R.string.mostrarmenos);
+                            mostrarmas_boolean=false;
+                        }
+                        else if(mostrarmas_boolean == false)
+                        {
+                            mostrar.setVisibility(View.GONE);
+                            mostrarmas.setText(R.string.mostrarmas);
+                            mostrarmas_boolean=true;
+                        }
+                        break;
+                    case R.id.trailer_Multimedia:
+                        Intent intent = new Intent(contexto,FullScreenYoutube.class);
+                        intent.putExtra("trailer",trailer);
+                        startActivity(intent);
+                        break;
                 }
-                else if(mostrarmas_boolean == false)
-                {
-                    mostrar.setVisibility(View.GONE);
-                    mostrarmas.setText(R.string.mostrarmas);
-                    mostrarmas_boolean=true;
-                }
-                break;
-            case R.id.trailer_Multimedia:
-                Intent intent = new Intent(this,FullScreenYoutube.class);
-                intent.putExtra("trailer",trailer);
-                startActivity(intent);
-                break;
-        }
+
+
 
     }
 
@@ -612,9 +648,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 {
 
                     for(int i = 0 ; i<peli.getVotacion_media().size();i++) {
-                        if(peli.getVotacion_media().get(i).getUid().equals(user.getUid()))
+                        if(peli.getVotacion_media().get(i).getVotado()==1&&peli.getVotacion_media().get(i).getUid().equals(user.getUid()))
                         {
-                            volveravotar=true;
                             imagenvoto.setImageResource(R.drawable.estrella_on);
 
                         }
@@ -625,9 +660,8 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                 {
 
                     for(int i = 0 ; i<ser.getVotacion_media().size();i++) {
-                        if(ser.getVotacion_media().get(i).getUid().equals(user.getUid()))
+                        if(ser.getVotacion_media().get(i).getVotado()==1&&ser.getVotacion_media().get(i).getUid().equals(user.getUid()))
                         {
-                            volveravotar=true;
                             imagenvoto.setImageResource(R.drawable.estrella_on);
                         }
                     }
@@ -640,96 +674,115 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
     /**
      * Este metodo se va a encargar de actualizar los votos segun el usuario pulse positivo o negativo
      */
-    private void actualizarVotosUsuario(Boolean positivo,Boolean negativo) throws LikeSeriesExceptionClass
+    private void actualizarVotosUsuario(final Boolean positivo, final Boolean negativo) throws LikeSeriesExceptionClass
     {
         mAuth = FirebaseAuth.getInstance();
         user= mAuth.getCurrentUser();
-        if(reglas.equals("0")&&negativo)
-        {
+                if(reglas.equals("0")&&negativo)
+                {
+
 //quitar 1 al negativo
-            db= FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    if(usuario.getAdministrador()==1) {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
-                    else {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
+                    db= FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                            if(usuario.getAdministrador()==1) {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+                                like.setEnabled(true);
+                                nolike.setEnabled(true);
+                            }
+                            else {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos(), usuario.getVotosNegativos() - 1);
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+                                like.setEnabled(true);
+                                nolike.setEnabled(true);
+                            }
+
+                        }
+                    });
+
 
                 }
-            });
-        }
-        else if(reglas.equals("0") && positivo)
-        {
-            //quitar 1 al positivo
-            db= FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    if(usuario.getAdministrador()==1) {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos() - 1, usuario.getVotosNegativos());
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
-                    else
-                    {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos() - 1, usuario.getVotosNegativos());
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
+                else if(reglas.equals("0") && positivo)
+                {
+                    //quitar 1 al positivo
+                    db= FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                            if(usuario.getAdministrador()==1) {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos() - 1, usuario.getVotosNegativos());
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+                                like.setEnabled(true);
+                                nolike.setEnabled(true);
+                            }
+                            else
+                            {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos() - 1, usuario.getVotosNegativos());
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+                                like.setEnabled(true);
+                                nolike.setEnabled(true);
+                            }
 
+                        }
+                    });
                 }
-            });
-        }
-        else if(reglas.equals("1")&&!vpositivo)
-        {
-          //sumar 1 al positivo
-            db= FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    if(usuario.getAdministrador()==1) {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos() + 1, usuario.getVotosNegativos());
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
-                    else
-                    {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos() + 1, usuario.getVotosNegativos());
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
+                else if(reglas.equals("1")&&!vpositivo)
+                {
+                    //sumar 1 al positivo
+                    db= FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                            if(usuario.getAdministrador()==1) {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos() + 1, usuario.getVotosNegativos());
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+                                like.setEnabled(true);
 
+                            }
+                            else
+                            {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos() + 1, usuario.getVotosNegativos());
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+                                like.setEnabled(true);
+
+                            }
+
+                        }
+                    });
                 }
-            });
-        }
-        else if(reglas.equals("2")&&!vnegativo)
-        {
-            //sumar 1 al negativo
-            db= FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("usuarios").document(user.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Usuario usuario = documentSnapshot.toObject(Usuario.class);
-                    if(usuario.getAdministrador()==1) {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos(), usuario.getVotosNegativos() + 1);
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
-                    else
-                    {
-                        Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos(), usuario.getVotosNegativos() + 1);
-                        db.collection("usuarios").document(usuario.getUID()).set(usua);
-                    }
+                else if(reglas.equals("2")&&!vnegativo)
+                {
+                    //sumar 1 al negativo
+                    db= FirebaseFirestore.getInstance();
+                    DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Usuario usuario = documentSnapshot.toObject(Usuario.class);
+                            if(usuario.getAdministrador()==1) {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), usuario.getAdministrador(), usuario.getVotosPositivos(), usuario.getVotosNegativos() + 1);
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+
+                                nolike.setEnabled(true);
+                            }
+                            else
+                            {
+                                Usuario usua = new Usuario(usuario.getUID(), usuario.getNombre(), usuario.getEmail(), 0, usuario.getVotosPositivos(), usuario.getVotosNegativos() + 1);
+                                db.collection("usuarios").document(usuario.getUID()).set(usua);
+
+                                nolike.setEnabled(true);
+                            }
+                        }
+                    });
                 }
-            });
-        }
     }
     /**
      * Metodo que llama a una función de firebase para subir los nuevos datos actualizados
@@ -762,7 +815,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Pelicula peli = documentSnapshot.toObject(Pelicula.class);
 
-                        Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(),id, titulo, descripcion, productora,director,fechaestreno,trailer,duracion, genero, imagen, votomas, votomenos, votantes, peli.getNotamedia_Pelicula(), votos, coment,peli.getVotacion_media());
+                        Pelicula pelicula = new Pelicula(peli.getCollection_Pelicula(),id, titulo, descripcion, productora,director,fechaestreno,trailer,duracion, genero, imagen, votomas, votomenos, votantes, peli.getNotamedia_Pelicula(), votos, coment,peli.getVotacion_media(),actores);
                         db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
                         try {
                             refrescarRecyclers(pelicula, null);
@@ -798,7 +851,7 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Serie ser = documentSnapshot.toObject(Serie.class);
 
-                        Serie serie = new Serie(ser.getCollection_Serie(),id, titulo, descripcion, productora,director,fechaestreno,trailer,duracion,genero, imagen, votomas, votomenos, votantes,capitulos,ser.getNotamedia_Serie(), votos, coment,ser.getVotacion_media());
+                        Serie serie = new Serie(ser.getCollection_Serie(),id, titulo, descripcion, productora,director,fechaestreno,trailer,duracion,genero, imagen, votomas, votomenos, votantes,capitulos,ser.getNotamedia_Serie(), votos, coment,ser.getVotacion_media(),actores);
                         db.collection("series").document(serie.getID_Serie()).set(serie);
                         try {
                             refrescarRecyclers(null, serie);
