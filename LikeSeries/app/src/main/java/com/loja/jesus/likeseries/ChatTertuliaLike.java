@@ -1,5 +1,6 @@
 package com.loja.jesus.likeseries;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,13 +37,13 @@ private FirebaseAuth mAuth;
 private FirebaseUser user;
 private FirebaseFirestore db;
 private Context contexto = this;
-private ArrayList<ChatGeneral>chatgeneral = new ArrayList<>();
-private ArrayList<Chat>arraychat = new ArrayList<>();
-private ArrayList<Tertulia>arraytertulia = new ArrayList<>();
+private ArrayList<ChatGeneral>arraychat = new ArrayList<>();
+private ArrayList<Chat>array=new ArrayList<>();
+private ArrayList<Tertulia>arrayTertulia = new ArrayList<>();
 private Intent intent;
 private EditText cajaTexto_chat_tertulia;
 private TextView botoncomentar;
-private TextView vaciarchat;
+private TextView vaciarchat,cerrarchattertulia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,45 +60,70 @@ private TextView vaciarchat;
             }
         });
         RVCT = findViewById(R.id.RVCT);
-        vaciarchat=findViewById(R.id.eliminartodo_administrador_tertulia);
-        cajaTexto_chat_tertulia=findViewById(R.id.cajaTexto_chat_tertulia);
-        botoncomentar=findViewById(R.id.botonmandarComentario_chat_tertulia);
+        vaciarchat = findViewById(R.id.eliminartodo_administrador_tertulia);
+        cajaTexto_chat_tertulia = findViewById(R.id.cajaTexto_chat_tertulia);
+        botoncomentar = findViewById(R.id.botonmandarComentario_chat_tertulia);
+        cerrarchattertulia=findViewById(R.id.cerrar_chat_tertulia);
+        cerrarchattertulia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cajaTexto_chat_tertulia.setText("");
+                finish();
+            }
+        });
+        actualizarRecyclerenTiempoReal();
         actualizarRecycler();
+
         botoncomentar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cargarRecycler();
-                actualizarRecyclerenTiempoReal();
+
             }
         });
-        vaciarchat.setOnClickListener(new View.OnClickListener() {
+        mAuth=FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        DocumentReference docRef = db.collection("usuarios").document(user.getUid());
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View v) {
-                final FirebaseFirestore db;
-                db = FirebaseFirestore.getInstance();
-                arraychat.clear();
-                DocumentReference docRef = db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ",""));
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Chat chat = new Chat();
-                        Tertulia tertulia = documentSnapshot.toObject(Tertulia.class);
-                        arraychat.add(chat);
-                        Tertulia tertulia1 = new Tertulia(tertulia.getNombretertulia(),tertulia.getHorainicio(),tertulia.getHorafin(),tertulia.getActivado(),arraychat);
-                        db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ","")).set(tertulia1);
-                    }
-                });
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+               Usuario user = documentSnapshot.toObject(Usuario.class);
+                if(user.getAdministrador()!=0) {
+                    vaciarchat.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final FirebaseFirestore db;
+                            db = FirebaseFirestore.getInstance();
+                            array.clear();
+                            arrayTertulia.clear();
+                            DocumentReference docRef = db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ", ""));
+                            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    Tertulias tertulias = documentSnapshot.toObject(Tertulias.class);
+                                    Tertulia tertulia1 = new Tertulia(tertulias.getTertulia().get(0).getNombretertulia(), tertulias.getTertulia().get(0).getHorainicio(), tertulias.getTertulia().get(0).getHorafin(), tertulias.getTertulia().get(0).getActivado(), array);
+                                    arrayTertulia.add(tertulia1);
+                                    Tertulias tertulias1 = new Tertulias(arrayTertulia);
+                                    db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ", "")).set(tertulias1);
+                                }
+                            });
+                        }
+                    });
+                }
+                else
+                {
+                   vaciarchat.setVisibility(View.GONE);
+                }
             }
         });
-
-
-
 
     }
     private void actualizarRecyclerenTiempoReal()
     {
-        final DocumentReference doc = db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ",""));
-        doc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        db = FirebaseFirestore.getInstance();
+        final DocumentReference docRef = db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ",""));
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @SuppressLint("StringFormatMatches")
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
                                 @Nullable FirebaseFirestoreException e) {
@@ -105,25 +132,22 @@ private TextView vaciarchat;
                 }
 
                 if (snapshot != null && snapshot.exists()) {
+                    Tertulias tertulias = snapshot.toObject(Tertulias.class);
+                    arraychat.clear();
                     try {
-                        Tertulia tertulia = snapshot.toObject(Tertulia.class);
-                        Tertulias tertulias = snapshot.toObject(Tertulias.class);
                         for (int i = 0; i < tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().size(); i++) {
-
-                            ChatGeneral chatGeneratertulia = new ChatGeneral(tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getNombre(), tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getUid(), tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getMensaje(), tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getNombredocumento());
-                            chatgeneral.add(chatGeneratertulia);
+                            arraychat.add(tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i));
                         }
-                        AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, chatgeneral, "tertulia");
-                        RVCT.setAdapter(adaptadorChat);
-                        RVCT.setHasFixedSize(true);
-                        adaptadorChat.refrescar();
                     }
-                    catch (Exception x)
+                    catch (Exception u)
                     {
 
                     }
+                    AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, arraychat,"tertulia");
+                    RVCT.setAdapter(adaptadorChat);
+                    RVCT.setHasFixedSize(true);
+                    adaptadorChat.refrescar();
                 } else {
-
                 }
             }
         });
@@ -134,37 +158,70 @@ private TextView vaciarchat;
         RVCT.addItemDecoration(new ChatTertuliaLike.SpaceItemDecoration(this, R.dimen.list_space, true, true));
         RVCT.setHasFixedSize(true);
         RVCT.setLayoutManager(llmRVCT);
+
+
+
+
+
     }
     private void cargarRecycler()
     {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
-
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ",""));
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                chatgeneral.clear();
                 arraychat.clear();
+                arrayTertulia.clear();
+                array.clear();
                 Tertulias tertulias = documentSnapshot.toObject(Tertulias.class);
-                ChatGeneral chatGeneraltertulia= new ChatGeneral(user.getDisplayName(),user.getUid(),cajaTexto_chat_tertulia.getText().toString(),intent.getStringExtra("nombredocumento").replace(" ",""));
-                chatgeneral.add(chatGeneraltertulia);
+                if(!cajaTexto_chat_tertulia.getText().toString().equals("")) {
+                    ChatGeneral chatGeneral = new ChatGeneral(user.getDisplayName(), user.getUid(), cajaTexto_chat_tertulia.getText().toString(), intent.getStringExtra("nombredocumento").replace(" ",""));
+                    arraychat.add(chatGeneral);
+                }
                 try {
+
                     for (int i = 0; i < tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().size(); i++) {
 
-                        ChatGeneral chatGeneratertulia = new ChatGeneral(tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getNombre(),tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getUid(),tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getMensaje(),tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getNombredocumento());
-                        chatgeneral.add(chatGeneratertulia);
+                        if(!tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getMensaje().equals(cajaTexto_chat_tertulia.getText().toString())) {
+                            arraychat.add(tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i));
+                        }
+                        else if(tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getMensaje().equals(cajaTexto_chat_tertulia.getText().toString()))
+                        {
+
+
+                        }
+
+
+
                     }
                 }
                 catch (Exception e)
                 {
 
                 }
-                AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, chatgeneral,"tertulia");
-                RVCT.setAdapter(adaptadorChat);
-                RVCT.setHasFixedSize(true);
-                adaptadorChat.refrescar();
+                    array.clear();
+                    Chat chat = new Chat(arraychat);
+                    array.add(chat);
+                    Tertulia tertulia1 = new Tertulia(tertulias.getTertulia().get(0).getNombretertulia(),tertulias.getTertulia().get(0).getHorainicio(),tertulias.getTertulia().get(0).getHorafin(),tertulias.getTertulia().get(0).getActivado(),array);
+                    arrayTertulia.add(tertulia1);
+                    tertulias = new Tertulias(arrayTertulia);
+                    db.collection("tertulia").document(intent.getStringExtra("nombredocumento").replace(" ","")).set(tertulias);
+                    AdaptadorChat adaptadorChat = new AdaptadorChat(contexto, arraychat,"tertulia");
+                    RVCT.setAdapter(adaptadorChat);
+                    RVCT.setHasFixedSize(true);
+                    adaptadorChat.refrescar();
+
+
+
+
+
+
 
             }
         });
@@ -176,3 +233,4 @@ private TextView vaciarchat;
         }
     }
 }
+

@@ -44,7 +44,9 @@ private TextView github,manual;
                 break;
 
             case R.id.manualusuario:
-
+                Intent intent2 = new Intent(this,FullScreenYoutube.class);
+                intent2.putExtra("trailer","6V0pAgIi9gg");
+                startActivity(intent2);
                 break;
         }
     }

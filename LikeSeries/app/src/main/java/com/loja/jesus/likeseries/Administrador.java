@@ -223,10 +223,7 @@ private Button insertar_peli,insertar_serie,insertar_tertulia;
     {
         db= FirebaseFirestore.getInstance();
         ArrayList<Tertulia> arraytertulia = new ArrayList<>();
-        ArrayList<ChatGeneral>chatgeneral = new ArrayList<>();
         ArrayList<Chat> arraychat = new ArrayList<>();
-        Chat chat = new Chat(chatgeneral);
-        arraychat.add(chat);
         Tertulia tertulia = new Tertulia(nombre_tertulia.getText().toString(),inicio_tertulia.getText().toString(),fin_tertulia.getText().toString(), Integer.parseInt(activar_tertulia.getText().toString()),arraychat);
         arraytertulia.add(tertulia);
         Tertulias tertulias = new Tertulias(arraytertulia);

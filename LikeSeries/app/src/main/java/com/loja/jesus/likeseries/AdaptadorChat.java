@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,7 +41,7 @@ public class AdaptadorChat extends RecyclerView.Adapter<AdaptadorChat.ViewHolder
         }
     }
     private String chatterttulia;
-    private ArrayList<ChatGeneral> listaChat =new ArrayList<>();
+    private ArrayList<ChatGeneral> listaChat;
 
     Context context;
     public AdaptadorChat(Context contexto, ArrayList<ChatGeneral> listaChat,String chatterttulia) {
@@ -158,7 +159,7 @@ public class AdaptadorChat extends RecyclerView.Adapter<AdaptadorChat.ViewHolder
 
         }
     } else if (chatterttulia.equals("tertulia")) {
-        DocumentReference admin = viewHolderChat.db.collection("usuarios").document(viewHolderChat.user.getUid());
+        final DocumentReference admin = viewHolderChat.db.collection("usuarios").document(viewHolderChat.user.getUid());
         admin.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @SuppressLint("ResourceAsColor")
             @Override
@@ -172,17 +173,28 @@ public class AdaptadorChat extends RecyclerView.Adapter<AdaptadorChat.ViewHolder
                             public void onClick(View v) {
                                 final FirebaseFirestore db;
                                 db = FirebaseFirestore.getInstance();
-                                listaChat.remove(i);
-
                                 DocumentReference docRef = db.collection("tertulia").document(listaChat.get(i).getNombredocumento());
                                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Chat chat = new Chat(listaChat);
-                                        db.collection("tertulia").document(listaChat.get(i).getNombredocumento()).update(
-                                                "arraychat", chat
-                                        );
-                                        notifyItemRemoved(i);
+                                        try {
+                                            String documento = listaChat.get(i).getNombredocumento();
+                                            listaChat.remove(i);
+                                            Chat chat = new Chat(listaChat);
+                                            ArrayList<Chat>arraychat = new ArrayList<>();
+                                            arraychat.add(chat);
+                                            Tertulias tertulias = documentSnapshot.toObject(Tertulias.class);
+                                            Tertulia tertulia1 = new Tertulia(tertulias.getTertulia().get(0).getNombretertulia(), tertulias.getTertulia().get(0).getHorainicio(), tertulias.getTertulia().get(0).getHorafin(), tertulias.getTertulia().get(0).getActivado(),arraychat);
+                                            ArrayList<Tertulia>arrayTertulia=new ArrayList<>();
+                                            arrayTertulia.add(tertulia1);
+                                            Tertulias tertulias1 = new Tertulias(arrayTertulia);
+                                            db.collection("tertulia").document(documento).set(tertulias1);
+                                            notifyItemRemoved(i);
+                                        }
+                                        catch (Exception e)
+                                        {
+
+                                        }
                                     }
                                 });
                             }
@@ -200,13 +212,15 @@ public class AdaptadorChat extends RecyclerView.Adapter<AdaptadorChat.ViewHolder
                                 public void onClick(View v) {
                                     final FirebaseFirestore db;
                                     db = FirebaseFirestore.getInstance();
-                                    listaChat.remove(i);
+
 
                                     DocumentReference docRef = db.collection("tertulia").document(listaChat.get(i).getNombredocumento());
                                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            listaChat.remove(i);
                                             Chat chat = new Chat(listaChat);
+
                                             db.collection("tertulia").document(listaChat.get(i).getNombredocumento()).update(
                                                     "arraychat", chat
                                             );
