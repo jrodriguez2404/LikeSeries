@@ -17,16 +17,9 @@
         android:id="@+id/chat_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/degradado1"
         android:orientation="vertical"
         tools:visibility="visible">
-
-        <TextView
-            android:id="@+id/chat_titulo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/letras"
-            tools:text="@string/Respeta" />
 
         <TextView
             android:id="@+id/eliminartodo_administrador_tertulia"
@@ -76,6 +69,7 @@
                 android:allowUndo="true"
                 android:breakStrategy="high_quality"
                 android:ems="10"
+                android:focusable="auto"
                 android:inputType="textMultiLine"
                 android:textColor="@color/letras" />
 

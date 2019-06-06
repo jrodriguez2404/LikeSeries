@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:src="@drawable/chat"
-        app:backgroundTint="@color/azul" />
+        app:backgroundTint="@color/colorPrimaryDark" />
 
     <include
         android:id="@+id/contenido"

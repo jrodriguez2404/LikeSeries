@@ -10,7 +10,7 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#BDBDBD</color>
     <!--Errores-->
-    <color name="invisible">#02000000</color>
+    <color name="invisible">#00000000</color>
     <color name="azul">#A7B7FF</color>
     <color name="rojo">@android:color/holo_red_dark</color>
     <color name="black_overlay">#66000000</color>

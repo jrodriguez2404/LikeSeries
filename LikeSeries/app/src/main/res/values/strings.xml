@@ -50,6 +50,7 @@
     <string name="email_perfil">Correo: %1$s</string>
     <string name="datos_perfil">Mis datos</string>
     <string name="olvidotexto_perfil">¿Olvidó su contraseña?,Púlsame</string>
+    <string name="cambiarnombre_perfil">¿Cambiar nombre de perfil?</string>
 
     <!-- Respecto al menu-->
     <string name="votacion_menu">Mis Votaciones</string>
@@ -59,6 +60,7 @@
     <string name="cerrarsesion_menu">Cerrar Sesión</string>
     <string name="info_menu">Creador App/Términos</string>
     <string name="tertulia">Tertulia</string>
+    <string name="requisitos">Requisitos</string>
     <!--Respecto a la sesion-->
     <string name="cerrarsesion">¿Está seguro de que quiere cerrar sesión %1$s?</string>
     <string name="ok">Aceptar</string>

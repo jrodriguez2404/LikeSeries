@@ -184,21 +184,16 @@ private TextView vaciarchat,cerrarchattertulia;
                     ChatGeneral chatGeneral = new ChatGeneral(user.getDisplayName(), user.getUid(), cajaTexto_chat_tertulia.getText().toString(), intent.getStringExtra("nombredocumento").replace(" ",""));
                     arraychat.add(chatGeneral);
                 }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),
+                            "Escriba algo", Toast.LENGTH_LONG).show();
+                }
+
                 try {
 
                     for (int i = 0; i < tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().size(); i++) {
-
-                        if(!tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getMensaje().equals(cajaTexto_chat_tertulia.getText().toString())) {
                             arraychat.add(tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i));
-                        }
-                        else if(tertulias.getTertulia().get(0).getChattertulia().get(0).getChatgeneral().get(i).getMensaje().equals(cajaTexto_chat_tertulia.getText().toString()))
-                        {
-
-
-                        }
-
-
-
                     }
                 }
                 catch (Exception e)

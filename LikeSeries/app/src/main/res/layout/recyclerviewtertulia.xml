@@ -26,7 +26,7 @@
         android:id="@+id/seleccion_tertulia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_light"
+        android:background="@color/invisible"
         android:orientation="vertical">
 
         <LinearLayout
@@ -98,6 +98,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:foregroundGravity="center"
+                        android:gravity="center"
                         android:textColor="@color/letras" />
 
                     <View
@@ -111,7 +112,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:foregroundGravity="center" />
+                        android:foregroundGravity="center"
+                        android:gravity="center" />
                 </LinearLayout>
 
                 <View

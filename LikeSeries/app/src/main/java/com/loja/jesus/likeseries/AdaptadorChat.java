@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -218,12 +219,17 @@ public class AdaptadorChat extends RecyclerView.Adapter<AdaptadorChat.ViewHolder
                                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            Tertulias tertulias = documentSnapshot.toObject(Tertulias.class);
+                                            String nombre = listaChat.get(i).getNombredocumento();
                                             listaChat.remove(i);
                                             Chat chat = new Chat(listaChat);
-
-                                            db.collection("tertulia").document(listaChat.get(i).getNombredocumento()).update(
-                                                    "arraychat", chat
-                                            );
+                                            ArrayList<Chat>array = new ArrayList<>();
+                                            array.add(chat);
+                                            Tertulia tertulia1 = new Tertulia(tertulias.getTertulia().get(0).getNombretertulia(),tertulias.getTertulia().get(0).getHorainicio(),tertulias.getTertulia().get(0).getHorafin(),tertulias.getTertulia().get(0).getActivado(),array);
+                                            ArrayList<Tertulia> arrayTertulia = new ArrayList<>();
+                                            arrayTertulia.add(tertulia1);
+                                            tertulias = new Tertulias(arrayTertulia);
+                                            db.collection("tertulia").document(nombre).set(tertulias);
                                             notifyItemRemoved(i);
                                         }
                                     });

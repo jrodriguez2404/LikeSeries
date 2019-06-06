@@ -109,8 +109,6 @@ if(!vacio.equals("vacio")) {
 
     if (listaTertulia.get(i).getActivado() == 0) {
         viewHolderTertulia.tertuliaactivada.setBackgroundResource(R.drawable.cerrado);
-        Toast.makeText(context.getApplicationContext(),
-                "La tertulia " + listaTertulia.get(i).getNombretertulia() + " está cerrada", Toast.LENGTH_LONG).show();
     }
 }
 

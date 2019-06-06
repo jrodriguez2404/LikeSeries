@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_light"
+    android:background="@drawable/degradado1"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Like"
@@ -177,7 +177,7 @@
         android:id="@+id/chat_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/degradado1"
         android:orientation="vertical"
         tools:visibility="gone">
 
@@ -236,6 +236,7 @@
                 android:allowUndo="true"
                 android:breakStrategy="high_quality"
                 android:ems="10"
+                android:focusable="auto"
                 android:inputType="textMultiLine"
                 android:textColor="@color/letras" />
 

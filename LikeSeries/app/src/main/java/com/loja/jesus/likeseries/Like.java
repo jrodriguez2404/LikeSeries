@@ -632,6 +632,7 @@ Context contexto;
                     startActivity(intent);
                 }
                 else if (id == R.id.administrador) {
+
                     if(user.getAdministrador()==1)
                     {
                         Intent intent = new Intent(contexto,Administrador.class);
@@ -642,6 +643,11 @@ Context contexto;
                         Toast.makeText(getApplicationContext(),
                                 "Usted no es administrador", Toast.LENGTH_LONG).show();
                     }
+                }
+                else if(id == R.id.requisitos)
+                {
+                Intent intent = new Intent(contexto,Requisitos.class);
+                startActivity(intent);
                 }
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);

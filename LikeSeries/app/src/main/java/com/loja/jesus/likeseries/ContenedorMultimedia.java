@@ -242,7 +242,6 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
         actor2_multimedia=findViewById(R.id.actor2_multimedia);
         actor3_multimedia=findViewById(R.id.actor3_multimedia);
         linearlayoutactores=findViewById(R.id.linearlayoutactores);
-
         cogerExtras();
     }
     private void abrirCompartir()
@@ -259,8 +258,11 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries"+"\n"+".Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s. " + "\n" +
-                            "A demas esta valorada en un "+peli.getNotamedia_Pelicula() + " de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n" +
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "*********************\n"+
+                            "LIKESERIES RECOMIENDA\n"+
+                            "*********************\n"+
+                            user.getDisplayName() + " te ha compartido la pelicula "+ peli.getTitulo_Pelicula() + " desde LikeSeries."+"\n"+"Esta película tiene "+ peli.getVotosPositivos_Pelicula()  + " voto/s positivo/s y "+peli.getVotosNegativos_Pelicula() + " voto/s negativo/s. " + "\n" +
+                            "Ademas está valorada en un "+peli.getNotamedia_Pelicula() + " de media , de "+peli.getVotantes_Pelicula()+" votante/s."+ "\n+"+"---------------------------------"+"\n" +
                             user.getDisplayName() + " gracias por compartir esta información con tus amigos");
                     sendIntent.setType("text/plain");
                     startActivity(sendIntent);
@@ -272,8 +274,11 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TITLE, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, user.getDisplayName() + " te ha compartido la serie "+ ser.getTitulo_Serie() + " desde LikeSeries");
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, user.getDisplayName() + " te ha compartido la pelicula "+ ser.getTitulo_Serie() + " desde LikeSeries"+"\n"+"Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s. " + "\n" +
-                            "A demas esta valorada en un "+ser.getNotamedia_Serie() + " de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n" +
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "*********************\n"+
+                            "LIKESERIES RECOMIENDA\n"+
+                            "*********************\n"+
+                            user.getDisplayName() + " te ha compartido la pelicula "+ ser.getTitulo_Serie() + " desde LikeSeries."+"\n"+"Esta serie tiene "+ ser.getVotosPositivos_Serie()  + " voto/s positivo/s y "+ser.getVotosNegativos_Serie() + " voto/s negativo/s. " + "\n" +
+                            "Ademas está valorada en un "+ser.getNotamedia_Serie() + " de media , de "+ser.getVotantes_Serie()+" votante/s."+ "\n+"+"---------------------------------"+"\n" +
                             user.getDisplayName() + " gracias por compartir esta información con tus amigos");
                     sendIntent.setType("text/plain");
                     startActivity(sendIntent);

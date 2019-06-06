@@ -2,6 +2,7 @@ package com.loja.jesus.likeseries;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,9 +13,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.sun.mail.util.UUDecoderStream;
 
 import java.util.ArrayList;
 
@@ -154,9 +160,36 @@ private Button insertar_peli,insertar_serie,insertar_tertulia;
 
 
         db= FirebaseFirestore.getInstance();
-
+        final String nombrecontenido = titulo_peli.getText().toString();
         Pelicula pelicula = new Pelicula("peliculas",titulo_peli.getText().toString().replace(" ",""),titulo_peli.getText().toString(),descripcion_peli.getText().toString(),productora_peli.getText().toString(),director_peli.getText().toString(),estreno_peli.getText().toString(),trailer_peli.getText().toString(),duracion_peli.getText().toString(),array,imagen_peli.getText().toString(),0,0,0,0,votos,comentarios,votacion_media,arrayactores);
         db.collection("peliculas").document(pelicula.getID_Pelicula()).set(pelicula);
+        db.collection("usuarios")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (final QueryDocumentSnapshot document : task.getResult()) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+
+                                            Usuario usuario = document.toObject(Usuario.class);
+                                            new EnviarMensaje(contexto).enviarEmail("peli",usuario.getNombre(),usuario.getEmail(),nombrecontenido) ;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            e.toString();
+                                        }
+                                    }
+                                }).start();
+                            }
+                        } else {
+
+                        }
+                    }
+                });
         actores1_peli.setText("");
         actores2_peli.setText("");
         actores3_peli.setText("");
@@ -197,6 +230,37 @@ private Button insertar_peli,insertar_serie,insertar_tertulia;
         db= FirebaseFirestore.getInstance();
         Serie serie = new Serie("series",titulo_serie.getText().toString().replace(" ",""),titulo_serie.getText().toString(),descripcion_serie.getText().toString(),productora_serie.getText().toString(),director_serie.getText().toString(),primeraemision_serie.getText().toString(),trailer_serie.getText().toString(),duracion_serie.getText().toString(),array,imagen_serie.getText().toString(),0,0,0, Integer.parseInt(numerocapitulos_serie.getText().toString()),0,votos,comentarios,votacion_media,arrayactores);
         db.collection("series").document(serie.getID_Serie()).set(serie);
+        final String nombrecontenido = titulo_serie.getText().toString();
+        db.collection("usuarios")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (final QueryDocumentSnapshot document : task.getResult()) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Usuario usuario = document.toObject(Usuario.class);
+                                            new EnviarMensaje(contexto).enviarEmail("serie",usuario.getNombre(),usuario.getEmail(),nombrecontenido) ;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            e.toString();
+                                        }
+                                    }
+                                }).start();
+
+
+
+                            }
+                        } else {
+
+                        }
+                    }
+                });
+
 
         genero1_serie.setText("");
         genero2_serie.setText("");
@@ -227,8 +291,34 @@ private Button insertar_peli,insertar_serie,insertar_tertulia;
         Tertulia tertulia = new Tertulia(nombre_tertulia.getText().toString(),inicio_tertulia.getText().toString(),fin_tertulia.getText().toString(), Integer.parseInt(activar_tertulia.getText().toString()),arraychat);
         arraytertulia.add(tertulia);
         Tertulias tertulias = new Tertulias(arraytertulia);
+        final String nombrecontenido = nombre_tertulia.getText().toString();
         db.collection("tertulia").document(nombre_tertulia.getText().toString().replace(" ","")).set(tertulias);
+        db.collection("usuarios")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (final QueryDocumentSnapshot document : task.getResult()) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Usuario usuario = document.toObject(Usuario.class);
+                                            new EnviarMensaje(contexto).enviarEmail("tertulia",usuario.getNombre(),usuario.getEmail(),nombrecontenido) ;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            e.toString();
+                                        }
+                                    }
+                                }).start();
+                            }
+                        } else {
 
+                        }
+                    }
+                });
 
         nombre_tertulia.setText("");
         inicio_tertulia.setText("");

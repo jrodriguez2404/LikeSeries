@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:background="@color/invisible"
     android:orientation="vertical"
     android:scrollbarSize="1sp">
 
@@ -29,6 +29,8 @@
                 android:allowUndo="true"
                 android:breakStrategy="high_quality"
                 android:ems="10"
+                android:focusable="auto"
+                android:focusableInTouchMode="true"
                 android:inputType="textMultiLine"
                 android:textColor="@color/primary_text" />
 

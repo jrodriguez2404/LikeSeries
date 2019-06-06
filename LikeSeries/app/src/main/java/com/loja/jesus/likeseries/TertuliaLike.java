@@ -66,34 +66,21 @@ public class TertuliaLike extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 try {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    for (int i = 0; i < task.getResult().size(); i++) {
-                                        Tertulias tertulias = document.toObject(Tertulias.class);
-                                        Tertulia tertulia = new Tertulia(tertulias.getTertulia().get(i).getNombretertulia(), tertulias.getTertulia().get(i).getHorainicio(), tertulias.getTertulia().get(i).getHorafin(), tertulias.getTertulia().get(i).getActivado(), tertulias.getTertulia().get(i).getChattertulia());
-                                        tertulia_array.add(tertulia);
-                                    }
+                                    Tertulias tertulias = document.toObject(Tertulias.class);
 
+                                    Tertulia tertulia = new Tertulia(tertulias.getTertulia().get(0).getNombretertulia(),tertulias.getTertulia().get(0).getHorainicio(),tertulias.getTertulia().get(0).getHorafin(),tertulias.getTertulia().get(0).getActivado(),tertulias.getTertulia().get(0).getChattertulia());
+                                    tertulia_array.add(tertulia);
                                 }
-                                    if (task.getResult().size() == 0) {
-                                        AdaptadorTertulia adaptadorTertulia = new AdaptadorTertulia(context, tertulia_array,"vacio");
-                                        RVT.setAdapter(adaptadorTertulia);
-                                        RVT.setHasFixedSize(true);
-                                        adaptadorTertulia.refrescar();
-                                    }
-                                    else
-                                    {
-                                        AdaptadorTertulia adaptadorTertulia = new AdaptadorTertulia(context, tertulia_array,"");
-                                        RVT.setAdapter(adaptadorTertulia);
-                                        RVT.setHasFixedSize(true);
-                                        adaptadorTertulia.refrescar();
-                                    }
+                                    AdaptadorTertulia adaptadorTertulia = new AdaptadorTertulia(context, tertulia_array,"");
+                                    RVT.setAdapter(adaptadorTertulia);
+                                    RVT.setHasFixedSize(true);
+                                    adaptadorTertulia.refrescar();
+
+
 
                                 }
                                 catch (Exception e)
                                 {
-                                    AdaptadorTertulia adaptadorTertulia = new AdaptadorTertulia(context, tertulia_array, "");
-                                    RVT.setAdapter(adaptadorTertulia);
-                                    RVT.setHasFixedSize(true);
-                                    adaptadorTertulia.refrescar();
                                 }
                             } else {
 

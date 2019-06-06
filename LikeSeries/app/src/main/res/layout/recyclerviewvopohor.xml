@@ -3,8 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primary_light"
+    android:background="@color/invisible"
     android:orientation="vertical">
+
+    <View
+        android:id="@+id/divider24"
+        android:layout_width="match_parent"
+        android:layout_height="3sp"
+        android:layout_marginBottom="5sp"
+        android:background="@color/common_google_signin_btn_text_dark_focused" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +27,7 @@
 
             <View
                 android:id="@+id/divider8"
-                android:layout_width="4sp"
+                android:layout_width="2sp"
                 android:layout_height="match_parent"
                 android:background="@color/letras" />
 
@@ -34,6 +41,7 @@
                     android:id="@+id/imagen"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -41,13 +49,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
-                <View
-                    android:id="@+id/divider12"
-                    android:layout_width="match_parent"
-                    android:layout_height="3sp"
-                    android:layout_weight="1"
-                    android:background="@color/letras" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -66,7 +67,7 @@
                 <View
                     android:id="@+id/divider11"
                     android:layout_width="match_parent"
-                    android:layout_height="3sp"
+                    android:layout_height="2sp"
                     android:layout_weight="1"
                     android:background="@color/letras" />
 
@@ -94,7 +95,7 @@
                 <View
                     android:id="@+id/divider7"
                     android:layout_width="match_parent"
-                    android:layout_height="3sp"
+                    android:layout_height="2sp"
                     android:layout_weight="1"
                     android:background="@color/letras" />
 
@@ -118,22 +119,23 @@
                         android:textColor="@color/letras" />
                 </LinearLayout>
 
-                <View
-                    android:id="@+id/divider10"
-                    android:layout_width="match_parent"
-                    android:layout_height="3sp"
-                    android:layout_weight="1"
-                    android:background="@color/letras" />
             </LinearLayout>
 
             <View
                 android:id="@+id/divider9"
-                android:layout_width="4sp"
+                android:layout_width="2sp"
                 android:layout_height="match_parent"
                 android:background="@color/letras" />
 
         </LinearLayout>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider25"
+        android:layout_width="match_parent"
+        android:layout_height="3sp"
+        android:layout_marginBottom="5sp"
+        android:background="@color/common_google_signin_btn_text_dark_focused" />
 
 </LinearLayout>

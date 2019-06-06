@@ -6,32 +6,58 @@
 
     <application
         android:allowBackup="true"
+        android:configChanges="screenSize|orientation"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ChatTertuliaLike"></activity>
-        <activity android:name=".TertuliaLike" />
-        <activity android:name=".Info" />
-        <activity android:name=".Administrador" />
+        android:theme="@style/AppTheme"
+        android:windowSoftInputMode="stateHidden">
+        <activity android:name=".Requisitos"></activity>
+        <activity
+            android:name=".ChatTertuliaLike"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".TertuliaLike"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Info"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Administrador"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".FullScreenYoutube"
             android:label="@string/title_activity_full_screen_youtube"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ContenedorMultimedia"
-            android:theme="@style/EstiloContenedor" />
+            android:configChanges="screenSize|orientation"
+            android:theme="@style/EstiloContenedor"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".miperfil"
-            android:theme="@style/EstiloPerfil" />
+            android:configChanges="screenSize|orientation"
+            android:theme="@style/EstiloPerfil"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Like"
-            android:theme="@style/EstiloMain" />
-        <activity android:name=".MainRegistro" />
+            android:configChanges="screenSize|orientation"
+            android:theme="@style/EstiloMain"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".MainRegistro"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".MainLogin"
-            android:theme="@style/EstiloLogin">
+            android:configChanges="screenSize|orientation"
+            android:theme="@style/EstiloLogin"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

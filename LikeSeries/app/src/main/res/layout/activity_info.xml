@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20sp"
                 android:gravity="center"
-                android:text="Esta app a sido realizada como proyecto final de ciclo DAM(Desarrollo de aplicaciones multiplataforma) .  Al principio tuve mis dudas sobre que aplicación realizar ya que la defensa debia ser perfecta , desde mi punto de vista creo que he sabido llegar a los puntos básicos para que esta aplicación cumpla con todas sus funcionalidades de manera adecuada."
+                android:text="Esta app ha sido realizada como proyecto final de ciclo DAM(Desarrollo de aplicaciones multiplataforma) 2019. \nAl principio tuve mis dudas sobre que aplicación realizar ya que la defensa debia ser perfecta , desde mi punto de vista creo que he sabido llegar a los puntos básicos para que esta aplicación cumpla con todas sus funcionalidades de manera adecuada."
                 android:textColor="@color/letras"
                 android:textSize="18sp" />
 
