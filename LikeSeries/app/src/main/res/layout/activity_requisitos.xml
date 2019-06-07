@@ -8,4 +8,42 @@
     android:orientation="vertical"
     tools:context=".Requisitos">
 
+    <include
+        android:id="@+id/appbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp"
+            android:layout_marginRight="10sp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/requisitos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20sp"
+                android:gravity="center"
+                android:text="Esta aplicación mobil está pensada para dispositivos mobiles a partir de la versión Nougat(7.0). \n También es recomendable una pantalla amplia para evitar malformaciones en la app"
+                android:textColor="@color/letras"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/manualusuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20sp"
+                android:gravity="center"
+                android:text="Una pequeña ayuda , el manual de usuario"
+                android:textColor="@color/rojo" />
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>

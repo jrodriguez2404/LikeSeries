@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 public class Info extends AppCompatActivity implements View.OnClickListener {
-private TextView github,manual;
+private TextView github;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +27,14 @@ private TextView github,manual;
                 finish();
             }
         });
-        github=findViewById(R.id.github);
-        manual=findViewById(R.id.manualusuario);
+        github=findViewById(R.id.github);;
         github.setOnClickListener(this);
-        manual.setOnClickListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
@@ -43,11 +47,6 @@ private TextView github,manual;
                 startActivity(intent);
                 break;
 
-            case R.id.manualusuario:
-                Intent intent2 = new Intent(this,FullScreenYoutube.class);
-                intent2.putExtra("trailer","6V0pAgIi9gg");
-                startActivity(intent2);
-                break;
         }
     }
 }

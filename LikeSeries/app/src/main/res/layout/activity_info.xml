@@ -62,14 +62,6 @@
                 android:textColor="@color/letras"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/manualusuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20sp"
-                android:gravity="center"
-                android:text="Una pequeña ayuda , el manual de usuario"
-                android:textColor="@color/rojo" />
         </LinearLayout>
     </ScrollView>
 

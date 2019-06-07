@@ -1,6 +1,7 @@
 package com.loja.jesus.likeseries;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -35,6 +39,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -68,8 +73,8 @@ Context contexto;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like);
         vaciarchat = findViewById(R.id.eliminartodo_administrador);
-        PersistenciaFirebase p = new PersistenciaFirebase();
-        p.persistenciaFirebase();
+
+
         chatmenu_linear = findViewById(R.id.chat_linear);
         pantalla_linear = findViewById(R.id.pantalla_linear);
         arraychat=new ArrayList<>();
@@ -345,6 +350,12 @@ Context contexto;
     @Override
     protected void onStart() {
         super.onStart();
+        if(!new PersistenciaFirebase().isOnline(contexto))
+        {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            DialogoAlerta dialogo = new DialogoAlerta();
+            dialogo.show(fragmentManager, "tagAlerta");
+        }
         mispositivos = findViewById(R.id.mispositivos);
         misnegativos = findViewById(R.id.misnegativos);
         tipousuario=findViewById(R.id.tipousuario);
@@ -442,12 +453,22 @@ Context contexto;
     }
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        final Dialog dialogo = new Dialog(contexto);
+        AlertDialog.Builder builder = new AlertDialog.Builder(dialogo.getContext());
+        builder.setMessage(R.string.salirapp);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+               finish();
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        builder.show();
+
     }
 
     public void cargarRecycerViewVotos() throws LikeSeriesExceptionClass
@@ -538,8 +559,6 @@ Context contexto;
     @Override
     public boolean onNavigationItemSelected(final MenuItem item) {
         // Handle navigation view item clicks here.
-
-
         mAuth = FirebaseAuth.getInstance();
         db= FirebaseFirestore.getInstance();
         user=mAuth.getCurrentUser();

@@ -1,10 +1,12 @@
 package com.loja.jesus.likeseries;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,7 +42,9 @@ public class SplashScreen extends Activity {
     private void cambiarActividad(Boolean cambioclase) {
         if (cambioclase == true) {
             //Una vez logeado salta este metodo
+
             SplashS(Like.class,false);
+
         }
         else
         {
@@ -64,10 +68,13 @@ public class SplashScreen extends Activity {
 
             if(!registro) {
                 startActivity(mainIntent);
+
         }
+
 // Close the activity so the user won't able to go back this
 // activity pressing Back button
                     finish();
+
                 }
             };
 // Lanzo en timer

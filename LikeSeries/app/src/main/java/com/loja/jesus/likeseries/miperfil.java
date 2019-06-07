@@ -181,6 +181,12 @@ Context contexto;
             }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         llamarinsertardatosUsuario();

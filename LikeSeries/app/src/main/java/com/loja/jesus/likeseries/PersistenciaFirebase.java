@@ -1,5 +1,8 @@
 package com.loja.jesus.likeseries;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.firestore.DocumentChange;
@@ -11,15 +14,21 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class PersistenciaFirebase {
     private FirebaseFirestore db;
-
+    private Boolean reachable;
     public PersistenciaFirebase() {
     }
-    public void persistenciaFirebase()
-    {
-        db= FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
+    public  boolean isOnline(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo!=null)
+        {
+            reachable=true;
+        }
+        else
+        {
+            reachable=false;
+        }
+        return reachable;
     }
+
 }

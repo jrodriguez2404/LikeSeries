@@ -50,7 +50,6 @@ public class MainRegistro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_registro);
         PersistenciaFirebase p = new PersistenciaFirebase();
-        p.persistenciaFirebase();
         Toolbar appToolbar = (Toolbar) findViewById(R.id.appbar);
 // *************************************************
 // Pongo el titulo en la toolbar

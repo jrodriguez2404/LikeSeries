@@ -1,6 +1,7 @@
 package com.loja.jesus.likeseries;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -88,6 +89,12 @@ public class TertuliaLike extends AppCompatActivity {
                         }
                     });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     public class SpaceItemDecoration extends RecyclerView.ItemDecoration {

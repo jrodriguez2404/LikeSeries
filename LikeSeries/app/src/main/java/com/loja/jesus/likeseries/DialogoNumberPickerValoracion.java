@@ -141,7 +141,8 @@ public class DialogoNumberPickerValoracion {
                                         }
 
 
-                                        for (int x = 0; x < votapersona.size(); x++) {
+                                        for
+                                        (int x = 0; x < votapersona.size(); x++) {
                                             votacionmedia += votapersona.get(x).getNota();
 
                                         }

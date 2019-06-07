@@ -3,7 +3,7 @@
     package="com.loja.jesus.likeseries">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:allowBackup="true"
         android:configChanges="screenSize|orientation"
@@ -12,24 +12,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:windowSoftInputMode="stateHidden">
-        <activity android:name=".Requisitos"></activity>
+        android:windowSoftInputMode="stateHidden"
+        android:screenOrientation="portrait">
+        <activity android:name=".Requisitos"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ChatTertuliaLike"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".TertuliaLike"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Info"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Administrador"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".FullScreenYoutube"
             android:label="@string/title_activity_full_screen_youtube"
@@ -38,33 +44,39 @@
             android:name=".ContenedorMultimedia"
             android:configChanges="screenSize|orientation"
             android:theme="@style/EstiloContenedor"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".miperfil"
             android:configChanges="screenSize|orientation"
             android:theme="@style/EstiloPerfil"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Like"
             android:configChanges="screenSize|orientation"
             android:theme="@style/EstiloMain"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainRegistro"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainLogin"
             android:configChanges="screenSize|orientation"
             android:theme="@style/EstiloLogin"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SplashScreen" />
+        <activity android:name=".SplashScreen"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

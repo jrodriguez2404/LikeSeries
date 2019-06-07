@@ -40,6 +40,14 @@ private Button insertar_peli,insertar_serie,insertar_tertulia;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appbar);
         toolbar.setTitle(R.string.titulo_Administración);
+    toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+// Hago que cuando se pulse la flecha de atras se cierre la actividad
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finish();
+        }
+    });
         setSupportActionBar(toolbar);
 
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
@@ -89,6 +97,7 @@ private Button insertar_peli,insertar_serie,insertar_tertulia;
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
     }
 
     private void declaraciones()

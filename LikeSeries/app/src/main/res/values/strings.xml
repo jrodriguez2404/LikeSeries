@@ -3,6 +3,7 @@
     <string name="SplasScream">splash</string>
     <!--Menú recordatorio-->
     <string name="action_settings">¿Olvido la contraseña?</string>
+    <string name="salirapp">¿Está seguro que quiere salir?</string>
     <!--LOGIN-->
     <string name="LOGIN">LOGIN - LikeSeries</string>
     <string name="correo">Correo:</string>
@@ -135,6 +136,8 @@
     <string name="numero_capitulos">Número capítulos Serie</string>
     <!--Info-->
     <string name="tituloinfo">Info-LikeSeries</string>
+    <!--Requisitos-->
+    <string name="titulorequisito">Requisitos-LikeSeries</string>
     <!--Tertulia-->
     <string name="titulotertulia">Tertulia - LikeSeries</string>
     <string name="nombretertulia">Nombre Tertulia</string>

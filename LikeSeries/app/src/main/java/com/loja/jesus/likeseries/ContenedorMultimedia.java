@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -71,7 +72,7 @@ private View dividercapitulos1,dividercapitulos2,divideractores;
  @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(intentlike);
+        finish();
     }
 
 
@@ -94,8 +95,7 @@ private View dividercapitulos1,dividercapitulos2,divideractores;
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(),Like.class);
-                startActivity(intentlike);
+                finish();
             }
         });
 
@@ -157,8 +157,6 @@ public void refrescarRecyclers(final Pelicula peli , final Serie ser) throws Lik
     @Override
     protected void onStart() {
         super.onStart();
-        PersistenciaFirebase p = new PersistenciaFirebase();
-        p.persistenciaFirebase();
         mostrarmas_boolean=true;
         try {
             declaraciones();
